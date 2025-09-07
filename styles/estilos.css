@@ -1,0 +1,10 @@
+/* Estilos para el proyecto */
+
+/* Cartas */
+.container{
+    display: flex;           /*contenedor flexible. Permite organizar fácilmente el contenido interno*/
+    align-items: center;
+    justify-content: center;
+    line-height: 1.5rem;     /*altura de cada línea de texto.*/
+    min-height: 80vh;        /*altura mínima del contenedor. 80% de la altura de la ventana gráfica (viewport height)*/
+}
