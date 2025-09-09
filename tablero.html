@@ -1,92 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tablero Monopoly Bootstrap</title>
-    <!-- Importar Bootstrap -->
-    <link  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"  rel="stylesheet"/>
-  </head>
-  <body>
-    <div class="container border border-dark">
-      <!-- Fila superior -->
-      <div class="row">
-        <div class="col border border-primary-subtle text-center ratio ratio-1x1">21 Parking</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-danger">22</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1">  23 Chance</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-danger">24</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-danger">25</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1">26 Railroad</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-warning">27</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-warning">28</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1">29 Water works</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-warning">30</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1">31 Go to jail</div>
-      </div>
+<html lang="es">
 
-      <!-- Fila del medio -->
-      <div class="row">
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-light">20</div>
-        <div class="col-10"></div>
-        <!-- Espacio central -->
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-success">32</div>
-      </div>
-      <div class="row">
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-light">19</div>
-        <div class="col-10"></div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-success">33</div>
-      </div>
-      <div class="row">
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1">18 Chest</div>
-        <div class="col-10"></div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1">34 Chest</div>
-      </div>
-      <div class="row">
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-light">17</div>
-        <div class="col-10"></div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-success">35</div>
-      </div>
-      <div class="row">
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1">16 Railroad</div>
-        <div class="col-10"></div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1">36 Railroad</div>
-      </div>
-      <div class="row">
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-secondary">15</div>
-        <div class="col-10"></div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1">37</div>
-      </div>
-      <div class="row">
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-secondary">14</div>
-        <div class="col-10"></div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-primary">38</div>
-      </div>
-      <div class="row">
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1">13 Electric</div>
-        <div class="col-10"></div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1">39 Luxury tax</div>
-      </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tablero Monopoly</title>
 
-      <div class="row">
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-secondary">12</div>
-        <div class="col-10"></div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-primary">40</div>
-      </div>
+  <!-- Bootstrap para estilos rápidos y responsivos -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles/estilos.css" />
+</head>
 
-      <!-- Fila inferior -->
-      <div class="row">
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1">11 Jail</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-info">10</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-info">9</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1">Chance</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-info">7</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1">6 Railroad</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1">5 Income tax</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-dark text-white">4</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1">3 Chest</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1 bg-dark text-white">2</div>
-        <div  class="col border border-primary-subtle text-center ratio ratio-1x1">1 Go</div>
-      </div>
+<body>
+  <div class="tablero">
+
+    <!-- 🔲 Esquinas del tablero -->
+    <div class="casilla esquina esquina-top-left free-parking"></div>
+    <div class="casilla esquina esquina-top-right go-to-jail"></div>
+    <div class="casilla esquina esquina-bottom-left jail"></div>
+    <div class="casilla esquina esquina-bottom-right go"></div>
+
+    <!-- 🔼 Fila superior -->
+    <div class="casilla c15-top propiedad color-red">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Avenida Roja</div>
     </div>
-  </body>
+    <div class="casilla c16-top propiedad color-red">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Calle Central</div>
+    </div>
+    <div class="casilla c17-top propiedad color-red">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Boulevard Sur</div>
+    </div>
+    <div class="casilla c18-top propiedad color-yellow">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Avenida Sol</div>
+    </div>
+    <div class="casilla c19-top propiedad color-yellow">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Calle Oro</div>
+    </div>
+    <div class="casilla c20-top propiedad color-yellow">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Paseo Dorado</div>
+    </div>
+    <div class="casilla c21-top propiedad color-yellow">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Camino Real</div>
+    </div>
+
+    <!-- ▶️ Columna derecha -->
+    <div class="casilla c22-right propiedad color-green">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Avenida Bosque</div>
+    </div>
+    <div class="casilla c23-right propiedad color-green">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Calle Verde</div>
+    </div>
+    <div class="casilla c24-right propiedad color-green">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Paseo Natural</div>
+    </div>
+    <div class="casilla c25-right propiedad color-light">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Estación Este</div>
+    </div>
+    <div class="casilla c26-right propiedad color-light">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Servicio Agua</div>
+    </div>
+    <div class="casilla c27-right propiedad color-light">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Calle Río</div>
+    </div>
+    <div class="casilla c28-right propiedad color-light">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Avenida Lago</div>
+    </div>
+
+    <!-- 🔽 Fila inferior -->
+    <div class="casilla c1-bottom propiedad color-blue">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Avenida Azul</div>
+    </div>
+    <div class="casilla c2-bottom propiedad color-blue">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Calle Marina</div>
+    </div>
+    <div class="casilla c3-bottom propiedad color-blue">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Paseo Oceánico</div>
+    </div>
+    <div class="casilla c4-bottom propiedad color-dark">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Estación Sur</div>
+    </div>
+    <div class="casilla c5-bottom propiedad color-dark">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Servicio Eléctrico</div>
+    </div>
+    <div class="casilla c6-bottom propiedad color-dark">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Calle Voltio</div>
+    </div>
+    <div class="casilla c7-bottom propiedad color-dark">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Avenida Mediterranea</div>
+    </div>
+
+    <!-- ◀️ Columna izquierda -->
+    <div class="casilla c8-left propiedad color-pink">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Calle Rosa</div>
+    </div>
+    <div class="casilla c9-left propiedad color-pink">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Avenida Flor</div>
+    </div>
+    <div class="casilla c10-left propiedad color-pink">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Paseo Primavera</div>
+    </div>
+    <div class="casilla c11-left propiedad color-brown">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Estación Oeste</div>
+    </div>
+    <div class="casilla c12-left propiedad color-brown">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Servicio Gas</div>
+    </div>
+    <div class="casilla c13-left propiedad color-brown">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Calle Fuego</div>
+    </div>
+    <div class="casilla c14-left propiedad color-brown">
+      <div class="sub-casilla sub-top"></div>
+      <div class="texto-casilla">Avenida Bronce</div>
+    </div>
+
+    <!-- 🧩 Centro del tablero -->
+    <div class="centro">
+      <img src="assets/img/monopoly-logo2.webp" alt="Monopoly logo" class="logo-centro" />
+    </div>
+
+  </div>
+</body>
+
 </html>
