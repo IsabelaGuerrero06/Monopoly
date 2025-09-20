@@ -1,6 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
+<<<<<<< HEAD
     // Se obtiene la cantidad de jugadores guardada antieriormente en el almacenamiento local para usarla en esta página
     let cantidadJugadores = localStorage.getItem('cantidadJugadores');
+=======
+    cargarBanderas();
+    // Se obtiene la cantidad de jugadores guardada antieriormente en el almacenamiento local para usarla en esta página
+    let cantidadJugadores = localStorage.getItem('cantidadJugadores');
+    let iniciarBtn = document.getElementById('iniciarBtn');
+
+    iniciarBtn.addEventListener('click', validarFormulario);
+>>>>>>> 8c4020317dcdb9355d7894172cf3687d6aead855
 
     // Se cambia la visibilidad de los divs de los jugadores 3 y 4 según la cantidad de jugadores seleccionada
     if (cantidadJugadores === '3') {
@@ -56,4 +65,80 @@ document.addEventListener('DOMContentLoaded', function() {
         // Se añade un listener para el evento 'change' (cuando se cambia una selección) y se llama a la función actualizarOpciones
         select.addEventListener('change', actualizarOpciones);
     });
+<<<<<<< HEAD
+=======
+
+    function validarFormulario() {
+        let jugador1 = document.getElementById('jugador1').value.trim();
+        let color1 = document.getElementById('color1').value;
+        let pais1 = document.getElementById('pais1').value;
+        let jugador2 = document.getElementById('jugador2').value.trim();
+        let color2 = document.getElementById('color2').value;
+        let pais2 = document.getElementById('pais2').value;
+
+        if (cantidadJugadores === '3') {
+            let jugador3 = document.getElementById('jugador3').value.trim();
+            let color3 = document.getElementById('color3').value;
+            let pais3 = document.getElementById('pais3').value;
+
+            if (jugador3 === '' || color3 === '' || pais3 === '') {
+                alert('Por favor, complete todos los campos obligatorios para los jugadores.');
+                return;
+            }
+
+            if (jugador1 === jugador3 || jugador2 === jugador3) {
+                alert('Los nombres de los jugadores no pueden ser iguales. Por favor, elija nombres diferentes.');
+                return;
+            }
+        }
+        else if (cantidadJugadores === '4') {
+            let jugador3 = document.getElementById('jugador3').value.trim();
+            let color3 = document.getElementById('color3').value;
+            let pais3 = document.getElementById('pais3').value;
+            let jugador4 = document.getElementById('jugador4').value.trim();
+            let color4 = document.getElementById('color4').value;
+            let pais4 = document.getElementById('pais4').value;
+
+            if (jugador3 === '' || color3 === '' || pais3 === '' || jugador4 === '' || color4 === '' || pais4 === '') {
+                alert('Por favor, complete todos los campos obligatorios para los jugadores.');
+                return;
+            }
+
+            if (jugador1 === jugador3 || jugador1 === jugador4 || jugador2 === jugador3 || jugador2 === jugador4 || jugador3 === jugador4) {
+                alert('Los nombres de los jugadores no pueden ser iguales. Por favor, elija nombres diferentes.');
+                return;
+            }
+        }
+
+        if (jugador1 === '' || color1 === '' || pais1 === '' || jugador2 === '' || color2 === '' || pais2 === '') {
+            alert('Por favor, complete todos los campos obligatorios para los jugadores.');
+            return;
+        }
+
+        if (jugador1 === jugador2) {
+            alert('Los nombres de los jugadores no pueden ser iguales. Por favor, elija nombres diferentes.');
+            return;
+        }
+
+        document.getElementById('iniciarBtnLink').href = 'tablero.html';
+    }
+
+    function cargarBanderas() {
+        fetch('http://127.0.0.1:5000/countries')
+        .then(response => response.json())
+        .then(data => {
+            const paises = data.countries;
+            const selectsPais = document.querySelectorAll('.pais-select');
+
+            selectsPais.forEach(select => {
+                paises.forEach(pais => {
+                    const option = document.createElement('option');
+                    option.value = pais.value; // Se usa el código del país como valor
+                    option.textContent = pais.value; // Se usa el nombre del país como texto visible
+                    select.appendChild(option);
+                });
+            });
+        })
+    }
+>>>>>>> 8c4020317dcdb9355d7894172cf3687d6aead855
 });

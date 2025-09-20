@@ -11,7 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <!-- Código de Select2 -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="scripts/elegirJugadores.js"></script>
+    <script src="../controllers/elegirJugadores.js"></script>
   </head>
   <body>
     <div>
@@ -99,7 +99,9 @@
         <option value="" disabled selected>Seleccione un país</option>
       </select>
     </div>
-      <button id="iniciarBtn">Iniciar Juego</button>
+      <a id="iniciarBtnLink" href="">
+        <button id="iniciarBtn">Iniciar Juego</button>
+      </a>  
       <a href="cantidadJugadores.html">
         <button id="atrasBtn">Atrás</button>
       </a>

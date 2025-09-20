@@ -1,4 +1,4 @@
-// scripts/tablero.js
+// controllers/tablero.js
 
 async function construirCasillas() {
   try {
