@@ -36,8 +36,10 @@ async function construirCasillas() {
         div.classList.add(casilla.type); // propiedad, servicio, ferrocarril, etc.
 
         div.innerHTML = `
-          <div class="sub-casilla sub-top"></div>
-          <div class="texto-casilla">${casilla.name}</div>
+          <div class="sub-casilla sub-top">
+         ${casilla.price ? `<span class="precio-casilla">$${casilla.price}</span>` : ''}
+         </div>
+         <div class="texto-casilla">${casilla.name}</div>
         `;
 
         tablero.appendChild(div);
