@@ -4,6 +4,104 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Elegir Jugadores</title>
+    <link rel="stylesheet" href="styles/elegirJugadores.css"/>
+    <!-- jQuery (Select2 lo necesita para funcionar) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Estilos de Select2 (para que se vea bonito el buscador) -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Código de Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="scripts/elegirJugadores.js"></script>
   </head>
-  <body></body>
+  <body>
+    <div>
+      <h4>Jugador 1</h4>
+    </div>
+    <div>
+      <label for="jugador1">Nombre:</label>
+      <input type="text" class="form-control" name="jugador1" id="jugador1" placeholder="Nickname" maxlength="15" minlength="3" required>
+
+      <label for="color1" class="form-label">Color de ficha:</label>
+      <select id="color1" class="color-select" required>
+        <option value="" disabled selected>Seleccione un color</option>
+        <option value="amarillo">Amarillo</option>
+        <option value="azul">Azul</option>
+        <option value="rojo">Rojo</option>
+        <option value="verde">Verde</option>
+      </select>
+
+      <label for="pais1">País:</label>
+      <select id="pais1" class="pais-select" required>
+        <option value="" disabled selected>Seleccione un país</option>
+      </select>
+    </div>
+    <div>
+      <h4>Jugador 2</h4>
+    </div>
+    <div>
+      <label for="jugador2">Nombre:</label>
+      <input type="text" class="form-control" name="jugador2" id="jugador2" placeholder="Nickname" maxlength="15" minlength="3" required>
+
+      <label for="color2" class="form-label">Color de ficha:</label>
+      <select id="color2" class="color-select" required>
+        <option value="" disabled selected>Seleccione un color</option>
+        <option value="amarillo">Amarillo</option>
+        <option value="azul">Azul</option>
+        <option value="rojo">Rojo</option>
+        <option value="verde">Verde</option>
+      </select>
+
+      <label for="pais2">País:</label>
+      <select id="pais2" class="pais-select" required>
+        <option value="" disabled selected>Seleccione un país</option>
+      </select>
+    </div>
+    <!-- Se ocultan, por defecto, tanto el título como el resto de campos de los jugadores 3 y 4 para mayor facilidad -->
+    <div id="tituloJugador3" style="display: none">
+      <h4>Jugador 3</h4>
+    </div>
+    <div id="divJugador3" style="display: none">
+      <label for="jugador3">Nombre:</label>
+      <input type="text" class="form-control" name="jugador3" id="jugador3" placeholder="Nickname" maxlength="15" minlength="3" required>
+
+      <label for="color3" class="form-label">Color de ficha:</label>
+      <select id="color3" class="color-select" required>
+        <option value="" disabled selected>Seleccione un color</option>
+        <option value="amarillo">Amarillo</option>
+        <option value="azul">Azul</option>
+        <option value="rojo">Rojo</option>
+        <option value="verde">Verde</option>
+      </select>
+
+      <label for="pais3">País:</label>
+      <select id="pais3" class="pais-select" required>
+        <option value="" disabled selected>Seleccione un país</option>
+      </select>
+    </div>
+    <div id="tituloJugador4" style="display: none">
+      <h4>Jugador 4</h4>
+    </div>
+    <div id="divJugador4" style="display: none">
+      <label for="jugador4">Nombre:</label>
+      <input type="text" class="form-control" name="jugador4" id="jugador4" placeholder="Nickname" maxlength="15" minlength="3" required>
+
+      <label for="color4" class="form-label">Color de ficha:</label>
+      <select id="color4" class="color-select" required>
+        <option value="" disabled selected>Seleccione un color</option>
+        <option value="amarillo">Amarillo</option>
+        <option value="azul">Azul</option>
+        <option value="rojo">Rojo</option>
+        <option value="verde">Verde</option>
+      </select>
+
+      <label for="pais4">País:</label>
+      <select id="pais4" class="pais-select" required>
+        <option value="" disabled selected>Seleccione un país</option>
+      </select>
+    </div>
+      <button id="iniciarBtn">Iniciar Juego</button>
+      <a href="cantidadJugadores.html">
+        <button id="atrasBtn">Atrás</button>
+      </a>
+  </body>
 </html>
