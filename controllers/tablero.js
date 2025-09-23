@@ -5,9 +5,11 @@ async function construirCasillas() {
     const res = await fetch('http://localhost:5000/board');
     const data = await res.json();
     const tablero = document.querySelector('.tablero');
-
     const lados = ['bottom', 'left', 'top', 'right'];
-    const esquinasPorId = [0, 10, 20, 30];
+ console.log(data);
+
+
+
 
     const colorMap = {
       brown: 'color-brown',
@@ -48,6 +50,26 @@ async function construirCasillas() {
   } catch (error) {
     console.error('Error al cargar el tablero:', error);
   }
+}
+
+function escucharEventosCasillas() {
+  // Selecciona todas las casillas
+  const casillas = document.querySelectorAll('.casilla');
+
+  // Escucha eventos en cada una
+  casillas.forEach(casilla => {
+    casilla.addEventListener('click', () => {
+      // Extrae información
+      const clases = casilla.className; // todas las clases
+      const id = casilla.dataset.id;    // data-id
+      const nombre = casilla.dataset.name; // data-name
+
+      // Muestra en consola (o úsalo como quieras)
+      console.log(`Casilla clickeada: ${nombre} (ID: ${id})`);
+      console.log(`Clases: ${clases}`);
+    });
+  });
+
 }
 
 construirCasillas();

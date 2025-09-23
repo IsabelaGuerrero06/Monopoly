@@ -99,16 +99,16 @@ body {
 .esquina-bottom-right { grid-column: 10 / span 2; grid-row: 10 / span 2; }
 
 .free-parking {
-  background-image: url("../assets/img/parqueadero.jpg");
+  background-image: url("../../assets/img/parqueadero.jpg");
 }
 .go-to-jail {
-  background-image: url("../assets/img/jail.jpg");
+  background-image: url("../../assets/img/jail2.jpg");
 }
 .jail {
-  background-image: url("../assets/img/jail2.jpg");
+  background-image: url("../../assets/img/jail2.jpg");
 }
 .go {
-  background-image: url("../assets/img/go.jpg");
+  background-image: url("../../assets/img/go.jpg");
 }
 
 .free-parking,
