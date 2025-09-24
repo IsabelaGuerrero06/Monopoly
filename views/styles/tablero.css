@@ -1,159 +1,202 @@
-/* Fuente y fondo general */
-body {
-  font-family: 'Poppins', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-  background: #f8f9fa;
+:root{
+  --board-border:#000;
+  --cell-border:#d6d6d6;
+  --bg:#f8f9fa;
+  --radius:10px;
+  --shadow:0 2px 6px rgba(0,0,0,.08);
 }
 
-/* Contenedor principal del tablero */
-.tablero {
-  display: grid;
-  grid-template-columns: repeat(11, 1fr);
-  grid-template-rows: repeat(11, 1fr);
-  width: 120vmin;
-  height: 100vmin;
-  border: 3px solid #000;
-  box-sizing: border-box;
-  position: relative;
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  background:var(--bg);
+  font-family:system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Poppins", sans-serif;
 }
 
-/* Casillas generales */
-.casilla {
-  position: relative;
-  border: 1px solid #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: clamp(0.6rem, 1.2vw, 1rem);
-  text-align: center;
-  padding: 0.2rem;
-  background-color: #f8f9fa;
-  word-break: break-word;
-  white-space: normal;
+.page{
+  min-height:100dvh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: min(4vmin, 24px);
 }
 
-.texto-casilla {
-  font-size: clamp(0.5rem, 0.8vw, 0.75rem);
-  padding: 0.2rem;
-  line-height: 1.1;
-  margin-top: 22px;
+/* TABLERO 3x3: top / middle / bottom */
+.board{
+  width:min(96vw, 120vmin);
+  aspect-ratio:1/1;
+  display:grid;
+  grid-template-rows:auto 1fr auto;
+  gap:0;
+  border:6px solid var(--board-border);
+  background:#fff;
+  border-radius: clamp(8px, 1.2vmin, 14px);
 }
 
-/* Sub-casilla superior para color de grupo */
-.sub-casilla {
-  position: absolute;
-  width: 100%;
-  height: 15px;
-  border-radius: 2px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+/* FILAS */
+.row-top,
+.row-bottom{
+  display:grid;
+  grid-template-columns: 1fr 7fr 1fr; /* esquina - lado (9 casillas) - esquina */
 }
 
-.sub-top {
-  top: 0;
-  left: 0;
+.row-middle{
+  display:grid;
+  grid-template-columns: 1fr 7fr 1fr; /* left - center - right */
+  height:100%;
 }
 
-/* Colores por grupo */
-.color-red    .sub-casilla { background-color: #dc3545; }
-.color-yellow .sub-casilla { background-color: #ffc107; }
-.color-green  .sub-casilla { background-color: #198754; }
-.color-blue   .sub-casilla { background-color: #0d6efd; }
-.color-brown  .sub-casilla { background-color: #8B4513; }
-.color-pink   .sub-casilla { background-color: #e83e8c; }
-.color-light  .sub-casilla { background-color: #17a2b8; }
-.color-dark   .sub-casilla { background-color: #343a40; }
+/* ESQUINAS */
+.corner{
+  position:relative;
+  border-right:2px solid var(--board-border);
+  border-left:2px solid var(--board-border);
+  border-top:2px solid var(--board-border);
+  border-bottom:2px solid var(--board-border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background-size:cover;
+  background-position:center;
+}
+.tl{ border-right:none; }
+.tr{ border-left:none; }
+.bl{ border-right:none; }
+.br{ border-left:none; }
 
-/* Casilla central con logo */
-.centro {
-  grid-column: 3 / span 7;
-  grid-row: 3 / span 7;
-  background: white;
-  border: 2px solid #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.corner-label{
+  background:rgba(255,255,255,.85);
+  padding:.35rem .5rem;
+  border-radius:8px;
+  font-weight:800;
+  line-height:1.05;
+  box-shadow:var(--shadow);
+  font-size: clamp(.6rem, 1.4vmin, .95rem);
 }
 
-.logo-centro {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+/* IMÁGENES DE ESQUINAS (ajusta rutas si cambian) */
+.free-parking { background-image:url("../../assets/img/parqueadero.jpg"); }
+.go-to-jail  { background-image:url("../../assets/img/jail2.jpg"); }
+.jail        { background-image:url("../../assets/img/jail2.jpg"); }
+.go          { background-image:url("../../assets/img/go.jpg"); }
+
+/* CENTRO */
+.center{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:3px solid var(--board-border);
+  margin: 1.5vmin;
+  border-radius: var(--radius);
+  background:#fff;
+}
+.logo-center{
+  max-width:80%;
+  max-height:60%;
+  object-fit:contain;
 }
 
-/* Esquinas posicionadas manualmente */
-.esquina-top-left     { grid-column: 1 / span 2; grid-row: 1 / span 2; }
-.esquina-top-right    { grid-column: 10 / span 2; grid-row: 1 / span 2; }
-.esquina-bottom-left  { grid-column: 1 / span 2; grid-row: 10 / span 2; }
-.esquina-bottom-right { grid-column: 10 / span 2; grid-row: 10 / span 2; }
+/* LADOS: contenedores de 9 casillas */
+.edge{
+  display:flex;
+  gap:0;
+}
+.edge-top,
+.edge-bottom{ flex-direction:row; }
+.edge-left,
+.edge-right{ flex-direction:column; }
 
-.free-parking {
-  background-image: url("../../assets/img/parqueadero.jpg");
-}
-.go-to-jail {
-  background-image: url("../assets/img/jail.jpg");
-}
-.jail {
-  background-image: url("../assets/img/jail2.jpg");
-}
-.go {
-  background-image: url("../assets/img/go.jpg");
-}
-
-.free-parking,
-.go-to-jail,
-.jail,
-.go {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+/* CASILLA */
+.cell{
+  flex:1 1 0;
+  min-width:0; /* no overflow horizontal */
+  border:1px solid var(--cell-border);
+  background:#fff;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:.35rem .3rem .4rem;
+  position:relative;
+  box-shadow: var(--shadow);
 }
 
-/* Posicionamiento por ID y lado */
+/* Banda de color (grupo) */
+.band{
+  position:absolute;
+  left:0; top:0;
+  width:100%;
+  height: 10px;
+  border-bottom:1px solid rgba(0,0,0,.2);
+  border-top-left-radius:6px;
+  border-top-right-radius:6px;
+}
 
-/* Inferior (IDs 1–9) */
-.c1-bottom  { grid-column: 3; grid-row: 10 / span 2; }
-.c2-bottom  { grid-column: 4; grid-row: 10 / span 2; }
-.c3-bottom  { grid-column: 5; grid-row: 10 / span 2; }
-.c4-bottom  { grid-column: 6; grid-row: 10 / span 2; }
-.c5-bottom  { grid-column: 7; grid-row: 10 / span 2; }
-.c6-bottom  { grid-column: 8; grid-row: 10 / span 2; }
-.c7-bottom  { grid-column: 9; grid-row: 10 / span 2; }
-.c8-bottom  { grid-column: 10; grid-row: 10 / span 2; }
-.c9-bottom  { grid-column: 11; grid-row: 10 / span 2; }
+/* Texto de la casilla */
+.label{
+  margin-top:14px;
+  text-align:center;
+  font-size: clamp(.55rem, 1.1vmin, .9rem);
+  font-weight:700;
+  line-height:1.1;
+  word-break:break-word;
+}
 
-/* Izquierda (IDs 11–19) */
-.c11-left  { grid-column: 1 / span 2; grid-row: 3; }
-.c12-left  { grid-column: 1 / span 2; grid-row: 4; }
-.c13-left  { grid-column: 1 / span 2; grid-row: 5; }
-.c14-left  { grid-column: 1 / span 2; grid-row: 6; }
-.c15-left  { grid-column: 1 / span 2; grid-row: 7; }
-.c16-left  { grid-column: 1 / span 2; grid-row: 8; }
-.c17-left  { grid-column: 1 / span 2; grid-row: 9; }
-.c18-left  { grid-column: 1 / span 2; grid-row: 10; }
-.c19-left  { grid-column: 1 / span 2; grid-row: 11; }
+/* Precio */
+.price{
+  display:block;
+  margin-top:.15rem;
+  font-size: clamp(.48rem, 1vmin, .75rem);
+  font-weight:800;
+  color:#222;
+}
 
-/* Superior (IDs 21–29) */
-.c21-top  { grid-column: 3; grid-row: 1 / span 2; }
-.c22-top  { grid-column: 4; grid-row: 1 / span 2; }
-.c23-top  { grid-column: 5; grid-row: 1 / span 2; }
-.c24-top  { grid-column: 6; grid-row: 1 / span 2; }
-.c25-top  { grid-column: 7; grid-row: 1 / span 2; }
-.c26-top  { grid-column: 8; grid-row: 1 / span 2; }
-.c27-top  { grid-column: 9; grid-row: 1 / span 2; }
-.c28-top  { grid-column: 10; grid-row: 1 / span 2; }
-.c29-top  { grid-column: 11; grid-row: 1 / span 2; }
+/* Estado encima (sin tapar esquinas) */
+.status{
+  position:absolute;
+  top:-10px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#fff;
+  border:1px solid #000;
+  border-radius:999px;
+  padding:.1rem .4rem;
+  font-size: clamp(.45rem, .95vmin, .75rem);
+  font-weight:800;
+  white-space:nowrap;
+  box-shadow:var(--shadow);
+  z-index:2;
+}
 
-/* Derecha (IDs 31–39) */
-.c31-right  { grid-column: 10 / span 2; grid-row: 3; }
-.c32-right  { grid-column: 10 / span 2; grid-row: 4; }
-.c33-right  { grid-column: 10 / span 2; grid-row: 5; }
-.c34-right  { grid-column: 10 / span 2; grid-row: 6; }
-.c35-right  { grid-column: 10 / span 2; grid-row: 7; }
-.c36-right  { grid-column: 10 / span 2; grid-row: 8; }
-.c37-right  { grid-column: 10 / span 2; grid-row: 9; }
-.c38-right  { grid-column: 10 / span 2; grid-row: 10; }
-.c39-right  { grid-column: 10 / span 2; grid-row: 11; }
+/* Colores de grupo */
+.cell.color-brown  .band{ background:#8B4513; }
+.cell.color-light-blue .band{ background:#4cb6ff; }
+.cell.color-pink   .band{ background:#ff6aa6; }
+.cell.color-orange .band{ background:#ffa116; }
+.cell.color-red    .band{ background:#e0352b; }
+.cell.color-yellow .band{ background:#ffd23c; }
+.cell.color-green  .band{ background:#1aa05b; }
+.cell.color-blue   .band{ background:#1d4ed8; }
+
+/* Orientación vertical para lados izquierdo/derecho */
+.edge-left .cell .label,
+.edge-right .cell .label{
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  margin-top: 12px; /* compensa banda */
+}
+.edge-left .cell .price,
+.edge-right .cell .price{
+  writing-mode: vertical-rl;
+
+}
+
+/* Responsive fino */
+@media (max-width: 560px){
+  .center{ margin: 1vmin; }
+  .band{ height: 9px; }
+  .status{ top:-9px; }
+}
+
+
