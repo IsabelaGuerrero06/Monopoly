@@ -119,5 +119,49 @@ class Jugador {
       // Aquí también podrías aplicar las reglas de bancarrota
     }
   }
+  // Método para mostrar la tarjeta de casa/hotel (grupo de propiedades del mismo color)
+  mostrarTarjetaCasaHotel(casillas) {
+    const tabla = document.getElementById("tablaPropiedades");
+    const cardHeader = document.querySelector(".card-header");
+    tabla.innerHTML = "";
+
+    const casilla = casillas[this.posicion];
+    if (casilla && casilla.type === "property") {
+      const colorGrupo = casilla.color;
+
+      cardHeader.textContent = "Propiedades disponibles";
+      cardHeader.style.background = colorGrupo;
+      cardHeader.style.color = "white";
+
+      const grupoPropiedades = casillas.filter(
+        (c) => c.type === "property" && c.color === colorGrupo
+      );
+
+      grupoPropiedades.forEach((prop, index) => {
+        const precioPrimeraCasa = prop.rent?.withHouse?.[0] || prop.price;
+
+        tabla.innerHTML += `
+        <tr id="prop-${index}">
+          <td>${prop.name}</td>
+          <td>$${precioPrimeraCasa}</td>
+          <td>
+            <button class="btn btn-primary btn-sm"
+                    onclick="comprarPropiedad(${index}, '${prop.name}', ${precioPrimeraCasa})">
+              Comprar
+            </button>
+          </td>
+        </tr>
+      `;
+      });
+    } else {
+      cardHeader.textContent = "Sin propiedad";
+      cardHeader.style.background = "gray";
+      tabla.innerHTML = `
+      <tr>
+        <td colspan="3">No hay propiedad en esta casilla</td>
+      </tr>
+    `;
+    }
+  }
   
 }
