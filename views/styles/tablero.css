@@ -12,6 +12,17 @@ body{
   margin:0;
   background:var(--bg);
   font-family:system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Poppins", sans-serif;
+  background: linear-gradient(135deg,  #ffcc70, #ff8177, #cf556c, #6a82fb); /* mismo fondo de la otra página */
+  background-size: 400% 400%;
+  animation: gradientBG 12s ease infinite;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+@keyframes gradientBG {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
 }
 
 .page{
@@ -24,12 +35,11 @@ body{
 
 /* TABLERO 3x3: top / middle / bottom */
 .board{
-  width:min(96vw, 120vmin);
+  width:min(98vw, 130vmin);
   aspect-ratio:1/1;
   display:grid;
   grid-template-rows:auto 1fr auto;
   gap:0;
-  border:6px solid var(--board-border);
   background:#fff;
   border-radius: clamp(8px, 1.2vmin, 14px);
 }
@@ -47,7 +57,7 @@ body{
   height:100%;
 }
 
-/* ESQUINAS */
+/* ESQUINAS - Proporción cuadrada mejorada */
 .corner{
   position:relative;
   border-right:2px solid var(--board-border);
@@ -60,6 +70,8 @@ body{
   text-align:center;
   background-size:cover;
   background-position:center;
+  aspect-ratio: 1/1; /* Fuerza proporción cuadrada */
+  min-height: 12vmin; /* Altura mínima */
 }
 .tl{ border-right:none; }
 .tr{ border-left:none; }
@@ -77,8 +89,8 @@ body{
 }
 
 /* IMÁGENES DE ESQUINAS (ajusta rutas si cambian) */
-.free-parking { background-image:url("../../assets/img/parqueadero.jpg"); }
-.go-to-jail  { background-image:url("../../assets/img/jail2.jpg"); }
+.free-parking { background-image:url("../../assets/img/free.jpg"); }
+.go-to-jail  { background-image:url("../../assets/img/gotojail.avif"); }
 .jail        { background-image:url("../../assets/img/jail2.jpg"); }
 .go          { background-image:url("../../assets/img/go.jpg"); }
 
@@ -88,8 +100,6 @@ body{
   align-items:center;
   justify-content:center;
   border:3px solid var(--board-border);
-  margin: 1.5vmin;
-  border-radius: var(--radius);
   background:#fff;
 }
 .logo-center{
@@ -108,7 +118,7 @@ body{
 .edge-left,
 .edge-right{ flex-direction:column; }
 
-/* CASILLA */
+/* CASILLA - SIN BORDER-RADIUS */
 .cell{
   flex:1 1 0;
   min-width:0; /* no overflow horizontal */
@@ -122,22 +132,20 @@ body{
   box-shadow: var(--shadow);
 }
 
-/* Banda de color (grupo) */
+/* Banda de color (grupo) - SIN BORDER-RADIUS */
 .band{
   position:absolute;
   left:0; top:0;
   width:100%;
-  height: 10px;
+  height: 20px;
   border-bottom:1px solid rgba(0,0,0,.2);
-  border-top-left-radius:6px;
-  border-top-right-radius:6px;
 }
 
 /* Texto de la casilla */
 .label{
-  margin-top:14px;
+  margin-top:18px;
   text-align:center;
-  font-size: clamp(.55rem, 1.1vmin, .9rem);
+  font-size: clamp(.7rem, 1.2vmin, .95rem);
   font-weight:700;
   line-height:1.1;
   word-break:break-word;
@@ -147,29 +155,14 @@ body{
 .price{
   display:block;
   margin-top:.15rem;
-  font-size: clamp(.48rem, 1vmin, .75rem);
+ font-size: clamp(.65rem, 2.2vmin, .75rem);
   font-weight:800;
   color:#222;
 }
 
-/* Estado encima (sin tapar esquinas) */
-.status{
-  position:absolute;
-  top:-10px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#fff;
-  border:1px solid #000;
-  border-radius:999px;
-  padding:.1rem .4rem;
-  font-size: clamp(.45rem, .95vmin, .75rem);
-  font-weight:800;
-  white-space:nowrap;
-  box-shadow:var(--shadow);
-  z-index:2;
-}
 
-/* Colores de grupo */
+
+/* Colores de grupo - más vibrantes */
 .cell.color-brown  .band{ background:#8B4513; }
 .cell.color-light-blue .band{ background:#4cb6ff; }
 .cell.color-pink   .band{ background:#ff6aa6; }
@@ -179,24 +172,77 @@ body{
 .cell.color-green  .band{ background:#1aa05b; }
 .cell.color-blue   .band{ background:#1d4ed8; }
 
-/* Orientación vertical para lados izquierdo/derecho */
+/* Para casillas laterales, centramos mejor el contenido */
+.edge-left .cell,
+.edge-right .cell {
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  padding: .5rem .3rem .45rem;
+}
+
+/* Orientación mejorada para lados izquierdo/derecho */
 .edge-left .cell .label,
 .edge-right .cell .label{
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  margin-top: 12px; /* compensa banda */
+  writing-mode: horizontal-tb;
+  transform: rotate(0deg);
+  margin-top: 16px;
+  text-align: center;
+  line-height: 1.05;
 }
 .edge-left .cell .price,
 .edge-right .cell .price{
-  writing-mode: vertical-rl;
-
+  writing-mode: horizontal-tb;
+  text-align: center;
+  position:absolute;
+  top:-1px;
+  left:0;
+  right:0;
+  width:100%;
+  height:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  color:#000;
+  text-shadow: 1px 1px 2px rgba(255,255,255,.9);
+  z-index:2;
 }
 
-/* Responsive fino */
+/* Responsive mejorado */
 @media (max-width: 560px){
   .center{ margin: 1vmin; }
-  .band{ height: 9px; }
+  .band{ height: 12px; }
   .status{ top:-9px; }
+  
+  .edge-left .cell,
+  .edge-right .cell {
+    padding: .45rem .25rem .4rem;
+  }
+  
+  .edge-left .cell .label,
+  .edge-right .cell .label{
+    margin-top: 14px;
+  }
+  
 }
 
-
+/* Estilo para filas */
+.edge-top .cell .price,
+.edge-bottom .cell .price {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  color: #000;
+  text-shadow: 1px 1px 2px rgba(255,255,255,.9);
+  z-index: 2;
+  pointer-events: none;
+}

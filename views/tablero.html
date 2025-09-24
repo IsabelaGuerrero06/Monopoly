@@ -9,14 +9,15 @@
 </head>
 <body>
   <main class="page">
+    
     <div class="board" aria-label="Tablero de Monopoly">
       <!-- FILA SUPERIOR -->
       <div class="row-top">
-        <div class="corner tl free-parking" data-id="20" data-name="free-parking">
+        <div class="corner tl free-parking" data-id="20"  data-name="free-parking">
           <span class="corner-label">Parqueo<br/>Gratis</span>
         </div>
         <div class="edge edge-top" id="edge-top" aria-label="Casillas superiores"></div>
-        <div class="corner tr go-to-jail">
+        <div class="corner tr go-to-jail" data-id="30" data-name="go-to-jail">
           <span class="corner-label">Ve a la<br/>Cárcel</span>
         </div>
       </div>
@@ -26,7 +27,7 @@
         <div class="edge edge-left" id="edge-left" aria-label="Casillas izquierda"></div>
 
         <div class="center">
-          <img src="./assets/img/monopoly-logo2.webp" alt="Monopoly" class="logo-center" />
+          <img src="../../assets/img/monopoly-logo2.webp" alt="Monopoly" class="logo-center" />
         </div>
 
         <div class="edge edge-right" id="edge-right" aria-label="Casillas derecha"></div>
@@ -34,11 +35,11 @@
 
       <!-- FILA INFERIOR -->
       <div class="row-bottom">
-        <div class="corner bl jail">
+        <div class="corner bl jail " id="jail" data-id="10" data-name="jail">
           <span class="corner-label">Cárcel<br/>/ Visita</span>
         </div>
         <div class="edge edge-bottom" id="edge-bottom" aria-label="Casillas inferiores"></div>
-        <div class="corner br go">
+        <div class="corner br go" id="go" data-id="0" data-name="go">
           <span class="corner-label">Salida</span>
         </div>
       </div>
