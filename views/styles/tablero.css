@@ -1,0 +1,202 @@
+:root{
+  --board-border:#000;
+  --cell-border:#d6d6d6;
+  --bg:#f8f9fa;
+  --radius:10px;
+  --shadow:0 2px 6px rgba(0,0,0,.08);
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  background:var(--bg);
+  font-family:system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Poppins", sans-serif;
+}
+
+.page{
+  min-height:100dvh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: min(4vmin, 24px);
+}
+
+/* TABLERO 3x3: top / middle / bottom */
+.board{
+  width:min(96vw, 120vmin);
+  aspect-ratio:1/1;
+  display:grid;
+  grid-template-rows:auto 1fr auto;
+  gap:0;
+  border:6px solid var(--board-border);
+  background:#fff;
+  border-radius: clamp(8px, 1.2vmin, 14px);
+}
+
+/* FILAS */
+.row-top,
+.row-bottom{
+  display:grid;
+  grid-template-columns: 1fr 7fr 1fr; /* esquina - lado (9 casillas) - esquina */
+}
+
+.row-middle{
+  display:grid;
+  grid-template-columns: 1fr 7fr 1fr; /* left - center - right */
+  height:100%;
+}
+
+/* ESQUINAS */
+.corner{
+  position:relative;
+  border-right:2px solid var(--board-border);
+  border-left:2px solid var(--board-border);
+  border-top:2px solid var(--board-border);
+  border-bottom:2px solid var(--board-border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background-size:cover;
+  background-position:center;
+}
+.tl{ border-right:none; }
+.tr{ border-left:none; }
+.bl{ border-right:none; }
+.br{ border-left:none; }
+
+.corner-label{
+  background:rgba(255,255,255,.85);
+  padding:.35rem .5rem;
+  border-radius:8px;
+  font-weight:800;
+  line-height:1.05;
+  box-shadow:var(--shadow);
+  font-size: clamp(.6rem, 1.4vmin, .95rem);
+}
+
+/* IMÁGENES DE ESQUINAS (ajusta rutas si cambian) */
+.free-parking { background-image:url("../../assets/img/parqueadero.jpg"); }
+.go-to-jail  { background-image:url("../../assets/img/jail2.jpg"); }
+.jail        { background-image:url("../../assets/img/jail2.jpg"); }
+.go          { background-image:url("../../assets/img/go.jpg"); }
+
+/* CENTRO */
+.center{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:3px solid var(--board-border);
+  margin: 1.5vmin;
+  border-radius: var(--radius);
+  background:#fff;
+}
+.logo-center{
+  max-width:80%;
+  max-height:60%;
+  object-fit:contain;
+}
+
+/* LADOS: contenedores de 9 casillas */
+.edge{
+  display:flex;
+  gap:0;
+}
+.edge-top,
+.edge-bottom{ flex-direction:row; }
+.edge-left,
+.edge-right{ flex-direction:column; }
+
+/* CASILLA */
+.cell{
+  flex:1 1 0;
+  min-width:0; /* no overflow horizontal */
+  border:1px solid var(--cell-border);
+  background:#fff;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:.35rem .3rem .4rem;
+  position:relative;
+  box-shadow: var(--shadow);
+}
+
+/* Banda de color (grupo) */
+.band{
+  position:absolute;
+  left:0; top:0;
+  width:100%;
+  height: 10px;
+  border-bottom:1px solid rgba(0,0,0,.2);
+  border-top-left-radius:6px;
+  border-top-right-radius:6px;
+}
+
+/* Texto de la casilla */
+.label{
+  margin-top:14px;
+  text-align:center;
+  font-size: clamp(.55rem, 1.1vmin, .9rem);
+  font-weight:700;
+  line-height:1.1;
+  word-break:break-word;
+}
+
+/* Precio */
+.price{
+  display:block;
+  margin-top:.15rem;
+  font-size: clamp(.48rem, 1vmin, .75rem);
+  font-weight:800;
+  color:#222;
+}
+
+/* Estado encima (sin tapar esquinas) */
+.status{
+  position:absolute;
+  top:-10px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#fff;
+  border:1px solid #000;
+  border-radius:999px;
+  padding:.1rem .4rem;
+  font-size: clamp(.45rem, .95vmin, .75rem);
+  font-weight:800;
+  white-space:nowrap;
+  box-shadow:var(--shadow);
+  z-index:2;
+}
+
+/* Colores de grupo */
+.cell.color-brown  .band{ background:#8B4513; }
+.cell.color-light-blue .band{ background:#4cb6ff; }
+.cell.color-pink   .band{ background:#ff6aa6; }
+.cell.color-orange .band{ background:#ffa116; }
+.cell.color-red    .band{ background:#e0352b; }
+.cell.color-yellow .band{ background:#ffd23c; }
+.cell.color-green  .band{ background:#1aa05b; }
+.cell.color-blue   .band{ background:#1d4ed8; }
+
+/* Orientación vertical para lados izquierdo/derecho */
+.edge-left .cell .label,
+.edge-right .cell .label{
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  margin-top: 12px; /* compensa banda */
+}
+.edge-left .cell .price,
+.edge-right .cell .price{
+  writing-mode: vertical-rl;
+
+}
+
+/* Responsive fino */
+@media (max-width: 560px){
+  .center{ margin: 1vmin; }
+  .band{ height: 9px; }
+  .status{ top:-9px; }
+}
+
+

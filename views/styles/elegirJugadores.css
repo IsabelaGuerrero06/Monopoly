@@ -6,6 +6,7 @@ body {
   margin: 0;
   padding: 20px;
   color: #fff;
+  height: 100vh;
 }
 
 /* Animación suave del fondo
@@ -97,31 +98,6 @@ select {
   color: black;
 }
 
-/* Mejorar el select2 (buscador de países) */
-/* Hace que el campo visible de Select2 tenga la misma altura y estilo que los otros inputs */
-.select2-container--default .select2-selection--single {
-  background-color: #fff;
-  border: none;
-  border-radius: 10px;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  box-shadow: inset 2px 2px 5px rgba(0,0,0,0.15);
-}
-
-/* Controla el texto que se ve dentro del Select2 */
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-  color: #333;
-  padding-left: 12px;
-  font-size: 14px;
-}
-
-/* Redondea y da sombra al panel desplegable del buscador */
-.select2-dropdown {
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.25);
-}
-
 /* Contenedor de botones */
 #iniciarBtn,
 #atrasBtn {
@@ -176,4 +152,72 @@ select {
     width: 100%;
     margin: 8px 0;
   }
+}
+
+/* Asegura que los botones dentro de los enlaces se vean bien */
+a {
+  text-decoration: none; /* Por si acaso */
+}
+
+a button {
+  display: inline-block; /* Asegura que los botones se comporten bien */
+  margin: 0 10px; /* Separación entre botones */
+}
+
+/* Estilos específicos para el Select2 */
+
+/* Estilo para las banderas del Select2 */
+.img-flag {
+  width: 20px;            
+  height: 14px;
+  object-fit: cover;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+
+/* Input de Select2 (el cuadro visible donde aparece el país) */
+.select2-container--default .select2-selection--single {
+  width: 100% !important;
+  height: 42px !important; /* Igual que Nombre y Color de ficha */
+  border-radius: 10px;
+  border: none !important;
+  font-size: 14px;
+  background: #fff !important;
+  color: #333 !important;
+  box-shadow: inset 2px 2px 5px rgba(0,0,0,0.15);
+  box-sizing: border-box;
+  display: block; /* Se quite el flex para que no se desborde */
+  padding: 6px 10px; /* Mismo padding que Nombre y Color de ficha */
+  margin: 0;
+}
+
+/* Texto dentro del Select2 */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: #333 !important;
+  line-height: normal !important;
+  padding-left: 5px !important;
+}
+
+/* Flechita del select centrada */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 100% !important;
+  top: 0 !important;
+  right: 10px !important;
+}
+
+/* Dropdown de opciones */
+.select2-container--default .select2-results__option {
+  color: #000 !important; /* Se cambia el color del texto a negro ya que por defecto es blanco al igual que el fondo */
+  background: #fff !important;
+  font-size: 14px;
+  padding: 8px 12px;
+}
+
+/* Se resalta la opción al pasar el mouse */
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+  background: #6a82fb !important;
+  color: #ffffff !important;
 }
