@@ -1,0 +1,223 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #ffcc70, #ff8177, #cf556c, #6a82fb);
+  background-size: 400% 400%;
+  animation: gradientBG 12s ease infinite;
+  margin: 0;
+  padding: 20px;
+  color: #fff;
+  height: 100vh;
+}
+
+/* Animación suave del fondo
+Mueve el punto de inicio del gradiente de izquierda a derecha y regresa
+para dar el efecto de respiración.*/
+
+@keyframes gradientBG {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+
+/* Contenedor general */
+div {
+  margin-bottom: 25px;
+  padding: 20px;
+  border-radius: 15px; /*Bordes redondeados */
+  background: rgba(0, 0, 0, 0.35); /* Fondo translúcido */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); /* Sombra para dar profundidad */ 
+  transition: transform 0.2s ease; /* Animación al pasar el cursor */
+}
+
+div:hover {
+  transform: scale(1.03); /* Animación al pasar el cursor */
+}
+
+/* Títulos de jugador */
+h4 {
+  margin: 0 0 15px 0;
+  font-size: 22px;
+  font-weight: bold;
+  color: #ffde59;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+}
+
+/* Etiquetas */
+label {
+  display: block; /* Pone cada etiqueta en una línea diferente */
+  margin: 10px 0 5px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+input[type="text"],
+select {
+  width: 100%;
+  height: 42px; /* Misma altura para todos */
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  margin-bottom: 10px;
+  background: #fff;
+  color: #333;
+  box-shadow: inset 2px 2px 5px rgba(0,0,0,0.15);
+  transition: 0.2s;
+  box-sizing: border-box; /* Asegura que padding no cambie tamaño */
+}
+
+input[type="text"]:focus,
+select:focus {
+  box-shadow: 0 0 8px #ffde59;
+}
+
+/* Selects */
+select {
+  cursor: pointer; /* Cambia el cursor al pasar sobre el select */
+}
+
+/* Opciones de colores de ficha */
+.color-select option[value="amarillo"] {
+  background: #ffde59;
+  color: black;
+}
+
+.color-select option[value="azul"] {
+  background: #4d79ff;
+  color: black;
+}
+
+.color-select option[value="rojo"] {
+  background: #ff4d4d;  
+  color: black;
+}  
+
+.color-select option[value="verde"] {
+  background: #4dff88;
+  color: black;
+}
+
+/* Contenedor de botones */
+#iniciarBtn,
+#atrasBtn {
+  padding: 12px 25px;
+  margin: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+  color: #fff;
+}
+
+/* Contenedor de los botones */
+.botones {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente por si el contenedor crece */
+  margin-top: 20px;
+}
+
+
+/* Botón Iniciar Juego */
+#iniciarBtn {
+  background: linear-gradient(135deg, #28a745, #4dff88);
+  color: #fff;
+  
+}
+
+#iniciarBtn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+}
+
+/* Botón Atrás */
+#atrasBtn {
+  background: linear-gradient(135deg, #ff4d4d, #ff8177);
+  color: #fff;
+}
+
+#atrasBtn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+}
+
+/* Ajuste para móviles: botones apilados */
+@media (max-width: 600px) {
+  #iniciarBtn,
+  #atrasBtn {
+    width: 100%;
+    margin: 8px 0;
+  }
+}
+
+/* Asegura que los botones dentro de los enlaces se vean bien */
+a {
+  text-decoration: none; /* Por si acaso */
+}
+
+a button {
+  display: inline-block; /* Asegura que los botones se comporten bien */
+  margin: 0 10px; /* Separación entre botones */
+}
+
+/* Estilos específicos para el Select2 */
+
+/* Estilo para las banderas del Select2 */
+.img-flag {
+  width: 20px;            
+  height: 14px;
+  object-fit: cover;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+
+/* Input de Select2 (el cuadro visible donde aparece el país) */
+.select2-container--default .select2-selection--single {
+  width: 100% !important;
+  height: 42px !important; /* Igual que Nombre y Color de ficha */
+  border-radius: 10px;
+  border: none !important;
+  font-size: 14px;
+  background: #fff !important;
+  color: #333 !important;
+  box-shadow: inset 2px 2px 5px rgba(0,0,0,0.15);
+  box-sizing: border-box;
+  display: block; /* Se quite el flex para que no se desborde */
+  padding: 6px 10px; /* Mismo padding que Nombre y Color de ficha */
+  margin: 0;
+}
+
+/* Texto dentro del Select2 */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: #333 !important;
+  line-height: normal !important;
+  padding-left: 5px !important;
+}
+
+/* Flechita del select centrada */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 100% !important;
+  top: 0 !important;
+  right: 10px !important;
+}
+
+/* Dropdown de opciones */
+.select2-container--default .select2-results__option {
+  color: #000 !important; /* Se cambia el color del texto a negro ya que por defecto es blanco al igual que el fondo */
+  background: #fff !important;
+  font-size: 14px;
+  padding: 8px 12px;
+}
+
+/* Se resalta la opción al pasar el mouse */
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+  background: #6a82fb !important;
+  color: #ffffff !important;
+}
