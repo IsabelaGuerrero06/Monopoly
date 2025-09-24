@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Se cargan las banderas en los selects de país
     cargarBanderas();
     // Se obtiene la cantidad de jugadores guardada antieriormente en el almacenamiento local para usarla en esta página
     let cantidadJugadores = localStorage.getItem('cantidadJugadores');
@@ -83,6 +84,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Los nombres de los jugadores no pueden ser iguales. Por favor, elija nombres diferentes.');
                 return;
             }
+
+            if (jugador3.length < 5 || jugador3.length > 15) {
+                alert('El nombre de los jugadores debe tener entre 5 y 15 caracteres.');
+                return;
+            }
         }
         else if (cantidadJugadores === '4') {
             let jugador3 = document.getElementById('jugador3').value.trim();
@@ -101,6 +107,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Los nombres de los jugadores no pueden ser iguales. Por favor, elija nombres diferentes.');
                 return;
             }
+
+            if (jugador3.length < 5 || jugador3.length > 15 || jugador4.length < 5 || jugador4.length > 15) {
+                alert('El nombre de los jugadores debe tener entre 5 y 15 caracteres.');
+                return;
+            }
         }
 
         if (jugador1 === '' || color1 === '' || pais1 === '' || jugador2 === '' || color2 === '' || pais2 === '') {
@@ -113,24 +124,102 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        if (jugador1.length < 5 || jugador1.length > 15 || jugador2.length < 5 || jugador2.length > 15) {
+            alert('El nombre de los jugadores debe tener entre 5 y 15 caracteres.');
+            return;
+        }
+
         document.getElementById('iniciarBtnLink').href = 'tablero.html';
+        // Si pasa todas las validaciones, se guardan los datos en el almacenamiento local y se redirige a la página del tablero
+        localStorage.setItem("jugador1", document.getElementById("jugador1").value);
+        localStorage.setItem("jugador2", document.getElementById("jugador2").value);
+        localStorage.setItem("jugador3", document.getElementById("jugador3").value);
+        localStorage.setItem("jugador4", document.getElementById("jugador4").value);
+        localStorage.setItem("color1", document.getElementById("color1").value);
+        localStorage.setItem("color2", document.getElementById("color2").value);
+        localStorage.setItem("color3", document.getElementById("color3").value);
+        localStorage.setItem("color4", document.getElementById("color4").value);
+        localStorage.setItem("pais1", document.getElementById("pais1").value);
+        localStorage.setItem("pais2", document.getElementById("pais2").value);
+        localStorage.setItem("pais3", document.getElementById("pais3").value);
+        localStorage.setItem("pais4", document.getElementById("pais4").value);
     }
 
-    function cargarBanderas() {
-        fetch('http://127.0.0.1:5000/countries')
-        .then(response => response.json())
-        .then(data => {
-            const paises = data.countries;
-            const selectsPais = document.querySelectorAll('.pais-select');
+    // Función para cargar las banderas en los selects de país usando la API REST local
+    async function cargarBanderas() { // El async permite usar await dentro de la función para trabajar con promesas de forma secuencial y legible
+        try {
+            const resp = await fetch('http://127.0.0.1:5000/countries'); // Hace una petición HTTP GET a la API local que devuelve la lista de países
+            const data = await resp.json(); // data = [ { "co": "Colombia" }, { "br": "Brasil" }, ... ]
 
+            const selectsPais = document.querySelectorAll('.pais-select'); // Selecciona todos los selects de país en un NodeList
+            if (!selectsPais.length) return; // Si no hay selects no hace nada
+
+            // Para cada select de país: vaciar y llenar opciones
             selectsPais.forEach(select => {
-                paises.forEach(pais => {
-                    const option = document.createElement('option');
-                    option.value = pais.value; // Se usa el código del país como valor
-                    option.textContent = pais.value; // Se usa el nombre del país como texto visible
-                    select.appendChild(option);
+                // Mantener la opción placeholder
+                select.innerHTML = '<option value="" disabled selected>Seleccione un país</option>';
+
+                data.forEach(paisObj => {
+                    // Para cada paisObj ({ "co": "Colombia" }) se extrae código y nombre
+                    const [codigoRaw, nombre] = Object.entries(paisObj)[0]; // Object.entries(paisObj)[0] devuelve un array [key, value], por eso se desestructura en [codigoRaw, nombre]
+                    const codigoUpper = String(codigoRaw).toUpperCase(); // Se pone en mayúsculas para la URL de flagsapi
+
+                    const option = document.createElement('option'); // Se crea un elemento <option> para cada país
+                    option.value = codigoRaw; // Valor a guardar (código en minúscula y con guiones si aplica)
+                    option.textContent = nombre; // Texto visible en el dropdown
+                    // Se guarda la URL de la bandera en un data-attribute para que Select2 lo lea luego
+                    option.dataset.flag = `https://flagsapi.com/${codigoUpper}/shiny/64.png`;
+
+                    select.appendChild(option); // Se añade cada opción al select actual
+                });
+
+                // Inicializar Select2 para cada uno de los select con templates para mostrar la bandera
+                $(select).select2({ // Transforma el select en un componente Select2
+                    placeholder: 'Seleccione un país',
+                    allowClear: true,
+                    templateResult: formatFlag, // Cómo se ven las opciones en el dropdown
+                    templateSelection: formatFlag, // Cómo se ve la selección actual
+                    escapeMarkup: function(m) { return m; } // Permitir markup/jQuery element
                 });
             });
-        })
+
+        } catch (e) {
+            console.error('Error cargando países:', e);
+        }
+    }
+
+    // Función que Select2 usa para renderizar opción + selección con bandera
+    function formatFlag(state) { // El state es el objeto de la opción actual, state.id = option.value, etc.
+        // state.id === undefined (o '' para la opción placeholder) devuelve option.textContent
+        if (!state.id) {
+            return state.text || '';
+        }
+
+        // Se obtiene la URL de la bandera desde option (state.element = option original para leer data-attributes)
+        const flagUrl = $(state.element).data('flag') || '';
+        // Código corto (para "us-ca" se toma "US" como fallback)
+        const fallbackCode = String(state.id).split('-')[0].toUpperCase();
+
+        // Se crea el <img> y se le pone un manejo de error para fallback en 404
+        const $img = $(`<img class="img-flag" alt="" />`);
+        $img.attr('src', flagUrl); // Se asigna la URL de la bandera
+
+        // Manejo de error si la imagen no carga (404 u otro error)
+        $img.on('error', function () {
+            // Primer fallback: intentar solo con el código base (por si viene "us-ca", probamos "US")
+            const fallbackUrl = `https://flagsapi.com/${fallbackCode}/shiny/64.png`;
+            if (this.src !== fallbackUrl) {
+            this.src = fallbackUrl; // Se intenta con el código base
+            return;
+            }
+            // Segundo fallback: imagen simple inline (gris) si no existe la bandera y para que no quede el ícono roto
+            this.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="14"><rect width="100%" height="100%" fill="%23cccccc"/></svg>';
+        });
+
+        // Contenedor con imagen + texto
+        const $container = $('<span></span>');
+        $container.append($img).append(document.createTextNode(' ' + state.text));
+
+        return $container; // Se devuelve el contenedor jQuery con la imagen y el texto para que Select2 lo inserte en los templates
     }
 });
