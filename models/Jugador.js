@@ -1,4 +1,4 @@
-class Jugador {
+export default class Jugador {
   constructor(nickname, pais, color) {
     this.nickname = nickname;
     this.pais = pais;
@@ -66,7 +66,7 @@ class Jugador {
     this._dinero = valor;
   }
 
-  //METODOS 
+  //METODOS
   // Método para mover al jugador (ejemplo chat)
   mover(casillas) {
     this.posicion = ((this.posicion - 1 + casillas) % 40) + 1;
@@ -101,12 +101,14 @@ class Jugador {
       duenio.dinero += renta;
       console.log(`${this.nickname} pagó ${renta} a ${duenio.nickname}`);
     } else {
-      console.log(`${this.nickname} no tiene suficiente dinero para pagar la renta.`);
+      console.log(
+        `${this.nickname} no tiene suficiente dinero para pagar la renta.`
+      );
       // Aquí podrías implementar reglas: vender propiedades, hipotecar, o declararse en bancarrota
     }
   }
 
-  // Pagar impuestos 
+  // Pagar impuestos
   pagarImpuestos(monto) {
     if (monto !== 100 && monto !== 200) {
       throw new Error("El impuesto debe ser 100 o 200.");
@@ -115,16 +117,22 @@ class Jugador {
       this.dinero -= monto;
       console.log(`${this.nickname} pagó ${monto} en impuestos.`);
     } else {
-      console.log(`${this.nickname} no tiene suficiente dinero para pagar impuestos.`);
+      console.log(
+        `${this.nickname} no tiene suficiente dinero para pagar impuestos.`
+      );
       // Aquí también podrías aplicar las reglas de bancarrota
     }
   }
   // Método para mostrar la tarjeta de casa/hotel (grupo de propiedades del mismo color)
   mostrarTarjetaCasaHotel(casillas) {
-    const tabla = document.getElementById("tablaPropiedades");
-    const cardHeader = document.querySelector(".card-header");
-    tabla.innerHTML = "";
+    const modalBody = document.getElementById("modalJugadorBody");
+    const modalTitle = document.getElementById("modalJugadorLabel");
 
+    modalTitle.textContent = `Jugador: ${this.nickname}`;
+    modalBody.innerHTML = `AQUI IRÁN LAS PROPIEDADES DEL JUGADOR ${this.nickname}`;
+
+    const modal = new bootstrap.Modal(document.getElementById("modalJugador"));
+    modal.show();
     const casilla = casillas[this.posicion];
     if (casilla && casilla.type === "property") {
       const colorGrupo = casilla.color;
@@ -163,5 +171,4 @@ class Jugador {
     `;
     }
   }
-  
 }
