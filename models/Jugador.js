@@ -1,4 +1,5 @@
-export default class Jugador {
+export default
+class Jugador {
   constructor(nickname, pais, color) {
     this.nickname = nickname;
     this.pais = pais;

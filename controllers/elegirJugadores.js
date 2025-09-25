@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Se elimina el valor almacenado localmente de cantidad de jugadores para evitar conflictos si se vuelve a esta página
-    localStorage.removeItem('cantidadJugadores');
+    // localStorage.removeItem('cantidadJugadores');
 
     // Lógica para evitar que se repitan los colores de las fichas ya seleccionados por los jugadores
     // Se seleccionan todos los selects de color en un NodeList (parecido a un array)
@@ -131,20 +131,49 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.getElementById('iniciarBtnLink').href = 'tablero.html';
         // Si pasa todas las validaciones, se guardan los datos en el almacenamiento local y se redirige a la página del tablero
-        localStorage.setItem("jugador1", document.getElementById("jugador1").value);
-        localStorage.setItem("jugador2", document.getElementById("jugador2").value);
-        localStorage.setItem("jugador3", document.getElementById("jugador3").value);
-        localStorage.setItem("jugador4", document.getElementById("jugador4").value);
-        localStorage.setItem("color1", document.getElementById("color1").value);
-        localStorage.setItem("color2", document.getElementById("color2").value);
-        localStorage.setItem("color3", document.getElementById("color3").value);
-        localStorage.setItem("color4", document.getElementById("color4").value);
-        localStorage.setItem("pais1", document.getElementById("pais1").value);
-        localStorage.setItem("pais2", document.getElementById("pais2").value);
-        localStorage.setItem("pais3", document.getElementById("pais3").value);
-        localStorage.setItem("pais4", document.getElementById("pais4").value);
+        const infoJugadores = extraerInfoJugadores();
+        localStorage.setItem("jugadores", JSON.stringify(infoJugadores)); // Se guarda el array de objetos como string JSON
     }
 
+    function extraerInfoJugadores() {
+        const jugador1 = document.getElementById("jugador1").value;
+        const jugador2 = document.getElementById("jugador2").value;
+        const jugador3 = document.getElementById("jugador3").value;
+        const jugador4 = document.getElementById("jugador4").value;
+        const color1 = document.getElementById("color1").value;
+        const color2 = document.getElementById("color2").value;
+        const color3 = document.getElementById("color3").value;
+        const color4 = document.getElementById("color4").value;
+        const pais1 = document.getElementById("pais1").value;
+        const pais2 = document.getElementById("pais2").value;
+        const pais3 = document.getElementById("pais3").value;
+        const pais4 = document.getElementById("pais4").value;
+        if (cantidadJugadores === '2') {
+            const jugadores = [
+                { nombre: jugador1, color: color1, pais: pais1 },
+                { nombre: jugador2, color: color2, pais: pais2 }
+            ];
+            return jugadores;
+        }
+        else if (cantidadJugadores === '3') {
+            const jugadores = [
+                { nombre: jugador1, color: color1, pais: pais1 },
+                { nombre: jugador2, color: color2, pais: pais2 },
+                { nombre: jugador3, color: color3, pais: pais3 }
+            ];
+            return jugadores;
+        }
+        else if (cantidadJugadores === '4') {
+            const jugadores = [
+                { nombre: jugador1, color: color1, pais: pais1 },
+                { nombre: jugador2, color: color2, pais: pais2 },
+                { nombre: jugador3, color: color3, pais: pais3 },
+                { nombre: jugador4, color: color4, pais: pais4 }
+            ];
+            return jugadores;
+        }
+
+    }
     // Función para cargar las banderas en los selects de país usando la API REST local
     async function cargarBanderas() { // El async permite usar await dentro de la función para trabajar con promesas de forma secuencial y legible
         try {
