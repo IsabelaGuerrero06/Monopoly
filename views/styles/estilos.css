@@ -1,13 +1,4 @@
 /* ==================== Fuente y fondo general ==================== */
-body {
-  font-family: 'Poppins', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-  background: #f8f9fa;
-}
 
 /* ==================== Contenedor principal del tablero ==================== */
 .tablero {
