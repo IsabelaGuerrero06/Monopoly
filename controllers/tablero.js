@@ -1,6 +1,9 @@
+import Jugador from "../models/Jugador";
 // controllers/tablero.js
 const ENDPOINT = 'http://127.0.0.1:5000/board';
 
+// Crear lista de jugadores
+const jugadores = [];
 /* Mapa de colores del grupo a clases CSS */
 const colorMap = {
   brown: 'color-brown',
@@ -120,6 +123,10 @@ async function renderBoard(){
   }catch(err){
     console.error('Error renderizando tablero:', err);
   }
+}
+
+function crearJugadores() {
+  const infoJugadores = localStorage.getItem("jugadores");
 }
 
 window.addEventListener('DOMContentLoaded', renderBoard);
