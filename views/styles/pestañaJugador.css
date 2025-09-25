@@ -11,3 +11,174 @@
   50% {background-position: 100% 50%;}
   100% {background-position: 0% 50%;}
 }
+
+.container {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+#iconoPerfil {
+  width: 100px; /* Tamaño ajustable */
+  height: 100px;
+  border-radius: 50%; /* Lo hace circular */
+  object-fit: cover; /* Asegura que la imagen no se deforme */
+  margin-bottom: 10px;
+  border: 3px solid #fff;
+}
+
+#nombreJugador {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+#paisJugador {
+  width: 50px;
+  height: 35px;
+  object-fit: contain;
+  margin: 5px 0 15px;
+  border-radius: 6px;
+  border: 1px solid #fff;
+}
+
+#dineroJugador {
+  font-size: 18px;
+  margin: 10px 0;
+  color: #ffd166;
+  font-weight: bold;
+}
+
+/* ==== TABLAS ==== */
+h3 {
+  margin-top: 20px;
+  font-size: 18px;
+  border-bottom: 2px solid rgba(255,255,255,0.3);
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+table {
+  width: 100%;
+  margin: 10px 0;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+table td, table th {
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,0.2);
+  text-align: center;
+  font-size: 14px;
+}
+
+table th {
+  background: rgba(0,0,0,0.4);
+  font-weight: bold;
+}
+
+/* Contenedor de botones */
+#lanzarDadosBtn,
+#cerrarBtn {
+  padding: 12px 25px;
+  margin: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+  color: #fff;
+}
+
+/* Contenedor de los botones */
+.botones {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente por si el contenedor crece */
+  gap: 15px;
+  margin-top: 20px;
+}
+
+
+/* Botón Lanzar Dados */
+#lanzarDadosBtn {
+  background: linear-gradient(135deg, #2f10c9, #5794ff);
+  color: #fff;
+  
+}
+
+#lanzarDadosBtn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+}
+
+/* Botón Cerrar */
+#cerrarBtn {
+  background: linear-gradient(135deg, #ff4d4d, #ff8177);
+  color: #fff;
+}
+
+#cerrarBtn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+}
+
+/* Ajuste para móviles: botones apilados */
+@media (max-width: 600px) {
+  .container {
+    padding: 15px;
+  }
+  .botones {
+    flex-direction: column;
+  }
+  #lanzarDadosBtn,
+  #cerrarBtn {
+    width: 100%;
+    margin: 8px 0;
+  }
+}
+
+/* Contenedor de perfil */
+.perfil {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Contenedor nombre + bandera */
+.nombreBandera {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* separación entre nombre y bandera */
+  justify-content: center;
+}
+
+#nombreJugador {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 0;
+}
+
+#paisJugador {
+  width: 40px;
+  height: 28px;
+  object-fit: contain;
+  border-radius: 6px;
+  border: 1px solid #fff;
+}
+
+#dineroJugador {
+  font-size: 18px;
+  margin-top: 8px;
+  color: #ffd166;
+  font-weight: bold;
+  text-align: center;
+}

@@ -1,3 +1,4 @@
+export default
 class Jugador {
   constructor(nickname, pais, color) {
     this.nickname = nickname;
@@ -163,5 +164,4 @@ class Jugador {
     `;
     }
   }
-  
 }

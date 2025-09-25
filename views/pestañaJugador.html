@@ -1,17 +1,32 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pestaña Jugador</title>
-    <link rel="stylesheet" href="styles/pestañaJugador.css"/>
-    <script src="../controllers/pestañaJugador.js" defer></script> <!-- El defer es para ejecutar el JS después de que cargue el DOM -->
-</head>
-<body>
-    <div>
-        <img id="iconoPerfil" src="../assets/img/iconoPerfil.webp" alt="Incono de Perfil">
-        <h3 id="nombreJugador"></h3>
-        <img id="banderaPais" src="" alt="Bandera del país" >
-    </div>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Pestaña Jugador</title>
+        <link rel="stylesheet" href="styles/pestañaJugador.css"/>
+        <script src="../controllers/pestañaJugador.js" defer></script> <!-- El defer es para ejecutar el JS después de que cargue el DOM -->
+    </head>
+    <body>
+        <div class="container">
+            <img id="iconoPerfil" src="../assets/img/iconoPerfil.webp" alt="Incono de Perfil">
+            
+            <div class="nombreBandera">
+                <h3 id="nombreJugador"></h3>
+                <img id="paisJugador" src="" alt="Bandera del país">
+            </div>
+
+            <h3 id="dineroJugador"></h3>
+        </div>
+        <div class="container">
+            <h3>Propiedades:</h3>
+            <table id="propiedadesJugador"></table>
+            <h3>Hipotecas:</h3>
+            <table id="hipotecasJugador"></table>
+        </div>
+        <div class="">
+            <button id="lanzarDadosBtn">Lanzar dados</button>
+            <button id="cerrarBtn">Cerrar</button>
+        </div>
+    </body>
 </html>
