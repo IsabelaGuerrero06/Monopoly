@@ -33,5 +33,5 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // Maneja el botón "Atrás" para volver a la página de inicio
 document.getElementById('irinicio').addEventListener('click', () => {
-  window.location.href = '../views/inicio.html'; // Ajusta la ruta si tu archivo de inicio tiene otro nombre
+  window.location.href = '../views/inicio.html'; 
 });
