@@ -1,0 +1,55 @@
+/* Archivo: modal-estilos.css */
+
+/* Centrar título del header del modal */
+.modal-header .titulo-modal {
+  flex: 1; /* ocupa todo el espacio */
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+/* Contenedor de los botones */
+.contenedor-botones {
+  display: flex;
+  justify-content: center;
+  gap: 1rem; /* separación entre botones */
+  width: 100%;
+}
+
+/* Botón estilo juego */
+.boton-comprar {
+  background-color: #00cc4e;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+/* Botón estilo juego */
+.boton-cancelar {
+  background-color: #606562;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.boton-comprar:hover {
+  background-color: #004a99;
+  transform: scale(1.05);
+}
+.boton-cancelar:hover {
+  background-color: #004a99;
+  transform: scale(1.05);
+}
+
+.boton-juego:active {
+  transform: scale(0.95);
+}
+
+
