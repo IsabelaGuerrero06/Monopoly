@@ -1,0 +1,47 @@
+/* Estilos para el modal de Casa/Hotel */
+
+.modal-header {
+    border-radius: 5px 5px 0 0;
+    text-align: center;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.table-casahotel {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.table-casahotel th,
+.table-casahotel td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.table-casahotel th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.table-casahotel tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table-casahotel tr:hover {
+    background-color: #f1f1f1;
+}
+
+.btn-construir {
+    font-size: 0.9rem;
+    padding: 5px 10px;
+}
+
+.btn-construir:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
