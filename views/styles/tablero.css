@@ -1,3 +1,4 @@
+/* Variables para mantener consistencia en colores y medidas */
 :root {
   --board-border: #000;
   --cell-border: #d6d6d6;
@@ -6,13 +7,14 @@
   --shadow: 0 2px 6px rgba(0, 0, 0, .08);
 }
 
+/* Reset básico */
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 10px 10px;
-  background-color: #4cb6ff;
+  background-color: #4cb6ff; /* Ese azul clásico del Monopoly */
 }
 
 .page {
@@ -23,7 +25,16 @@ body {
   padding: min(4vmin, 24px);
 }
 
-/* TABLERO 3x3: top / middle / bottom */
+/* Layout principal - Jugadores a la izquierda, tablero a la derecha */
+.contenedor-juego {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  padding: 20px;
+}
+
+/* El tablero en sí - pensado como una cuadrícula 3x3 */
 .board {
   width: 100%;
   height: 80vh;
@@ -31,56 +42,40 @@ body {
   background: #fff;
 }
 
-/* FILAS */
+/* Las tres filas principales del tablero */
 .row-top,
 .row-bottom {
   display: grid;
-  grid-template-columns: 1fr 7fr 1fr;
-  /* esquina - lado (9 casillas) - esquina */
+  grid-template-columns: 1fr 7fr 1fr; /* esquina, 9 casillas, esquina */
 }
 
 .row-middle {
   display: grid;
-  grid-template-columns: 1fr 7fr 1fr;
-  /* left - center - right */
+  grid-template-columns: 1fr 7fr 1fr; /* lado izq, centro con logo, lado der */
   height: 100%;
 }
 
-/* ESQUINAS - Proporción cuadrada mejorada */
+/* Las 4 esquinas del tablero (Go, Jail, etc.) */
 .corner {
   position: relative;
-  border-right: 2px solid var(--board-border);
-  border-left: 2px solid var(--board-border);
-  border-top: 2px solid var(--board-border);
-  border-bottom: 2px solid var(--board-border);
+  border: 2px solid var(--board-border);
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   background-size: cover;
   background-position: center;
-  aspect-ratio: 1/1;
-  /* Fuerza proporción cuadrada */
+  aspect-ratio: 1/1; /* Mantiene forma cuadrada */
   min-height: 12vmin;
-  /* Altura mínima */
 }
 
-.tl {
-  border-right: none;
-}
+/* Quitamos algunos bordes para que se vea como un tablero real */
+.tl { border-right: none; } /* esquina superior izquierda */
+.tr { border-left: none; }  /* esquina superior derecha */
+.bl { border-right: none; } /* esquina inferior izquierda */
+.br { border-left: none; }  /* esquina inferior derecha */
 
-.tr {
-  border-left: none;
-}
-
-.bl {
-  border-right: none;
-}
-
-.br {
-  border-left: none;
-}
-
+/* El texto que aparece en las esquinas */
 .corner-label {
   background: rgba(255, 255, 255, .85);
   padding: .35rem .5rem;
@@ -91,24 +86,13 @@ body {
   font-size: clamp(.6rem, 1.4vmin, .95rem);
 }
 
-/* IMÁGENES DE ESQUINAS (ajusta rutas si cambian) */
-.free-parking {
-  background-image: url("../../assets/img/free.jpg");
-}
+/* Imágenes de fondo para cada esquina */
+.free-parking { background-image: url("../../assets/img/free.jpg"); }
+.go-to-jail { background-image: url("../../assets/img/gotojail.avif"); }
+.jail { background-image: url("../../assets/img/jail2.jpg"); }
+.go { background-image: url("../../assets/img/go.jpg"); }
 
-.go-to-jail {
-  background-image: url("../../assets/img/gotojail.avif");
-}
-
-.jail {
-  background-image: url("../../assets/img/jail2.jpg");
-}
-
-.go {
-  background-image: url("../../assets/img/go.jpg");
-}
-
-/* CENTRO */
+/* El centro del tablero donde va el logo */
 .center {
   display: flex;
   align-items: center;
@@ -123,27 +107,24 @@ body {
   object-fit: contain;
 }
 
-/* LADOS: contenedores de 9 casillas */
+/* Los 4 lados del tablero que contienen las casillas */
 .edge {
   display: flex;
   gap: 0;
 }
 
-.edge-top,
-.edge-bottom {
-  flex-direction: row;
+.edge-top, .edge-bottom {
+  flex-direction: row; /* casillas en fila horizontal */
 }
 
-.edge-left,
-.edge-right {
-  flex-direction: column;
+.edge-left, .edge-right {
+  flex-direction: column; /* casillas en columna vertical */
 }
 
-/* CASILLA - SIN BORDER-RADIUS */
+/* Cada casilla individual del tablero */
 .cell {
   flex: 1 1 0;
   min-width: 0;
-  /* no overflow horizontal */
   border: 1px solid var(--cell-border);
   background: #fff;
   display: flex;
@@ -154,7 +135,7 @@ body {
   box-shadow: var(--shadow);
 }
 
-/* Banda de color (grupo) - SIN BORDER-RADIUS */
+/* La banda de color en la parte superior de cada propiedad */
 .band {
   position: absolute;
   left: 0;
@@ -164,62 +145,37 @@ body {
   border-bottom: 1px solid rgba(0, 0, 0, .2);
 }
 
-/* Texto de la casilla */
+/* El nombre de la propiedad */
 .label {
   margin-top: 18px;
   text-align: center;
-  font-size: clamp(.7rem, 1.2vmin, .95rem);
+  font-size: clamp(.9rem, 1.5vmin, .95rem);
   font-weight: 700;
   line-height: 1.1;
   word-break: break-word;
-   font-family: 'Arial', sans-serif;
+  font-family: 'Arial', sans-serif;
 }
 
-/* Precio */
+/* El precio de compra */
 .price {
   display: block;
   margin-top: .15rem;
-  font-size: clamp(.65rem, 2.2vmin, .75rem);
+  font-size: clamp(.7rem, 2.2vmin, .75rem);
   font-weight: 800;
   color: #222;
 }
 
+/* Los colores de cada grupo de propiedades */
+.cell.color-brown .band { background: #8B4513; }
+.cell.color-light-blue .band { background: #4cb6ff; }
+.cell.color-pink .band { background: #ff6aa6; }
+.cell.color-orange .band { background: #ffa116; }
+.cell.color-red .band { background: #e0352b; }
+.cell.color-yellow .band { background: #ffd23c; }
+.cell.color-green .band { background: #1aa05b; }
+.cell.color-blue .band { background: #1d4ed8; }
 
-
-/* Colores de grupo - más vibrantes */
-.cell.color-brown .band {
-  background: #8B4513;
-}
-
-.cell.color-light-blue .band {
-  background: #4cb6ff;
-}
-
-.cell.color-pink .band {
-  background: #ff6aa6;
-}
-
-.cell.color-orange .band {
-  background: #ffa116;
-}
-
-.cell.color-red .band {
-  background: #e0352b;
-}
-
-.cell.color-yellow .band {
-  background: #ffd23c;
-}
-
-.cell.color-green .band {
-  background: #1aa05b;
-}
-
-.cell.color-blue .band {
-  background: #1d4ed8;
-}
-
-/* Para casillas laterales, centramos mejor el contenido */
+/* Ajustes especiales para las casillas de los lados izquierdo y derecho */
 .edge-left .cell,
 .edge-right .cell {
   flex-direction: column;
@@ -229,7 +185,6 @@ body {
   padding: .5rem .3rem .45rem;
 }
 
-/* Orientación mejorada para lados izquierdo/derecho */
 .edge-left .cell .label,
 .edge-right .cell .label {
   writing-mode: horizontal-tb;
@@ -255,33 +210,10 @@ body {
   color: #000;
   text-shadow: 1px 1px 2px rgba(255, 255, 255, .9);
   z-index: 2;
-   font-family: 'Arial', sans-serif; 
+  font-family: 'Arial', sans-serif; 
 }
 
-/* Responsive mejorado */
-@media (max-width: 560px) {
- 
-
-  .band {
-    height: 12px;
-  }
-
-  .status {
-    top: -9px;
-  }
-
-  .edge-left .cell,
-  .edge-right .cell {
-    padding: .45rem .25rem .4rem;
-  }
-
-  .edge-left .cell .label,
-  .edge-right .cell .label {
-    margin-top: 14px;
-  }
-
-}
-/* Estilo para filas */
+/* Ajustes para los precios en las filas superior e inferior */
 .edge-top .cell .price,
 .edge-bottom .cell .price {
   position: absolute;
@@ -290,25 +222,17 @@ body {
   width: 100%;
   height: 17px;
   display: flex;
-  align-items: center;      /* Centrado vertical */
-  justify-content: center;  /* Centrado horizontal */
+  align-items: center;
+  justify-content: center;
   font-weight: 900;
   color: #000;
   text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.9);
   z-index: 2;
   pointer-events: none;
-  font-family: 'Arial', sans-serif; /* Puedes cambiar la fuente aquí */
+  font-family: 'Arial', sans-serif;
 }
 
-.contenedor-juego {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 40px;
-  padding: 20px;
-}
-
-/* Columna de jugadores */
+/* Panel de jugadores a la izquierda */
 .contenedor-perfiles {
   display: flex;
   flex-direction: column;
@@ -343,4 +267,31 @@ body {
   font-family: 'Montserrat', sans-serif;
 }
 
+/* Para pantallas pequeñas */
+@media (max-width: 560px) {
+  .band {
+    height: 12px;
+  }
 
+  .status {
+    top: -9px;
+  }
+
+  .edge-left .cell,
+  .edge-right .cell {
+    padding: .45rem .25rem .4rem;
+  }
+
+  .edge-left .cell .label,
+  .edge-right .cell .label {
+    margin-top: 14px;
+  }
+}
+.dice-area {
+  margin-top: 20px; /* Espacio entre logo y dados */
+  display: flex;
+  gap: 20px; /*  Separación entre los dos dados */
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap; /*  Para que se adapten en pantallas pequeñas */
+}

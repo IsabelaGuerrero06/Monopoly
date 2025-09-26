@@ -1,0 +1,225 @@
+/* ===== ESTILOS PARA LOS DADOS - MONOPOLY ===== */
+
+/* Contenedor principal del área de dados */
+.dice-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+  padding: 15px;
+}
+
+/* Container para los dos dados */
+.dice-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Estilos base para cada dado */
+.dice {
+  width: 60px;
+  height: 60px;
+  background: #ffffff;
+  border: 3px solid #d4af37;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  transition: all 0.2s ease;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.15),
+    0 2px 4px rgba(212, 175, 55, 0.2);
+  cursor: pointer;
+}
+
+/* Estado de los dados cuando están rodando */
+.dice.rolling {
+  animation: rollAnimation 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+  background: #f8f8f8;
+  border-color: #f39c12;
+}
+
+/* Animación de rodar los dados */
+@keyframes rollAnimation {
+  0% { 
+    transform: rotate(0deg) scale(1); 
+  }
+  20% { 
+    transform: rotate(72deg) scale(1.1); 
+  }
+  40% { 
+    transform: rotate(144deg) scale(1.05); 
+  }
+  60% { 
+    transform: rotate(216deg) scale(1.1); 
+  }
+  80% { 
+    transform: rotate(288deg) scale(1.05); 
+  }
+  100% { 
+    transform: rotate(360deg) scale(1); 
+  }
+}
+
+/* Contenedor de los puntos del dado */
+.dice-dots {
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  width: 80%;
+  height: 80%;
+  padding: 3px;
+}
+
+/* Estilos para cada punto del dado */
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #2c3e50;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+/* Punto activo/visible */
+.dot.active {
+  opacity: 1;
+}
+
+/* Botón para lanzar los dados */
+.roll-button {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: #ffffff;
+  border: 2px solid #d4af37;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: 'Arial', sans-serif;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(243, 156, 18, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Efectos hover del botón */
+.roll-button:hover {
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
+}
+
+/* Botón activo/presionado */
+.roll-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(243, 156, 18, 0.3);
+}
+
+/* Botón deshabilitado */
+.roll-button:disabled {
+  background: #bdc3c7;
+  border-color: #95a5a6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Resultado de los dados */
+.dice-result {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablets */
+@media (max-width: 768px) {
+  .dice-area {
+    gap: 15px;
+    margin-top: 15px;
+    padding: 10px;
+  }
+  
+  .dice-container {
+    gap: 15px;
+  }
+  
+  .dice {
+    width: 50px;
+    height: 50px;
+    border-width: 2px;
+  }
+  
+  .dot {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .roll-button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  
+  .dice-result {
+    font-size: 16px;
+  }
+}
+
+/* Móviles */
+@media (max-width: 480px) {
+  .dice-area {
+    gap: 12px;
+    margin-top: 10px;
+  }
+  
+  .dice-container {
+    gap: 12px;
+  }
+  
+  .dice {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .dot {
+    width: 5px;
+    height: 5px;
+  }
+  
+  .roll-button {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  
+  .dice-result {
+    font-size: 14px;
+  }
+}
+
+/* Pantallas muy pequeñas */
+@media (max-width: 320px) {
+  .dice {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .dot {
+    width: 4px;
+    height: 4px;
+  }
+  
+  .roll-button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}

@@ -1,4 +1,4 @@
-import Jugador from "../models/Jugador";
+import Jugador from "../models/Jugador.js";
 // controllers/tablero.js
 const ENDPOINT = 'http://127.0.0.1:5000/board';
 
@@ -130,9 +130,31 @@ async function renderBoard() {
   }
 }
 
-function crearJugadores() {
-  const infoJugadores = localStorage.getItem("jugadores");
-}
 
 addEventListenerCornerCell();
 window.addEventListener('DOMContentLoaded', renderBoard);
+
+function crearFichasVisuales(jugadores) {
+  const salida = document.querySelector('[data-id="0"]');
+  if (!salida) return;
+
+  jugadores.forEach((jugador, index) => {
+    const ficha = document.createElement('div');
+    ficha.classList.add('ficha');
+    ficha.id = `ficha-${jugador.id}`;
+    ficha.style.backgroundColor = jugador.color;
+
+    // Posición visual única por jugador
+    const posiciones = [
+      { bottom: '5px', left: '5px' },
+      { bottom: '5px', right: '5px' },
+      { top: '5px', left: '5px' },
+      { top: '5px', right: '5px' }
+    ];
+    const pos = posiciones[index] || { top: '0', left: '0' };
+    Object.assign(ficha.style, pos);
+
+    salida.appendChild(ficha);
+  });
+}
+

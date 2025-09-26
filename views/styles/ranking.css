@@ -1,0 +1,92 @@
+/* Importa la fuente Quicksand desde Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
+
+/* Estilo del título principal */
+h2 {
+  font-family: 'Quicksand', sans-serif; /* Fuente moderna y legible */
+  color: #fff; /* Texto blanco para contraste */
+  background-color: #f39c12; /* Fondo dorado vibrante */
+  padding: 15px 30px; /* Espaciado interno */
+  border: 3px solid #d4af37; /* Borde dorado más intenso */
+  border-radius: 12px; /* Bordes redondeados */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3); /* Sombra para profundidad */
+  text-transform: uppercase; /* Mayúsculas para estilo de título */
+  letter-spacing: 1.5px; /* Espaciado entre letras */
+  margin: 40px auto; /* Centrado vertical con margen */
+  display: table; /* Permite centrado horizontal automático */
+}
+
+/* Estilo general de la tabla */
+table {
+  width: 85%; /* Ancho relativo para buena visualización */
+  margin: 30px auto; /* Centrado horizontal */
+  border-collapse: separate;
+  border-spacing: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Sombra suave */
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #fdf6e3; /* Fondo claro tipo pergamino */
+}
+
+/* Estilo de las celdas */
+th, td {
+  padding: 16px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+  font-size: 16px;
+  font-family: 'Quicksand', sans-serif;
+  color: #34495e; /* Gris oscuro para buena legibilidad */
+}
+
+/* Encabezados de la tabla */
+th {
+  background-color: #f39c12; /* Fondo dorado */
+  color: #fff; /* Texto blanco */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Alternancia de color en filas pares */
+tr:nth-child(even) {
+  background-color: #fef9e7;
+}
+
+/* Efecto al pasar el mouse sobre una fila */
+tr:hover {
+  background-color: #f9e79f;
+  transition: background-color 0.3s ease;
+}
+
+/* Estilo de las banderas */
+img.flag {
+  width: 28px;
+  height: 20px;
+  border-radius: 3px;
+  box-shadow: 0 0 3px rgba(0,0,0,0.2); /* Sombra sutil */
+}
+
+/* Fondo del contenedor principal */
+.ranking-container {
+  background-image: url('../../assets/img/cityjpg.jpg'); /* Imagen de fondo temática */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 160px 0; /* Espaciado vertical para centrar contenido */
+}
+
+/* Contenedor del botón "Atrás" */
+.back-button {
+  text-align: center;
+  margin: 30px 0;
+}
+
+/* Estilo del botón "Atrás" */
+.back-button button {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 16px;
+  padding: 12px 24px;
+  background-color: #f39c12; /* Fondo dorado */
+  color: #fff; /* Texto blanco */
+  border: 2px solid #d4af37; /* Borde dorado */
+  border-radius: 8px; /* Bordes redondeados */
+}
