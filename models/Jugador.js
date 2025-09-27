@@ -6,7 +6,7 @@ export default class Jugador {
     this.dinero = 1500;
     this.propiedades = [];
     this.posicion = 3; // posición inicial en el tablero
-    this.tieneHipoteca = false;
+    this.hipotecas = [];
   }
 
   // Getter para nickname

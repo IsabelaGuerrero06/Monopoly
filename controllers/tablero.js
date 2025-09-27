@@ -146,11 +146,25 @@ async function renderBoard() {
 
 function crearJugadores() {
   const infoJugadores = JSON.parse(localStorage.getItem("jugadores"));
-  infoJugadores.forEach((info) => {
+  if (!infoJugadores) {
+    console.warn("No hay información de jugadores en localStorage");
+    return;
+  }
+  
+  // Limpiar array de jugadores
+  jugadores.length = 0;
+  
+  // Obtener cantidad de jugadores activos
+  const cantidadJugadores = parseInt(localStorage.getItem("cantidadJugadores")) || 2;
+  
+  // Crear solo la cantidad de jugadores seleccionada
+  for (let i = 0; i < cantidadJugadores && i < infoJugadores.length; i++) {
+    const info = infoJugadores[i];
     const jugador = new Jugador(info.nombre, info.pais, info.color);
     jugadores.push(jugador);
-  });
-  console.log(jugadores);
+  }
+  
+  console.log(`Se crearon ${jugadores.length} jugadores:`, jugadores);
 }
 
 function pintarJugadores() {
@@ -175,10 +189,13 @@ function mostrarPerfilesActivos() {
   });
 }
 
-
+// Inicializar todo
 crearJugadores();
 mostrarPerfilesActivos();
 pintarJugadores();
+
+// Hacer el array de jugadores accesible globalmente
+window.jugadores = jugadores;
 
 addEventListenerCornerCell();
 window.addEventListener("DOMContentLoaded", renderBoard);
@@ -188,28 +205,34 @@ import {
   moverFicha,
   getTurnoActual,
   siguienteTurno,
+  getJugadorActual,
+  getCantidadJugadores
 } from "./ficha.js";
 
 window.addEventListener("DOMContentLoaded", () => {
-  crearFichas();
+  // Crear fichas después de que el tablero esté renderizado
+  setTimeout(() => {
+    crearFichas();
+  }, 100);
 
   // Cuando los dados terminan de lanzarse
   document.addEventListener("diceRolled", (e) => {
     const { total, dice1, dice2 } = e.detail;
-    const jugador = getTurnoActual();
+    const jugadorIndex = getTurnoActual();
+    const jugadorActual = getJugadorActual();
 
-    console.log(`Jugador ${jugador + 1} avanza ${total} pasos`);
+    console.log(`${jugadorActual.nombre} avanza ${total} pasos`);
 
     // Mover la ficha
-    moverFicha(jugador, total);
+    moverFicha(jugadorIndex, total);
 
     // Si no sacó dobles → pasa turno
     if (dice1 !== dice2) {
       const nuevoTurno = siguienteTurno();
-      console.log(`Turno del Jugador ${nuevoTurno + 1}`);
+      const siguienteJugador = getJugadorActual();
+      console.log(`Turno de ${siguienteJugador.nombre}`);
     } else {
-      console.log(`Jugador ${jugador + 1} repite turno (dobles) 🎲🎲`);
+      console.log(`${jugadorActual.nombre} repite turno (dobles) 🎲🎲`);
     }
   });
 });
-
