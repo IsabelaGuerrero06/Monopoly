@@ -25,8 +25,11 @@ function makeCell(c) {
   cell.dataset.id = c.id;
   cell.dataset.name = c.name || "";
 
-  // tipo para estilos futuros
-  if (c.type) cell.classList.add(c.type);
+  // Añadir atributo data-type
+  if (c.type) {
+    cell.classList.add(c.type);
+    cell.dataset.type = c.type; // Configurar data-type
+  }
 
   // banda de color SOLO si es propiedad
   if (c.type === "property" && c.color && colorMap[c.color]) {
@@ -75,6 +78,14 @@ function makeCell(c) {
   label.textContent = c.name || "";
   cell.appendChild(label);
 
+  // Añadir atributos data-price y data-color si es propiedad o ferrocarril
+  if (c.type === "property" || c.type === "railroad") {
+    cell.dataset.price = c.price || "N/A"; // Precio de la propiedad o ferrocarril
+    cell.dataset.color = c.color || "Sin color"; // Color del grupo (si aplica)
+  }
+
+  cell.dataset.rentBase = c.rent?.base || "N/A"; // Renta base de la propiedad
+
   addEventListenerCell(cell, c);
   return cell;
 }
@@ -85,17 +96,6 @@ function addEventListenerCell(cell, c) {
   });
 }
 
-function addEventListenerCornerCell(cell, c) {
-  const esquinas = document.querySelectorAll(".corner");
-  esquinas.forEach((esquina) => {
-    esquina.addEventListener("click", (e) => {
-      console.log(
-        `Casilla: ${esquina.dataset.name} id ${esquina.dataset.id}  `
-      );
-    });
-  });
-}
-
 async function renderBoard() {
   try {
     const res = await fetch(ENDPOINT, {
@@ -103,6 +103,9 @@ async function renderBoard() {
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const board = await res.json();
+
+    // 👇 ARI guardamos los datos del tablero en window
+    window.datosTablero = board;
 
     // contenedores de lados
     const topC = document.getElementById("edge-top");
@@ -150,20 +153,21 @@ function crearJugadores() {
     console.warn("No hay información de jugadores en localStorage");
     return;
   }
-  
+
   // Limpiar array de jugadores
   jugadores.length = 0;
-  
+
   // Obtener cantidad de jugadores activos
-  const cantidadJugadores = parseInt(localStorage.getItem("cantidadJugadores")) || 2;
-  
+  const cantidadJugadores =
+    parseInt(localStorage.getItem("cantidadJugadores")) || 2;
+
   // Crear solo la cantidad de jugadores seleccionada
   for (let i = 0; i < cantidadJugadores && i < infoJugadores.length; i++) {
     const info = infoJugadores[i];
     const jugador = new Jugador(info.nombre, info.pais, info.color);
     jugadores.push(jugador);
   }
-  
+
   console.log(`Se crearon ${jugadores.length} jugadores:`, jugadores);
 }
 
@@ -172,7 +176,9 @@ function pintarJugadores() {
     jugador.mostrarJugador(index);
 
     // Obtener el contenedor del perfil
-    const contenedor = document.querySelector(`.perfil-jugador[data-index="${index}"]`);
+    const contenedor = document.querySelector(
+      `.perfil-jugador[data-index="${index}"]`
+    );
     if (contenedor) {
       const icono = contenedor.querySelector(".iconoPerfil");
 
@@ -186,7 +192,9 @@ function pintarJugadores() {
         document.getElementById("iframeJugador").src = "pestañaJugador.html";
 
         // Mostrar el modal
-        const modal = new bootstrap.Modal(document.getElementById("modalJugador"));
+        const modal = new bootstrap.Modal(
+          document.getElementById("modalJugador")
+        );
         modal.show();
       });
     }
@@ -195,7 +203,8 @@ function pintarJugadores() {
 
 function mostrarPerfilesActivos() {
   // Leer cantidad de jugadores desde localStorage
-  const cantidadJugadores = parseInt(localStorage.getItem("cantidadJugadores")) || 0;
+  const cantidadJugadores =
+    parseInt(localStorage.getItem("cantidadJugadores")) || 0;
 
   // Obtener todos los contenedores de perfiles
   const perfiles = document.querySelectorAll(".perfil-jugador");
@@ -217,7 +226,6 @@ pintarJugadores();
 // Hacer el array de jugadores accesible globalmente
 window.jugadores = jugadores;
 
-addEventListenerCornerCell();
 window.addEventListener("DOMContentLoaded", renderBoard);
 
 import {
@@ -226,7 +234,7 @@ import {
   getTurnoActual,
   siguienteTurno,
   getJugadorActual,
-  getCantidadJugadores
+  getCantidadJugadores,
 } from "./ficha.js";
 
 window.addEventListener("DOMContentLoaded", () => {

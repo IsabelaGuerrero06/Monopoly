@@ -1,11 +1,47 @@
-// ficha.js
+// ficha.js - Versión depurada
 
 // Orden lineal del tablero (ids de casillas en sentido horario)
 const ordenTablero = [
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,     // BOTTOM
-  10, 11, 12, 13, 14, 15, 16, 17, 18, 19, // LEFT
-  20, 21, 22, 23, 24, 25, 26, 27, 28, 29, // TOP
-  30, 31, 32, 33, 34, 35, 36, 37, 38, 39  // RIGHT
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9, // BOTTOM
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19, // LEFT
+  20,
+  21,
+  22,
+  23,
+  24,
+  25,
+  26,
+  27,
+  28,
+  29, // TOP
+  30,
+  31,
+  32,
+  33,
+  34,
+  35,
+  36,
+  37,
+  38,
+  39, // RIGHT
 ];
 
 // Variables globales
@@ -17,15 +53,16 @@ let turno = 0; // Jugador actual (0 = primer jugador activo, 1 = segundo, etc.)
  * Inicializa los datos de los jugadores desde localStorage
  */
 function inicializarJugadores() {
-  const cantidadJugadores = parseInt(localStorage.getItem("cantidadJugadores")) || 2;
-  
+  const cantidadJugadores =
+    parseInt(localStorage.getItem("cantidadJugadores")) || 2;
+
   // Debugging: mostrar todo lo que hay en localStorage
   console.log("=== DEBUGGING LOCALSTORAGE ===");
   console.log("cantidadJugadores:", cantidadJugadores);
   console.log("jugadores string:", localStorage.getItem("jugadores"));
-  
+
   let infoJugadores = [];
-  
+
   // Los datos se guardan en la clave "jugadores" como un array JSON
   try {
     const jugadoresData = localStorage.getItem("jugadores");
@@ -36,32 +73,32 @@ function inicializarJugadores() {
   } catch (e) {
     console.warn("Error parseando 'jugadores':", e);
   }
-  
+
   // Limpiar arrays
   jugadoresActivos = [];
   posiciones = [];
-  
+
   // Tomar solo la cantidad de jugadores seleccionada
   for (let i = 0; i < cantidadJugadores && i < infoJugadores.length; i++) {
     const jugadorData = infoJugadores[i];
-    
+
     // Convertir el color a formato hexadecimal si es necesario
     let colorHex = convertirColor(jugadorData.color);
-    
+
     const jugador = {
       nombre: jugadorData.nombre || `Jugador ${i + 1}`,
       color: colorHex,
       pais: jugadorData.pais || "Sin país",
-      index: i
+      index: i,
     };
-    
+
     console.log(`Jugador ${i} configurado:`, jugador);
     jugadoresActivos.push(jugador);
-    
+
     // Todos empiezan en la posición 0 (Salida)
     posiciones.push(0);
   }
-  
+
   console.log("=== JUGADORES ACTIVOS FINALES ===");
   console.log(jugadoresActivos);
   console.log("===============================");
@@ -74,61 +111,64 @@ function inicializarJugadores() {
  */
 function convertirColor(color) {
   // Si ya es hexadecimal, devolverlo tal como está
-  if (color && color.startsWith('#')) {
+  if (color && color.startsWith("#")) {
     return color;
   }
-  
+
   // Mapeo de nombres de colores comunes a hexadecimal
   const colorMap = {
-    'rojo': '#FF0000',
-    'azul': '#0000FF',
-    'verde': '#00FF00',
-    'amarillo': '#FFFF00',
-    'rosa': '#FF69B4',
-    'violeta': '#8B00FF',
-    'naranja': '#FFA500',
-    'celeste': '#87CEEB',
-    'morado': '#8B00FF',
-    'cyan': '#00FFFF',
-    'magenta': '#FF00FF',
+    rojo: "#FF0000",
+    azul: "#0000FF",
+    verde: "#00FF00",
+    amarillo: "#FFFF00",
+    rosa: "#FF69B4",
+    violeta: "#8B00FF",
+    naranja: "#FFA500",
+    celeste: "#87CEEB",
+    morado: "#8B00FF",
+    cyan: "#00FFFF",
+    magenta: "#FF00FF",
     // Colores en inglés también
-    'red': '#FF0000',
-    'blue': '#0000FF',
-    'green': '#00FF00',
-    'yellow': '#FFFF00',
-    'pink': '#FF69B4',
-    'purple': '#8B00FF',
-    'orange': '#FFA500',
-    'cyan': '#00FFFF',
-    'magenta': '#FF00FF',
-    'black': '#000000',
-    'white': '#FFFFFF'
+    red: "#FF0000",
+    blue: "#0000FF",
+    green: "#00FF00",
+    yellow: "#FFFF00",
+    pink: "#FF69B4",
+    purple: "#8B00FF",
+    orange: "#FFA500",
+    cyan: "#00FFFF",
+    magenta: "#FF00FF",
+    black: "#000000",
+    white: "#FFFFFF",
   };
-  
+
   // Buscar el color en el mapeo (insensible a mayúsculas/minúsculas)
-  const colorLower = color ? color.toLowerCase() : '';
+  const colorLower = color ? color.toLowerCase() : "";
   const hexColor = colorMap[colorLower];
-  
+
   if (hexColor) {
     console.log(`Convertido color "${color}" a ${hexColor}`);
     return hexColor;
   }
-  
+
   // Si no se encuentra, intentar crear un div temporal para que el navegador convierta el color
   try {
-    const div = document.createElement('div');
+    const div = document.createElement("div");
     div.style.color = color;
     document.body.appendChild(div);
     const computedColor = window.getComputedStyle(div).color;
     document.body.removeChild(div);
-    
+
     // Convertir rgb(r, g, b) a hex
-    if (computedColor.startsWith('rgb')) {
+    if (computedColor.startsWith("rgb")) {
       const matches = computedColor.match(/\d+/g);
       if (matches && matches.length >= 3) {
-        const hex = "#" + matches.slice(0, 3)
-          .map(x => parseInt(x).toString(16).padStart(2, '0'))
-          .join('');
+        const hex =
+          "#" +
+          matches
+            .slice(0, 3)
+            .map((x) => parseInt(x).toString(16).padStart(2, "0"))
+            .join("");
         console.log(`Convertido color "${color}" (via CSS) a ${hex}`);
         return hex;
       }
@@ -136,10 +176,10 @@ function convertirColor(color) {
   } catch (e) {
     console.warn(`No se pudo convertir el color "${color}"`);
   }
-  
+
   // Color por defecto si no se puede convertir
   console.warn(`Usando color por defecto para "${color}"`);
-  return '#FF0000'; // Rojo por defecto
+  return "#FF0000"; // Rojo por defecto
 }
 
 /**
@@ -148,7 +188,7 @@ function convertirColor(color) {
 export function crearFichas() {
   // Inicializar jugadores primero
   inicializarJugadores();
-  
+
   const salida = document.querySelector('[data-id="0"]');
   if (!salida) {
     console.error("No se encontró la casilla de salida");
@@ -156,53 +196,58 @@ export function crearFichas() {
   }
 
   // Limpiar fichas existentes
-  const fichasExistentes = salida.querySelectorAll('.ficha');
-  fichasExistentes.forEach(ficha => ficha.remove());
-  
+  const fichasExistentes = salida.querySelectorAll(".ficha");
+  fichasExistentes.forEach((ficha) => ficha.remove());
+
   // Limpiar contenedores de fichas existentes
-  const contenedoresExistentes = salida.querySelectorAll('.fichas-container');
-  contenedoresExistentes.forEach(contenedor => contenedor.remove());
+  const contenedoresExistentes = salida.querySelectorAll(".fichas-container");
+  contenedoresExistentes.forEach((contenedor) => contenedor.remove());
 
   // Crear contenedor para fichas si no existe
-  let fichasContainer = salida.querySelector('.fichas-container');
+  let fichasContainer = salida.querySelector(".fichas-container");
   if (!fichasContainer) {
-    fichasContainer = document.createElement('div');
-    fichasContainer.className = 'fichas-container';
+    fichasContainer = document.createElement("div");
+    fichasContainer.className = "fichas-container";
     salida.appendChild(fichasContainer);
   }
 
   // Crear fichas solo para los jugadores activos
   jugadoresActivos.forEach((jugador, index) => {
-    console.log(`Creando ficha ${index} para ${jugador.nombre} con color original: ${jugador.color}`);
-    
+    console.log(
+      `Creando ficha ${index} para ${jugador.nombre} con color original: ${jugador.color}`
+    );
+
     const ficha = document.createElement("div");
     ficha.classList.add("ficha");
     ficha.classList.add(`color-jugador-${index}`); // Clase de fallback
-    
+
     // Asegurarnos de que el color se aplique correctamente
     ficha.style.backgroundColor = jugador.color;
-    ficha.style.setProperty('background-color', jugador.color, 'important'); // Forzar el color
-    
+    ficha.style.setProperty("background-color", jugador.color, "important"); // Forzar el color
+
     ficha.setAttribute("id", `ficha-${index}`);
     ficha.setAttribute("data-jugador", jugador.nombre);
     ficha.setAttribute("data-color", jugador.color); // Para CSS y debugging
     ficha.setAttribute("data-color-original", jugador.color); // Backup del color original
     ficha.title = `${jugador.nombre} (${jugador.pais}) - Color: ${jugador.color}`; // Tooltip con info del jugador
-    
+
     console.log("Ficha creada:", ficha);
     fichasContainer.appendChild(ficha);
-    
+
     // Verificar que el color se aplicó después de un breve delay
     setTimeout(() => {
       const colorAplicado = window.getComputedStyle(ficha).backgroundColor;
       console.log(`Color aplicado a ficha ${index}:`, {
         esperado: jugador.color,
         aplicado: colorAplicado,
-        elemento: ficha
+        elemento: ficha,
       });
-      
-      // Si el color no se aplicó correctamente, forzarlo de nuevo
-      if (colorAplicado === 'rgba(0, 0, 0, 0)' || colorAplicado === 'transparent') {
+
+      // Si el color no se aplició correctamente, forzarlo de nuevo
+      if (
+        colorAplicado === "rgba(0, 0, 0, 0)" ||
+        colorAplicado === "transparent"
+      ) {
         console.warn(`Forzando color para ficha ${index}`);
         ficha.style.cssText += `background-color: ${jugador.color} !important; background: ${jugador.color} !important;`;
       }
@@ -210,53 +255,225 @@ export function crearFichas() {
   });
 }
 
+// ----------------- moverFicha (reemplaza tu versión existente) -----------------
 /**
  * Mueve la ficha de un jugador según los pasos
- * @param {number} jugadorIndex - índice del jugador en el array de jugadores activos (0 a jugadoresActivos.length-1)
+ * @param {number} jugador - índice del jugador (0 a 3)
  * @param {number} pasos - cantidad de pasos que avanza
  */
-export function moverFicha(jugadorIndex, pasos) {
-  // Verificar que el índice sea válido
-  if (jugadorIndex >= jugadoresActivos.length || jugadorIndex < 0) {
-    console.error(`Índice de jugador inválido: ${jugadorIndex}`);
-    return;
-  }
-  
-  // Índice actual en el recorrido lineal
-  let indiceActual = posiciones[jugadorIndex];
+export function moverFicha(jugador, pasos) {
+  // índice actual en el recorrido lineal
+  let indiceActual = posiciones[jugador];
   let nuevoIndice = (indiceActual + pasos) % ordenTablero.length;
 
   // Actualizar posición
-  posiciones[jugadorIndex] = nuevoIndice;
+  posiciones[jugador] = nuevoIndice;
 
   // Buscar la casilla real en el DOM usando el id de ordenTablero
   const nuevaId = ordenTablero[nuevoIndice];
   const nuevaCasilla = document.querySelector(`[data-id="${nuevaId}"]`);
 
-  if (!nuevaCasilla) {
-    console.error(`No se encontró la casilla con id ${nuevaId}`);
+  // Mover la ficha al nuevo contenedor
+  const ficha = document.getElementById(`ficha-${jugador}`);
+  nuevaCasilla.appendChild(ficha);
+
+  // Verificar si la casilla es de tipo propiedad
+  const casillaData = nuevaCasilla.dataset;
+  console.log("Datos de la casilla al mover ficha:", casillaData); // Registro para depuración
+
+  if (
+    casillaData.name &&
+    (casillaData.type === "property" || casillaData.type === "railroad")
+  ) {
+    // Inyectar información dinámica en el modal
+    const modalBody = document.getElementById("modalComprarPropiedadBody");
+    const modalHeader = document.getElementById("modalPropiedadHeader");
+
+    if (modalBody && modalHeader) {
+      modalHeader.style.backgroundColor = casillaData.color || "#f8f9fa"; // Estilo dinámico basado en color
+      modalBody.innerHTML = `
+        <div>
+          <h6>${
+            casillaData.type === "railroad" ? "Ferrocarril" : "Propiedad"
+          }: ${casillaData.name}</h6>
+          <p>Precio: $${casillaData.price || "N/A"}</p>
+          <p>Color: ${casillaData.color || "Sin color"}</p>
+          ${
+            casillaData.type === "property"
+              ? `<table class="table table-borderless mt-3">
+            <tbody>
+              <tr>
+                <td><strong>Renta base</strong></td>
+                <td>$${casillaData.rentBase || "N/A"}</td>
+              </tr>
+            </tbody>
+          </table>`
+              : ""
+          }
+        </div>
+      `;
+    } else {
+      console.error("Elementos del modal no encontrados.");
+    }
+
+    // Desplegar el modal para comprar propiedad o ferrocarril
+    const modalElement = document.getElementById("modalComprarPropiedad");
+    if (modalElement) {
+      const modal = new bootstrap.Modal(modalElement);
+      modal.show();
+    } else {
+      console.error("Modal para comprar propiedad no encontrado.");
+    }
+  }
+}
+
+// ----------------- verificarPropiedadParaCompra -----------------
+/**
+ * Verifica si la casilla es una propiedad y si ya tiene dueño.
+ * Si está libre, muestra el modal de compra en la instancia Jugador (si existe).
+ *
+ * @param {number} jugadorIndex - índice del jugador que cayó
+ * @param {number} casillaId - id real de la casilla (ej: 6)
+ * @param {number} nuevoIndice - índice lineal en `ordenTablero` (posición en el recorrido)
+ */
+function verificarPropiedadParaCompra(jugadorIndex, casillaId, nuevoIndice) {
+  console.log("=== DEBUG VERIFICACION PROPIEDAD ===");
+  console.log("Jugador índice:", jugadorIndex);
+  console.log("Nueva casilla ID:", casillaId);
+  console.log("Datos tablero disponibles:", !!window.datosTablero);
+  console.log(
+    "Jugadores disponibles:",
+    !!window.jugadores || !!jugadoresActivos
+  );
+
+  if (!window.datosTablero) {
+    console.warn(
+      "No hay datosTablero cargado (window.datosTablero). No puedo buscar la casilla."
+    );
     return;
   }
 
-  // Buscar o crear contenedor de fichas en la nueva casilla
-  let fichasContainer = nuevaCasilla.querySelector('.fichas-container');
-  if (!fichasContainer) {
-    fichasContainer = document.createElement('div');
-    fichasContainer.className = 'fichas-container';
-    nuevaCasilla.appendChild(fichasContainer);
+  const casilla = buscarCasillaPorId(casillaId, window.datosTablero);
+  console.log("Casilla encontrada:", casilla);
+  if (!casilla) return;
+
+  if (casilla.type !== "property") {
+    console.log(
+      `La casilla ${casilla.name} (id ${casilla.id}) no es de tipo property.`
+    );
+    return;
   }
 
-  // Mover la ficha al nuevo contenedor
-  const ficha = document.getElementById(`ficha-${jugadorIndex}`);
-  if (ficha) {
-    fichasContainer.appendChild(ficha);
-    
-    // Log para debugging
-    const jugador = jugadoresActivos[jugadorIndex];
-    console.log(`${jugador.nombre} se movió a la casilla ${nuevaId} (posición ${nuevoIndice})`);
-  } else {
-    console.error(`No se encontró la ficha del jugador ${jugadorIndex}`);
+  // Obtener lista de jugadores a chequear (preferimos window.jugadores si existen instancias Jugador)
+  const listaJugadores =
+    window.jugadores && window.jugadores.length
+      ? window.jugadores
+      : jugadoresActivos;
+
+  // Buscar dueño
+  let duenio = null;
+  for (let p of listaJugadores) {
+    if (
+      Array.isArray(p.propiedades) &&
+      p.propiedades.some((prop) => prop.id === casilla.id)
+    ) {
+      duenio = p;
+      break;
+    }
   }
+
+  console.log(`Propiedad ${casilla.name} tiene dueño:`, !!duenio);
+
+  if (duenio) {
+    console.log(
+      `➡️ La propiedad ${casilla.name} (id ${casilla.id}) ya pertenece a ${
+        duenio.nickname || duenio.nombre
+      }`
+    );
+    return;
+  }
+
+  // Si no hay dueño → mostrar modal de compra en la instancia Jugador si existe
+  const instanciaJugador =
+    window.jugadores && window.jugadores[jugadorIndex]
+      ? window.jugadores[jugadorIndex]
+      : null;
+
+  const casillasArray = [];
+  // colocamos la casilla en el índice lineal esperado (nuevoIndice)
+  casillasArray[nuevoIndice] = casilla;
+
+  if (
+    instanciaJugador &&
+    typeof instanciaJugador.mostrarModalComprarPropiedad === "function"
+  ) {
+    console.log(
+      "Mostrando modal de compra para:",
+      instanciaJugador.nickname || instanciaJugador.nombre || jugadorIndex
+    );
+    instanciaJugador.mostrarModalComprarPropiedad(casillasArray);
+  } else {
+    // Fallback / debugging
+    console.warn(
+      "No se encontró una instancia Jugador con el método mostrarModalComprarPropiedad.\n" +
+        "Asegúrate de que las instancias de Jugador estén en window.jugadores.\n" +
+        "CasillasArray preparado en índice",
+      nuevoIndice,
+      casillasArray
+    );
+    // Si quieres, aquí podrías llamar a alguna función global que abra el modal manualmente,
+    // o transformar tu objeto jugadoresActivos en instancias Jugador antes de la partida.
+  }
+}
+
+// ----------------- buscarCasillaPorId (útil si no tienes una) -----------------
+function buscarCasillaPorId(id, datosTablero) {
+  if (!datosTablero) return null;
+
+  // Si datosTablero es un array plano
+  if (Array.isArray(datosTablero)) {
+    return datosTablero.find((c) => c.id === id) || null;
+  }
+
+  // Si es un objeto con lados (bottom, left, top, right, etc.)
+  for (const lado of Object.values(datosTablero)) {
+    if (Array.isArray(lado)) {
+      const encontrada = lado.find((c) => c.id === id);
+      if (encontrada) return encontrada;
+    }
+  }
+
+  // Si no encontrado
+  return null;
+}
+
+/**
+ * Verifica si una propiedad ya tiene dueño
+ * @param {number} casillaId - ID de la casilla
+ * @returns {boolean} - true si tiene dueño, false si está disponible
+ */
+function verificarSiTieneDueno(casillaId) {
+  // Verificar en todos los jugadores si alguien ya tiene esta propiedad
+  if (window.jugadores && Array.isArray(window.jugadores)) {
+    return window.jugadores.some((jugador) =>
+      jugador.propiedades.some((propiedad) => propiedad.id === casillaId)
+    );
+  }
+  return false;
+}
+
+/**
+ * Obtiene la posición actual de un jugador en el tablero
+ * @param {number} jugadorIndex - Índice del jugador
+ * @returns {number} - ID de la casilla actual
+ */
+export function getPosicionJugador(jugadorIndex) {
+  if (jugadorIndex < 0 || jugadorIndex >= posiciones.length) {
+    console.error(`Índice de jugador inválido: ${jugadorIndex}`);
+    return 0;
+  }
+  // Devolver el ID real de la casilla, no el índice en ordenTablero
+  return ordenTablero[posiciones[jugadorIndex]];
 }
 
 /**
@@ -302,8 +519,8 @@ export function debugFichas() {
   console.log("=== DEBUG FICHAS ===");
   console.log("Jugadores activos:", jugadoresActivos);
   console.log("Posiciones:", posiciones);
-  console.log("Turno actual:", turno);
-  
+  console.log("Turno current:", turno);
+
   // Inspeccionar fichas en el DOM
   jugadoresActivos.forEach((jugador, index) => {
     const ficha = document.getElementById(`ficha-${index}`);
@@ -312,13 +529,13 @@ export function debugFichas() {
       console.log(`Ficha ${index} (${jugador.nombre}):`, {
         colorEsperado: jugador.color,
         colorAplicado: colorAplicado,
-        elemento: ficha
+        elemento: ficha,
       });
     } else {
       console.log(`Ficha ${index} NO ENCONTRADA en el DOM`);
     }
   });
-  
+
   console.log("==================");
 }
 
