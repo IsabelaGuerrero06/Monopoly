@@ -42,12 +42,10 @@ export default class Jugador {
   }
   set color(valor) {
     const coloresValidos = [
-      "red",
-      "blue",
-      "green",
-      "yellow",
-      "purple",
-      "orange",
+      "amarillo",
+      "azul",
+      "rojo",
+      "verde",
     ];
     if (!coloresValidos.includes(valor)) {
       throw new Error("Color no válido para el jugador.");
@@ -123,8 +121,6 @@ export default class Jugador {
       // Aquí también podrías aplicar las reglas de bancarrota
     }
   }
-
-
 
   calcularPatrimonio() {
     let patrimonio = this.dinero;
@@ -401,5 +397,38 @@ export default class Jugador {
       document.getElementById("modalCasaHotel")
     );
     modal.show();
+  }
+
+  mostrarJugador(index) {
+    const contenedor = document.querySelector(`.perfil-jugador[data-index="${index}"]`);
+    if (!contenedor) return;
+
+    const colorFichaMap = {
+      amarillo: "#FFD700",
+      azul: "#1E90FF",
+      rojo: "#FF4500",
+      verde: "#32CD32"
+    };
+
+    // Traducir color lógico → color real
+    const colorCSS = colorFichaMap[this.color];
+
+    // Icono de perfil con borde del color de la ficha
+    const icono = contenedor.querySelector(".iconoPerfil");
+    icono.style.border = `4px solid ${colorCSS}`;
+
+
+    // Bandera (usando flagsapi.com)
+    const bandera = contenedor.querySelector(".bandera");
+    const paisCodigo = this.pais.split('-')[0].toUpperCase();
+    bandera.src = `https://flagsapi.com/${paisCodigo}/flat/32.png`;
+
+    // Nickname
+    const nombreLabel = contenedor.querySelector(".nombre");
+    nombreLabel.textContent = this.nickname;
+
+    // Dinero
+    const dineroLabel = contenedor.querySelector(".dinero");
+    dineroLabel.textContent = `$${this.dinero}`;
   }
 }
