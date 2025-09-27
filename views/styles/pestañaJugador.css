@@ -84,7 +84,6 @@ table th {
 }
 
 /* Contenedor de botones */
-#lanzarDadosBtn,
 #cerrarBtn {
   padding: 12px 25px;
   margin: 10px;
@@ -107,19 +106,6 @@ table th {
   margin-top: 20px;
 }
 
-
-/* Botón Lanzar Dados */
-#lanzarDadosBtn {
-  background: linear-gradient(135deg, #2f10c9, #5794ff);
-  color: #fff;
-  
-}
-
-#lanzarDadosBtn:hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
-}
-
 /* Botón Cerrar */
 #cerrarBtn {
   background: linear-gradient(135deg, #ff4d4d, #ff8177);
@@ -139,7 +125,6 @@ table th {
   .botones {
     flex-direction: column;
   }
-  #lanzarDadosBtn,
   #cerrarBtn {
     width: 100%;
     margin: 8px 0;

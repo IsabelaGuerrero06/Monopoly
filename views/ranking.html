@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tabla de Ranking</title>
+    <!-- Vincula el archivo de estilos -->
+    <link rel="stylesheet" href="../views/styles/ranking.css">
+</head>
+
+<body>
+    <!-- Contenedor principal para aplicar fondo y estilos -->
+    <div class="ranking-container">
+
+        <!-- Título principal -->
+        <h2>🏆 Tabla de Ranking</h2>
+
+        <!-- Tabla que se llenará dinámicamente con los datos -->
+        <table id="rankingTable">
+            <thead>
+                <tr>
+                    <th>Posición</th>
+                    <th>Bandera</th>
+                    <th>Nickname</th>
+                    <th>Puntaje</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <!-- Botón para volver a la página de inicio -->
+        <div class="back-button">
+            <button id="irinicio"> Atrás</button>
+        </div>
+    </div>
+
+    <!-- Script que carga los datos y maneja el botón -->
+    <script src="../controllers/ranking.js"></script>
+</body>
+
+</html>

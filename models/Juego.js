@@ -10,9 +10,11 @@ class Juego {
     console.log(`Turno de: ${jugador.nickname}`);
 
     // Lanzar dados (2 dados de 1 a 6)
-    const dado1 = Math.floor(Math.random() * 6) + 1;
-    const dado2 = Math.floor(Math.random() * 6) + 1;
-    const avance = dado1 + dado2;
+    const resultado = getLastDiceResult();
+    if (!resultado) return; // Asegúrate de que los dados se hayan lanzado
+
+    const { dice1: dado1, dice2: dado2, total: avance } = resultado;
+
 
     console.log(`${jugador.nickname} lanzó ${dado1} y ${dado2} (total ${avance})`);
 

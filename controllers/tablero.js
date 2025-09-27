@@ -150,3 +150,28 @@ pintarJugadores();
 
 addEventListenerCornerCell();
 window.addEventListener('DOMContentLoaded', renderBoard);
+
+function crearFichasVisuales(jugadores) {
+  const salida = document.querySelector('[data-id="0"]');
+  if (!salida) return;
+
+  jugadores.forEach((jugador, index) => {
+    const ficha = document.createElement('div');
+    ficha.classList.add('ficha');
+    ficha.id = `ficha-${jugador.id}`;
+    ficha.style.backgroundColor = jugador.color;
+
+    // Posición visual única por jugador
+    const posiciones = [
+      { bottom: '5px', left: '5px' },
+      { bottom: '5px', right: '5px' },
+      { top: '5px', left: '5px' },
+      { top: '5px', right: '5px' }
+    ];
+    const pos = posiciones[index] || { top: '0', left: '0' };
+    Object.assign(ficha.style, pos);
+
+    salida.appendChild(ficha);
+  });
+}
+
