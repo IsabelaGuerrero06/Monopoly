@@ -5,3 +5,4 @@ document.getElementById('nombreJugador').textContent = localStorage.getItem('jug
 document.getElementById('dineroJugador').textContent = "$1500";
 const codigoPais = localStorage.getItem('pais1').split('-')[0].toUpperCase();
 document.getElementById('paisJugador').src = "https://flagsapi.com/"+codigoPais+"/shiny/64.png"
+  

@@ -140,12 +140,30 @@ function crearJugadores() {
 }
 
 function pintarJugadores() {
-  jugadores.forEach((jugador) => {
-    jugador.mostrarJugador();
+  jugadores.forEach((jugador, index) => {
+    jugador.mostrarJugador(index);
   });
 }
 
+function mostrarPerfilesActivos() {
+  // Leer cantidad de jugadores desde localStorage
+  const cantidadJugadores = parseInt(localStorage.getItem("cantidadJugadores")) || 0;
+
+  // Obtener todos los contenedores de perfiles
+  const perfiles = document.querySelectorAll(".perfil-jugador");
+
+  perfiles.forEach((perfil, index) => {
+    if (index < cantidadJugadores) {
+      perfil.style.display = "flex"; // mostrar (puede ser flex o block, según tu CSS)
+    } else {
+      perfil.style.display = "none"; // ocultar
+    }
+  });
+}
+
+
 crearJugadores();
+mostrarPerfilesActivos();
 pintarJugadores();
 
 addEventListenerCornerCell();

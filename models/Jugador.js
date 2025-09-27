@@ -122,8 +122,6 @@ export default class Jugador {
     }
   }
 
-
-
   calcularPatrimonio() {
     let patrimonio = this.dinero;
     this.propiedades.forEach((prop) => {
@@ -401,9 +399,36 @@ export default class Jugador {
     modal.show();
   }
 
-  mostrarJugador() {
-    // Buscar el contenedor del jugador
-    // Crear el html del jugador (botones, imagen, nombre, dinero)
-    // Meter el contenido en el contenedor
+  mostrarJugador(index) {
+    const contenedor = document.querySelector(`.perfil-jugador[data-index="${index}"]`);
+    if (!contenedor) return;
+
+    const colorFichaMap = {
+      amarillo: "#FFD700",
+      azul: "#1E90FF",
+      rojo: "#FF4500",
+      verde: "#32CD32"
+    };
+
+    // Traducir color lógico → color real
+    const colorCSS = colorFichaMap[this.color];
+
+    // Icono de perfil con borde del color de la ficha
+    const icono = contenedor.querySelector(".iconoPerfil");
+    icono.style.border = `4px solid ${colorCSS}`;
+
+
+    // Bandera (usando flagsapi.com)
+    const bandera = contenedor.querySelector(".bandera");
+    const paisCodigo = this.pais.split('-')[0].toUpperCase();
+    bandera.src = `https://flagsapi.com/${paisCodigo}/flat/32.png`;
+
+    // Nickname
+    const nombreLabel = contenedor.querySelector(".nombre");
+    nombreLabel.textContent = this.nickname;
+
+    // Dinero
+    const dineroLabel = contenedor.querySelector(".dinero");
+    dineroLabel.textContent = `$${this.dinero}`;
   }
 }
