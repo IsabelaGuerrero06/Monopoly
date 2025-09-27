@@ -4,6 +4,7 @@ const ENDPOINT = "http://127.0.0.1:5000/board";
 
 // Crear lista de jugadores
 const jugadores = [];
+
 /* Mapa de colores del grupo a clases CSS */
 const colorMap = {
   brown: "color-brown",
@@ -218,6 +219,19 @@ function mostrarPerfilesActivos() {
   });
 }
 
+function actualizarJugadores() {
+  // 🔹 1. Guardar el estado actual de los jugadores en localStorage
+  localStorage.setItem("jugadores", JSON.stringify(jugadores));
+
+  // 🔹 2. Volver a pintar los jugadores en el DOM (perfil, dinero, propiedades, etc.)
+  jugadores.forEach((jugador, index) => {
+    jugador.mostrarJugador(index);
+  });
+
+  console.log("Jugadores actualizados:", jugadores);
+}
+
+
 // Inicializar todo
 crearJugadores();
 mostrarPerfilesActivos();
@@ -234,7 +248,10 @@ import {
   getTurnoActual,
   siguienteTurno,
   getJugadorActual,
+<<<<<<< HEAD
   getCantidadJugadores,
+=======
+>>>>>>> e0de76dcddb60bfb6686830c5e1e35bb423d386e
 } from "./ficha.js";
 
 window.addEventListener("DOMContentLoaded", () => {
