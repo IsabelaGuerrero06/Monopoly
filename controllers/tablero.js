@@ -1,4 +1,4 @@
-import Jugador from "../models/Jugador";
+import Jugador from "../models/Jugador.js";
 // controllers/tablero.js
 const ENDPOINT = 'http://127.0.0.1:5000/board';
 
@@ -131,8 +131,22 @@ async function renderBoard() {
 }
 
 function crearJugadores() {
-  const infoJugadores = localStorage.getItem("jugadores");
+  const infoJugadores = JSON.parse(localStorage.getItem("jugadores"));
+  infoJugadores.forEach(info => {
+    const jugador = new Jugador(info.nombre, info.pais, info.color);
+    jugadores.push(jugador);
+  });
+  console.log(jugadores);
 }
+
+function pintarJugadores() {
+  jugadores.forEach((jugador) => {
+    jugador.mostrarJugador();
+  });
+}
+
+crearJugadores();
+pintarJugadores();
 
 addEventListenerCornerCell();
 window.addEventListener('DOMContentLoaded', renderBoard);

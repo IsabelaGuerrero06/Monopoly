@@ -43,12 +43,10 @@ class Jugador {
   }
   set color(valor) {
     const coloresValidos = [
-      "red",
-      "blue",
-      "green",
-      "yellow",
-      "purple",
-      "orange",
+      "amarillo",
+      "azul",
+      "rojo",
+      "verde",
     ];
     if (!coloresValidos.includes(valor)) {
       throw new Error("Color no válido para el jugador.");
@@ -163,5 +161,11 @@ class Jugador {
       </tr>
     `;
     }
+  }
+
+  mostrarJugador() {
+    // Buscar el contenedor del jugador
+    // Crear el html del jugador (botones, imagen, nombre, dinero)
+    // Meter el contenido en el contenedor
   }
 }
