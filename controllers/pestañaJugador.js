@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!jugadorData) return;
 
   document.getElementById("nombreJugador").textContent = jugadorData._nickname;
-  document.getElementById("paisJugador").src = `https://flagsapi.com/${(jugadorData._pais).toUpperCase()}/shiny/32.png`;
+  document.getElementById("paisJugador").src = `https://flagsapi.com/${(jugadorData._pais).split('-')[0].toUpperCase()}/shiny/32.png`;
   document.getElementById("dineroJugador").textContent = `$${jugadorData._dinero}`;
 
   // Pintar propiedades

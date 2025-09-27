@@ -77,16 +77,15 @@ export default class Jugador {
   }
 
   // Pagar renta a otro jugador
-  pagarRenta(duenio, renta) {
+  pagarRenta(dueño, renta) {
     if (this.dinero >= renta) {
       this.dinero -= renta;
-      duenio.dinero += renta;
-      console.log(`${this.nickname} pagó ${renta} a ${duenio.nickname}`);
+      dueño.dinero += renta;
+      console.log(`${this.nickname} pagó ${renta} a ${dueño.nickname}`);
     } else {
       console.log(
         `${this.nickname} no tiene suficiente dinero para pagar la renta.`
       );
-      // Aquí podrías implementar reglas: vender propiedades, hipotecar, o declararse en bancarrota
     }
   }
 
@@ -330,7 +329,7 @@ export default class Jugador {
 
     // Bandera (usando flagsapi.com)
     const bandera = contenedor.querySelector(".bandera");
-    const paisCodigo = this.pais.split("-")[0].toUpperCase();
+    const paisCodigo = this.pais.trim().split('-')[0].toUpperCase();
     bandera.src = `https://flagsapi.com/${paisCodigo}/shiny/32.png`;
 
     // Nickname

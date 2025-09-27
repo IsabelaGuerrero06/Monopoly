@@ -231,6 +231,8 @@ function actualizarJugadores() {
   console.log("Jugadores actualizados:", jugadores);
 }
 
+window.actualizarJugadores = actualizarJugadores;
+
 
 // Inicializar todo
 crearJugadores();
@@ -248,10 +250,6 @@ import {
   getTurnoActual,
   siguienteTurno,
   getJugadorActual,
-<<<<<<< HEAD
-  getCantidadJugadores,
-=======
->>>>>>> e0de76dcddb60bfb6686830c5e1e35bb423d386e
 } from "./ficha.js";
 
 window.addEventListener("DOMContentLoaded", () => {

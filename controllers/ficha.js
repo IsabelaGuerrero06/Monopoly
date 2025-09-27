@@ -321,6 +321,34 @@ export function moverFicha(jugador, pasos) {
     if (modalElement) {
       const modal = new bootstrap.Modal(modalElement);
       modal.show();
+
+      // Asignar evento al botón de compra (botón ya existe en el HTML)
+      const btnComprar = document.getElementById("btnComprarPropiedad");
+      if (btnComprar) {
+        btnComprar.onclick = () => {
+          const jugadorObj = window.jugadores[jugador];
+          const casillaObj = buscarCasillaPorId(nuevaId, window.datosTablero);
+          const price = parseInt(casillaData.price);
+
+          if (jugadorObj && casillaObj) {
+            try {
+              jugadorObj.comprarPropiedad(casillaObj, price);
+              console.log(`${jugadorObj.nickname} compró ${casillaObj.name}`);
+
+              // refrescar perfiles
+              if (typeof actualizarJugadores === "function") {
+                window.actualizarJugadores();
+              }
+
+              // cerrar modal
+              const modalInstance = bootstrap.Modal.getInstance(modalElement);
+              modalInstance.hide();
+            } catch (err) {
+              alert(err.message);
+            }
+          }
+        };
+      }
     } else {
       console.error("Modal para comprar propiedad no encontrado.");
     }
