@@ -136,12 +136,31 @@ function crearJugadores() {
     const jugador = new Jugador(info.nombre, info.pais, info.color);
     jugadores.push(jugador);
   });
-  console.log(jugadores);
 }
 
 function pintarJugadores() {
   jugadores.forEach((jugador, index) => {
     jugador.mostrarJugador(index);
+
+    // Obtener el contenedor del perfil
+    const contenedor = document.querySelector(`.perfil-jugador[data-index="${index}"]`);
+    if (contenedor) {
+      const icono = contenedor.querySelector(".iconoPerfil");
+
+      // Click para abrir modal
+      icono.style.cursor = "pointer";
+      icono.addEventListener("click", () => {
+        // Pasar datos del jugador al localStorage (para que pestañaJugador los use)
+        localStorage.setItem("jugadorActivo", JSON.stringify(jugador));
+
+        // Cargar la página pestañaJugador.html en el iframe
+        document.getElementById("iframeJugador").src = "pestañaJugador.html";
+
+        // Mostrar el modal
+        const modal = new bootstrap.Modal(document.getElementById("modalJugador"));
+        modal.show();
+      });
+    }
   });
 }
 

@@ -421,7 +421,7 @@ export default class Jugador {
     // Bandera (usando flagsapi.com)
     const bandera = contenedor.querySelector(".bandera");
     const paisCodigo = this.pais.split('-')[0].toUpperCase();
-    bandera.src = `https://flagsapi.com/${paisCodigo}/flat/32.png`;
+    bandera.src = `https://flagsapi.com/${paisCodigo}/shiny/32.png`;
 
     // Nickname
     const nombreLabel = contenedor.querySelector(".nombre");
