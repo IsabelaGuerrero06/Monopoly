@@ -160,7 +160,7 @@ body {
 .price {
   display: block;
   margin-top: .15rem;
-  font-size: clamp(.9rem, 2.2vmin, .75rem);
+  font-size: clamp(.7rem, 2.2vmin, .75rem);
   font-weight: 800;
   color: #222;
 }
