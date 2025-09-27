@@ -1,127 +1,146 @@
 <!DOCTYPE html>
 <html lang="es">
+  <head>
+    <!-- Configuración básica del documento -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tablero Monopoly</title>
 
-<head>
-  <!-- Configuración básica del documento -->
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tablero Monopoly</title>
+    <!-- Estilos -->
+    <link rel="stylesheet" href="styles/tablero.css" />
+    <link rel="stylesheet" href="styles/dados.css" />
+  </head>
 
-  <!-- Estilos -->
-  <link rel="stylesheet" href="styles/tablero.css" />
-  <link rel="stylesheet" href="styles/dados.css" />
-</head>
+  <body>
+    <!-- Contenedor principal del juego -->
+    <div class="contenedor-juego">
+      <!-- SECCIÓN: Panel de jugadores con dados -->
+      <div class="contenedor-perfiles">
+        <!-- Panel de jugadores -->
+        <div class="jugadores">
+          <!-- Jugador 1 -->
+          <div class="perfil-jugador">
+            <img src="../../assets/img/iconoPerfil.webp" alt="Jugador 1" />
+            <label>Jugador 1</label>
+          </div>
 
-<body>
-  <!-- Contenedor principal del juego -->
-  <div class="contenedor-juego">
+          <!-- Jugador 2 -->
+          <div class="perfil-jugador">
+            <img src="../../assets/img/iconoPerfil.webp" alt="Jugador 2" />
+            <label>Jugador 2</label>
+          </div>
 
-    <!-- SECCIÓN: Panel de jugadores con dados -->
-    <div class="contenedor-perfiles">
+          <!-- Jugador 3 -->
+          <div class="perfil-jugador">
+            <img src="../../assets/img/iconoPerfil.webp" alt="Jugador 3" />
+            <label>Jugador 3</label>
+          </div>
 
-      <!-- Panel de jugadores -->
-      <div class="jugadores">
-        <!-- Jugador 1 -->
-        <div class="perfil-jugador">
-          <img src="../../assets/img/iconoPerfil.webp" alt="Jugador 1" />
-          <label>Jugador 1</label>
+          <!-- Jugador 4 -->
+          <div class="perfil-jugador">
+            <img src="../../assets/img/iconoPerfil.webp" alt="Jugador 4" />
+            <label>Jugador 4</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN: Tablero de Monopoly -->
+      <div class="board" aria-label="Tablero de Monopoly">
+        <!-- FILA SUPERIOR del tablero -->
+        <div class="row-top">
+          <!-- Esquina superior izquierda: Parqueo Gratis -->
+          <div
+            class="corner tl free-parking"
+            data-id="20"
+            data-name="free-parking"
+          >
+            <span class="corner-label">Parqueo<br />Gratis</span>
+          </div>
+
+          <!-- Casillas del borde superior -->
+          <div
+            class="edge edge-top"
+            id="edge-top"
+            aria-label="Casillas superiores"
+          ></div>
+
+          <!-- Esquina superior derecha: Ve a la Cárcel -->
+          <div class="corner tr go-to-jail" data-id="30" data-name="go-to-jail">
+            <span class="corner-label">Ve a la<br />Cárcel</span>
+          </div>
         </div>
 
-        <!-- Jugador 2 -->
-        <div class="perfil-jugador">
-          <img src="../../assets/img/iconoPerfil.webp" alt="Jugador 2" />
-          <label>Jugador 2</label>
+        <!-- FILA MEDIA del tablero -->
+        <div class="row-middle">
+          <!-- Casillas del borde izquierdo -->
+          <div
+            class="edge edge-left"
+            id="edge-left"
+            aria-label="Casillas izquierda"
+          ></div>
+
+          <!-- Centro del tablero con logo -->
+          <div class="center">
+            <!--  Logo de Monopoly centrado -->
+            <img
+              src="../../assets/img/monopoly-logo2.webp"
+              alt="Monopoly"
+              class="logo-center"
+            />
+
+            <!-- Sección de dados -->
+            <div class="dice-area">
+              <!-- Dado 1 -->
+              <div class="dice" id="dice1">
+                <div class="dice-dots" id="dots1"></div>
+              </div>
+
+              <!-- Dado 2 -->
+              <div class="dice" id="dice2">
+                <div class="dice-dots" id="dots2"></div>
+              </div>
+
+              <!-- Botón para lanzar los dados -->
+              <button class="roll-button" id="rollButton" onclick="rollDice()">
+                Lanzar
+              </button>
+            </div>
+          </div>
+
+          <!-- Casillas del borde derecho -->
+          <div
+            class="edge edge-right"
+            id="edge-right"
+            aria-label="Casillas derecha"
+          ></div>
         </div>
 
-        <!-- Jugador 3 -->
-        <div class="perfil-jugador">
-          <img src="../../assets/img/iconoPerfil.webp" alt="Jugador 3" />
-          <label>Jugador 3</label>
-        </div>
+        <!-- FILA INFERIOR del tablero -->
+        <div class="row-bottom">
+          <!-- Esquina inferior izquierda: Cárcel/Visita -->
+          <div class="corner bl jail" id="jail" data-id="10" data-name="jail">
+            <span class="corner-label">Cárcel<br />/ Visita</span>
+          </div>
 
-        <!-- Jugador 4 -->
-        <div class="perfil-jugador">
-          <img src="../../assets/img/iconoPerfil.webp" alt="Jugador 4" />
-          <label>Jugador 4</label>
+          <!-- Casillas del borde inferior -->
+          <div
+            class="edge edge-bottom"
+            id="edge-bottom"
+            aria-label="Casillas inferiores"
+          ></div>
+
+          <!-- Esquina inferior derecha: Salida -->
+          <!-- Esquina inferior derecha: Salida -->
+          <div class="corner br go" id="go" data-id="0" data-name="go">
+            <span class="corner-label">Salida</span>
+            <!-- Aquí aparecerán las fichas -->
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- SECCIÓN: Tablero de Monopoly -->
-    <div class="board" aria-label="Tablero de Monopoly">
-
-      <!-- FILA SUPERIOR del tablero -->
-      <div class="row-top">
-        <!-- Esquina superior izquierda: Parqueo Gratis -->
-        <div class="corner tl free-parking" data-id="20" data-name="free-parking">
-          <span class="corner-label">Parqueo<br />Gratis</span>
-        </div>
-
-        <!-- Casillas del borde superior -->
-        <div class="edge edge-top" id="edge-top" aria-label="Casillas superiores"></div>
-
-        <!-- Esquina superior derecha: Ve a la Cárcel -->
-        <div class="corner tr go-to-jail" data-id="30" data-name="go-to-jail">
-          <span class="corner-label">Ve a la<br />Cárcel</span>
-        </div>
-      </div>
-
-      <!-- FILA MEDIA del tablero -->
-      <div class="row-middle">
-        <!-- Casillas del borde izquierdo -->
-        <div class="edge edge-left" id="edge-left" aria-label="Casillas izquierda"></div>
-
-        <!-- Centro del tablero con logo -->
-     <div class="center">
-
-  <!--  Logo de Monopoly centrado -->
-  <img src="../../assets/img/monopoly-logo2.webp" alt="Monopoly" class="logo-center" />
-
-  <!-- Sección de dados -->
-  <div class="dice-area">
-    <!-- Dado 1 -->
-    <div class="dice" id="dice1">
-      <div class="dice-dots" id="dots1"></div>
-    </div>
-
-    <!-- Dado 2 -->
-    <div class="dice" id="dice2">
-      <div class="dice-dots" id="dots2"></div>
-    </div>
-
-    <!-- Botón para lanzar los dados -->
-    <button class="roll-button" id="rollButton" onclick="rollDice()">
-      Lanzar
-    </button>
-  </div>
-
-</div>
-
-        <!-- Casillas del borde derecho -->
-        <div class="edge edge-right" id="edge-right" aria-label="Casillas derecha"></div>
-      </div>
-
-      <!-- FILA INFERIOR del tablero -->
-      <div class="row-bottom">
-        <!-- Esquina inferior izquierda: Cárcel/Visita -->
-        <div class="corner bl jail" id="jail" data-id="10" data-name="jail">
-          <span class="corner-label">Cárcel<br />/ Visita</span>
-        </div>
-
-        <!-- Casillas del borde inferior -->
-        <div class="edge edge-bottom" id="edge-bottom" aria-label="Casillas inferiores"></div>
-
-        <!-- Esquina inferior derecha: Salida -->
-        <div class="corner br go" id="go" data-id="0" data-name="go">
-          <span class="corner-label">Salida</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Scripts -->
-  <script type="module" src="../controllers/tablero.js"></script>
-  <script src="../controllers/dados.js"></script>
-</body>
-
+    <!-- Scripts -->
+    <script type="module" src="../controllers/tablero.js"></script>
+    <script src="../controllers/dados.js"></script>
+  </body>
 </html>
