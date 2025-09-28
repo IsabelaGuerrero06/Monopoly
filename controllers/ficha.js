@@ -1,5 +1,3 @@
-// ficha.js - Versión depurada
-
 // Orden lineal del tablero (ids de casillas en sentido horario)
 const ordenTablero = [
   0,
