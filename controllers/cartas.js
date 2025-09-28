@@ -4,7 +4,7 @@
 let CARTAS_DICCIONARIO = {
   chance: [],
   community_chest: [],
-  loaded: false
+  loaded: false,
 };
 
 /**
@@ -24,71 +24,76 @@ export async function inicializarCartasDiccionario() {
   try {
     console.log("Cargando cartas desde el backend...");
     const response = await fetch(ENDPOINT);
-    
+
     if (!response.ok) {
       throw new Error(`Error HTTP: ${response.status}`);
     }
-    
+
     const data = await response.json();
-    
+
     // Extraer cartas del response
     if (data.chance && Array.isArray(data.chance)) {
       CARTAS_DICCIONARIO.chance = data.chance;
       console.log(`Cargadas ${data.chance.length} cartas de Chance`);
     }
-    
+
     if (data.community_chest && Array.isArray(data.community_chest)) {
       CARTAS_DICCIONARIO.community_chest = data.community_chest;
-      console.log(`Cargadas ${data.community_chest.length} cartas de Community Chest`);
+      console.log(
+        `Cargadas ${data.community_chest.length} cartas de Community Chest`
+      );
     }
-    
+
     CARTAS_DICCIONARIO.loaded = true;
-    console.log("Diccionario de cartas cargado exitosamente:", CARTAS_DICCIONARIO);
-    
+    console.log(
+      "Diccionario de cartas cargado exitosamente:",
+      CARTAS_DICCIONARIO
+    );
+
     return CARTAS_DICCIONARIO;
-    
   } catch (error) {
     console.error("Error cargando cartas desde el backend:", error);
-    
+
     // Fallback: cartas por defecto en caso de error
     CARTAS_DICCIONARIO = {
       chance: [
         {
           id: 1,
           description: "Avanza hasta la Salida. Cobra $200",
-          action: { money: 200, goTo: 0 }
+          action: { money: 200, goTo: 0 },
         },
         {
           id: 2,
           description: "Error del banco a tu favor. Cobra $200",
-          action: { money: 200 }
+          action: { money: 200 },
         },
         {
           id: 3,
-          description: "Paga multa de $50 o toma una carta de Caja de Comunidad",
-          action: { money: -50 }
-        }
+          description:
+            "Paga multa de $50 o toma una carta de Caja de Comunidad",
+          action: { money: -50 },
+        },
       ],
       community_chest: [
         {
           id: 1,
           description: "Error del banco a tu favor. Cobra $200",
-          action: { money: 200 }
+          action: { money: 200 },
         },
         {
           id: 2,
           description: "Honorarios médicos. Paga $100",
-          action: { money: -100 }
+          action: { money: -100 },
         },
         {
           id: 3,
           description: "Venta de acciones. Cobra $50",
-          action: { money: 50 }
-        }
+          action: { money: 50 },
+        },
       ],
-      loaded: true
+      loaded: true,
     };
-    
+
     console.log("Usando cartas por defecto debido al error");
     return CARTAS_DICCIONARIO;
   }
@@ -101,20 +106,25 @@ export async function inicializarCartasDiccionario() {
  */
 function obtenerCartaAleatoria(tipo) {
   if (!CARTAS_DICCIONARIO.loaded) {
-    console.error("Diccionario de cartas no está cargado. Llama a inicializarCartasDiccionario() primero.");
+    console.error(
+      "Diccionario de cartas no está cargado. Llama a inicializarCartasDiccionario() primero."
+    );
     return null;
   }
-  
+
   const cartas = CARTAS_DICCIONARIO[tipo];
   if (!cartas || cartas.length === 0) {
     console.error(`No hay cartas disponibles para el tipo: ${tipo}`);
     return null;
   }
-  
+
   const indiceAleatorio = Math.floor(Math.random() * cartas.length);
   const cartaSorteada = cartas[indiceAleatorio];
-  
-  console.log(`Carta sorteada (${tipo}, índice ${indiceAleatorio}):`, cartaSorteada);
+
+  console.log(
+    `Carta sorteada (${tipo}, índice ${indiceAleatorio}):`,
+    cartaSorteada
+  );
   return cartaSorteada;
 }
 
@@ -132,15 +142,15 @@ export function manejarCasillaEspecial(datosCasilla, jugadorIndex = null) {
     case "chance":
       procesarCartaChance(jugadorIndex);
       break;
-    
+
     case "community_chest":
       procesarCartaCommunityChest(jugadorIndex);
       break;
-    
+
     case "tax":
       procesarCasillaImpuesto(jugadorIndex, datosCasilla);
       break;
-    
+
     default:
       console.log(`La casilla no es especial. Tipo: ${tipoCasilla}`);
   }
@@ -152,7 +162,7 @@ export function manejarCasillaEspecial(datosCasilla, jugadorIndex = null) {
  */
 function procesarCartaChance(jugadorIndex) {
   const carta = obtenerCartaAleatoria("chance");
-  
+
   if (!carta) {
     mostrarAlertaFallback("chance");
     return;
@@ -171,7 +181,7 @@ function procesarCartaChance(jugadorIndex) {
  */
 function procesarCartaCommunityChest(jugadorIndex) {
   const carta = obtenerCartaAleatoria("community_chest");
-  
+
   if (!carta) {
     mostrarAlertaFallback("community_chest");
     return;
@@ -192,26 +202,34 @@ function procesarCartaCommunityChest(jugadorIndex) {
 function procesarCasillaImpuesto(jugadorIndex, datosCasilla) {
   // Obtener el jugador de cualquier lista disponible
   let jugador = obtenerJugador(jugadorIndex);
-  
+
   if (!jugador) {
     console.error("Jugador no encontrado para procesar el impuesto.");
-    mostrarAlertaError("No se pudo encontrar el jugador para procesar el impuesto.");
+    mostrarAlertaError(
+      "No se pudo encontrar el jugador para procesar el impuesto."
+    );
     return;
   }
 
   const montoImpuesto = parseInt(datosCasilla.amount, 10) || 100; // Default $100 si no hay monto
-  
+
   // Aplicar el impuesto
   const dineroAnterior = jugador.dinero;
   jugador.dinero = Math.max(0, jugador.dinero - montoImpuesto); // No permitir dinero negativo
-  
-  console.log(`${jugador.nickname || jugador.nombre} pagó impuesto: $${dineroAnterior} → $${jugador.dinero} (-$${montoImpuesto})`);
+
+  console.log(
+    `${
+      jugador.nickname || jugador.nombre
+    } pagó impuesto: $${dineroAnterior} → $${
+      jugador.dinero
+    } (-$${montoImpuesto})`
+  );
 
   // Mostrar modal de impuesto
   mostrarModalImpuesto(jugador, montoImpuesto, datosCasilla.name || "Impuesto");
-  
+
   // Actualizar visualización si existe la función
-  if (typeof actualizarVisualizacionDinero === 'function') {
+  if (typeof actualizarVisualizacionDinero === "function") {
     actualizarVisualizacionDinero(jugadorIndex, jugador.dinero);
   }
 }
@@ -225,13 +243,14 @@ function mostrarCartaModal(carta, tipo) {
   const titulo = tipo === "chance" ? "¡Sorpresa!" : "Caja de Comunidad";
   const icono = tipo === "chance" ? "🎲" : "📦";
   const colorHeader = tipo === "chance" ? "#ffc107" : "#0dcaf0";
-  
-  const dineroTexto = carta.action?.money ? 
-    `<div class="carta-dinero mt-3 fs-4">
-      <span class="${carta.action.money > 0 ? 'text-success' : 'text-danger'}">
-        ${carta.action.money > 0 ? '+' : ''}$${Math.abs(carta.action.money)}
+
+  const dineroTexto = carta.action?.money
+    ? `<div class="carta-dinero mt-3 fs-4">
+      <span class="${carta.action.money > 0 ? "text-success" : "text-danger"}">
+        ${carta.action.money > 0 ? "+" : ""}$${Math.abs(carta.action.money)}
       </span>
-    </div>` : '';
+    </div>`
+    : "";
 
   const modalHTML = `
     <div class="modal fade" id="modalCartaTemporal" tabindex="-1" aria-hidden="true">
@@ -253,26 +272,26 @@ function mostrarCartaModal(carta, tipo) {
       </div>
     </div>
   `;
-  
+
   // Remover modal anterior si existe
-  const modalAnterior = document.getElementById('modalCartaTemporal');
+  const modalAnterior = document.getElementById("modalCartaTemporal");
   if (modalAnterior) {
     modalAnterior.remove();
   }
-  
+
   // Insertar el nuevo modal
-  document.body.insertAdjacentHTML('beforeend', modalHTML);
-  const modal = document.getElementById('modalCartaTemporal');
-  
+  document.body.insertAdjacentHTML("beforeend", modalHTML);
+  const modal = document.getElementById("modalCartaTemporal");
+
   // Mostrar el modal
   const bootstrapModal = new bootstrap.Modal(modal);
   bootstrapModal.show();
-  
+
   // Limpiar modal del DOM cuando se cierre
-  modal.addEventListener('hidden.bs.modal', () => {
+  modal.addEventListener("hidden.bs.modal", () => {
     modal.remove();
   });
-  
+
   // Auto-cerrar después de 5 segundos
   setTimeout(() => {
     if (document.body.contains(modal)) {
@@ -298,9 +317,13 @@ function mostrarModalImpuesto(jugador, monto, nombreCasilla) {
           </div>
           <div class="modal-body text-center p-4">
             <div class="mb-3" style="font-size: 3rem;">🏛️</div>
-            <h5 class="mb-3">${jugador.nickname || jugador.nombre}, debes pagar un impuesto</h5>
+            <h5 class="mb-3">${
+              jugador.nickname || jugador.nombre
+            }, debes pagar un impuesto</h5>
             <div class="fs-4 text-danger fw-bold">-$${monto}</div>
-            <div class="mt-3 text-muted">Dinero restante: $${jugador.dinero}</div>
+            <div class="mt-3 text-muted">Dinero restante: $${
+              jugador.dinero
+            }</div>
           </div>
           <div class="modal-footer border-0">
             <button type="button" class="btn btn-danger px-4" data-bs-dismiss="modal">Pagar</button>
@@ -309,23 +332,23 @@ function mostrarModalImpuesto(jugador, monto, nombreCasilla) {
       </div>
     </div>
   `;
-  
+
   // Remover modal anterior si existe
-  const modalAnterior = document.getElementById('modalImpuestoTemporal');
+  const modalAnterior = document.getElementById("modalImpuestoTemporal");
   if (modalAnterior) {
     modalAnterior.remove();
   }
-  
+
   // Insertar el nuevo modal
-  document.body.insertAdjacentHTML('beforeend', modalHTML);
-  const modal = document.getElementById('modalImpuestoTemporal');
-  
+  document.body.insertAdjacentHTML("beforeend", modalHTML);
+  const modal = document.getElementById("modalImpuestoTemporal");
+
   // Mostrar el modal
   const bootstrapModal = new bootstrap.Modal(modal);
   bootstrapModal.show();
-  
+
   // Limpiar modal del DOM cuando se cierre
-  modal.addEventListener('hidden.bs.modal', () => {
+  modal.addEventListener("hidden.bs.modal", () => {
     modal.remove();
   });
 }
@@ -348,21 +371,31 @@ function aplicarEfectoCarta(carta, jugadorIndex) {
   }
 
   // Aplicar efecto de dinero
-  if (typeof carta.action.money === 'number') {
-    const cantidadAnterior = jugador.dinero;
-    jugador.dinero = Math.max(0, jugador.dinero + carta.action.money); // No permitir dinero negativo
-    
-    console.log(`${jugador.nickname || jugador.nombre}: $${cantidadAnterior} → $${jugador.dinero} (${carta.action.money > 0 ? '+' : ''}${carta.action.money})`);
-    
+  if (typeof carta.action.money === "number") {
+    if (carta.action.money < 0) {
+      // Usar el método pagarImpuestos para montos negativos
+      jugador.pagarImpuestos(Math.abs(carta.action.money));
+    } else {
+      const cantidadAnterior = jugador.dinero;
+      jugador.dinero = Math.max(0, jugador.dinero + carta.action.money); // No permitir dinero negativo
+      console.log(
+        `${jugador.nickname || jugador.nombre}: $${cantidadAnterior} → $${
+          jugador.dinero
+        } (${carta.action.money > 0 ? "+" : ""}${carta.action.money})`
+      );
+    }
+
     // Actualizar visualización si existe la función
-    if (typeof actualizarVisualizacionDinero === 'function') {
+    if (typeof actualizarVisualizacionDinero === "function") {
       actualizarVisualizacionDinero(jugadorIndex, jugador.dinero);
     }
   }
 
   // Aquí se pueden agregar más tipos de acciones en el futuro
   if (carta.action.goTo !== undefined) {
-    console.log(`Carta requiere mover al jugador a la casilla ${carta.action.goTo}`);
+    console.log(
+      `Carta requiere mover al jugador a la casilla ${carta.action.goTo}`
+    );
     // Implementar lógica de movimiento si es necesario
   }
 }
@@ -377,11 +410,11 @@ function obtenerJugador(jugadorIndex) {
   if (window.jugadores && window.jugadores[jugadorIndex]) {
     return window.jugadores[jugadorIndex];
   }
-  
+
   if (window.jugadoresActivos && window.jugadoresActivos[jugadorIndex]) {
     return window.jugadoresActivos[jugadorIndex];
   }
-  
+
   console.error(`No se encontró jugador con índice ${jugadorIndex}`);
   return null;
 }
@@ -392,21 +425,23 @@ function obtenerJugador(jugadorIndex) {
  * @param {number} nuevaCantidad - Nueva cantidad de dinero
  */
 function actualizarVisualizacionDinero(jugadorIndex, nuevaCantidad) {
-  const perfilJugador = document.querySelector(`.perfil-jugador[data-index="${jugadorIndex}"]`);
-  
+  const perfilJugador = document.querySelector(
+    `.perfil-jugador[data-index="${jugadorIndex}"]`
+  );
+
   if (perfilJugador) {
-    const elementoDinero = perfilJugador.querySelector('.dinero');
+    const elementoDinero = perfilJugador.querySelector(".dinero");
     if (elementoDinero) {
       elementoDinero.textContent = `$${nuevaCantidad}`;
-      
+
       // Efecto visual temporal
-      elementoDinero.style.transition = 'all 0.3s ease';
-      elementoDinero.style.transform = 'scale(1.1)';
-      elementoDinero.style.color = '#28a745';
-      
+      elementoDinero.style.transition = "all 0.3s ease";
+      elementoDinero.style.transform = "scale(1.1)";
+      elementoDinero.style.color = "#28a745";
+
       setTimeout(() => {
-        elementoDinero.style.transform = 'scale(1)';
-        elementoDinero.style.color = '';
+        elementoDinero.style.transform = "scale(1)";
+        elementoDinero.style.color = "";
       }, 500);
     }
   }
@@ -426,10 +461,11 @@ function mostrarAlertaError(mensaje) {
  * @param {string} tipo - Tipo de carta
  */
 function mostrarAlertaFallback(tipo) {
-  const mensaje = tipo === "chance" 
-    ? "¡Cayiste en una casilla de Sorpresa! (Cartas no disponibles)" 
-    : "¡Cayiste en Caja de Comunidad! (Cartas no disponibles)";
-  
+  const mensaje =
+    tipo === "chance"
+      ? "¡Cayiste en una casilla de Sorpresa! (Cartas no disponibles)"
+      : "¡Cayiste en Caja de Comunidad! (Cartas no disponibles)";
+
   alert(mensaje);
 }
 

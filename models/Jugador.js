@@ -91,9 +91,6 @@ export default class Jugador {
 
   // Pagar impuestos
   pagarImpuestos(monto) {
-    if (monto !== 100 && monto !== 200) {
-      throw new Error("El impuesto debe ser 100 o 200.");
-    }
     if (this.dinero >= monto) {
       this.dinero -= monto;
       console.log(`${this.nickname} pagó ${monto} en impuestos.`);
@@ -329,7 +326,7 @@ export default class Jugador {
 
     // Bandera (usando flagsapi.com)
     const bandera = contenedor.querySelector(".bandera");
-    const paisCodigo = this.pais.trim().split('-')[0].toUpperCase();
+    const paisCodigo = this.pais.trim().split("-")[0].toUpperCase();
     bandera.src = `https://flagsapi.com/${paisCodigo}/shiny/32.png`;
 
     // Nickname
