@@ -1,4 +1,4 @@
-import { manejarCasillaEspecial } from './cartas.js';
+import { manejarCasillaEspecial } from "./cartas.js";
 // Orden lineal del tablero (ids de casillas en sentido horario)
 const ordenTablero = [
   0,
@@ -282,9 +282,13 @@ export function moverFicha(jugadorIndex, pasos) {
   console.log("Datos de la casilla al mover ficha:", casillaData);
 
   // --- NUEVA SECCIÓN: Verificar si la casilla es de tipo especial (chance, community_chest, tax) ---
-  if (casillaData.type === "chance" || casillaData.type === "community_chest" || casillaData.type === "tax") {
+  if (
+    casillaData.type === "chance" ||
+    casillaData.type === "community_chest" ||
+    casillaData.type === "tax"
+  ) {
     console.log(`Casilla especial detectada: ${casillaData.type}`);
-    
+
     // Llamar a la función para manejar cartas especiales
     try {
       if (typeof window.manejarCasillaEspecial === "function") {
@@ -292,43 +296,61 @@ export function moverFicha(jugadorIndex, pasos) {
       } else {
         // Fallback si no está disponible la función de cartas
         console.warn("Función manejarCasillaEspecial no disponible");
-        const tipoTexto = casillaData.type === "chance" ? "Sorpresa" : 
-                         casillaData.type === "community_chest" ? "Caja de Comunidad" : "Impuesto";
+        const tipoTexto =
+          casillaData.type === "chance"
+            ? "Sorpresa"
+            : casillaData.type === "community_chest"
+            ? "Caja de Comunidad"
+            : "Impuesto";
         alert(`¡Cayiste en ${tipoTexto}! (Sistema de cartas no disponible)`);
       }
     } catch (error) {
       console.error("Error manejando casilla especial:", error);
       alert("Error procesando la casilla especial");
     }
-    
+
     return; // Salir aquí para casillas especiales
   }
 
   // Solo actuar si es propiedad o ferrocarril
-  if (!(casillaData.name && (casillaData.type === "property" || casillaData.type === "railroad"))) {
+  if (
+    !(
+      casillaData.name &&
+      (casillaData.type === "property" || casillaData.type === "railroad")
+    )
+  ) {
     return;
   }
 
   // ---------------- obtener casillaObj con datos reales (o fallback) ----------------
-  const casillaObj = buscarCasillaPorId(Number(nuevaId), window.datosTablero) || {
+  const casillaObj = buscarCasillaPorId(
+    Number(nuevaId),
+    window.datosTablero
+  ) || {
     id: Number(nuevaId),
     name: casillaData.name,
     type: casillaData.type,
     price: parseInt(casillaData.price) || 0,
     color: casillaData.color || null,
-    rent: { base: parseInt(casillaData.rentBase) || 0 }
+    rent: { base: parseInt(casillaData.rentBase) || 0 },
   };
 
   // ---------------- elegir la lista de jugadores correcta ----------------
-  const listaJugadores = (window.jugadores && window.jugadores.length) ? window.jugadores : jugadoresActivos;
+  const listaJugadores =
+    window.jugadores && window.jugadores.length
+      ? window.jugadores
+      : jugadoresActivos;
 
   // DEBUG: ver rápidamente la estructura de jugadores antes de buscar dueño
-  console.log("Lista usada para buscar dueño:", listaJugadores.map(p => ({
-    id: p.index ?? p._index ?? null,
-    nombre: p.nombre ?? p.nickname,
-    dinero: p.dinero,
-    propiedades: (p.propiedades || []).map(x => x.id ?? x)
-  })));
+  console.log(
+    "Lista usada para buscar dueño:",
+    listaJugadores.map((p) => ({
+      id: p.index ?? p._index ?? null,
+      nombre: p.nombre ?? p.nickname,
+      dinero: p.dinero,
+      propiedades: (p.propiedades || []).map((x) => x.id ?? x),
+    }))
+  );
 
   // helper para comparar ids (permite string/number)
   const idsEqual = (a, b) => String(a) === String(b);
@@ -336,14 +358,20 @@ export function moverFicha(jugadorIndex, pasos) {
   // ---------------- buscar dueño ----------------
   let duenio = null;
   for (const p of listaJugadores) {
-    if (Array.isArray(p.propiedades) && p.propiedades.some(prop => idsEqual(prop.id ?? prop, casillaObj.id))) {
+    if (
+      Array.isArray(p.propiedades) &&
+      p.propiedades.some((prop) => idsEqual(prop.id ?? prop, casillaObj.id))
+    ) {
       duenio = p;
       break;
     }
   }
 
   // referencia al jugador que se movió (instancia o plano)
-  const jugadorObj = (window.jugadores && window.jugadores[jugadorIndex]) ? window.jugadores[jugadorIndex] : jugadoresActivos[jugadorIndex];
+  const jugadorObj =
+    window.jugadores && window.jugadores[jugadorIndex]
+      ? window.jugadores[jugadorIndex]
+      : jugadoresActivos[jugadorIndex];
 
   // --------- CASILLA LIBRE: mostrar modal de compra (y asignar compra correctamente) ---------
   if (!duenio) {
@@ -352,17 +380,28 @@ export function moverFicha(jugadorIndex, pasos) {
     const modalHeader = document.getElementById("modalPropiedadHeader");
 
     if (!modalElement || !modalBody || !modalHeader) {
-      console.error("Elementos del modal no encontrados (modalComprarPropiedad / body / header).");
+      console.error(
+        "Elementos del modal no encontrados (modalComprarPropiedad / body / header)."
+      );
       return;
     }
 
     // Inyectar contenido
-    modalHeader.style.backgroundColor = casillaObj.color || casillaData.color || "#f8f9fa";
+    modalHeader.style.backgroundColor =
+      casillaObj.color || casillaData.color || "#f8f9fa";
     modalBody.innerHTML = `
       <div>
-        <h6>${casillaObj.type === "railroad" ? "Ferrocarril" : "Propiedad"}: ${casillaObj.name}</h6>
+        <h6>${casillaObj.type === "railroad" ? "Ferrocarril" : "Propiedad"}: ${
+      casillaObj.name
+    }</h6>
         <p>Precio: $${casillaObj.price || "N/A"}</p>
-        ${casillaObj.type === "property" ? `<p>Renta base: $${casillaObj.rent?.base ?? casillaData.rentBase ?? 0}</p>` : ""}
+        ${
+          casillaObj.type === "property"
+            ? `<p>Renta base: $${
+                casillaObj.rent?.base ?? casillaData.rentBase ?? 0
+              }</p>`
+            : ""
+        }
       </div>
     `;
 
@@ -377,7 +416,8 @@ export function moverFicha(jugadorIndex, pasos) {
         try {
           const price = parseInt(casillaObj.price) || 0;
 
-          if (!jugadorObj) throw new Error("No se encontró el jugador que intenta comprar.");
+          if (!jugadorObj)
+            throw new Error("No se encontró el jugador que intenta comprar.");
 
           // Si existe el método de clase, llámalo (instancia Jugador)
           if (typeof jugadorObj.comprarPropiedadConIndicador === "function") {
@@ -395,19 +435,26 @@ export function moverFicha(jugadorIndex, pasos) {
             jugadorObj.dinero = (Number(jugadorObj.dinero) || 0) - price;
             jugadorObj.propiedades = jugadorObj.propiedades || [];
             jugadorObj.propiedades.push({ ...casillaObj });
-            
+
             // Actualizar casilla manualmente para objetos planos
             actualizarCasillaManual(casillaObj, jugadorObj);
           }
 
-          console.log(`${jugadorObj.nickname || jugadorObj.nombre} compró ${casillaObj.name}`);
+          console.log(
+            `${jugadorObj.nickname || jugadorObj.nombre} compró ${
+              casillaObj.name
+            }`
+          );
 
           // Guardar y refrescar UI: intenta la función global que definiste en tablero.js
           if (typeof window.actualizarJugadores === "function") {
             window.actualizarJugadores();
           } else {
             // fallback: sincronizar jugadoresActivos en localStorage si no hay función
-            localStorage.setItem("jugadores", JSON.stringify(window.jugadores || jugadoresActivos));
+            localStorage.setItem(
+              "jugadores",
+              JSON.stringify(window.jugadores || jugadoresActivos)
+            );
           }
 
           bootstrap.Modal.getInstance(modalElement).hide();
@@ -417,7 +464,6 @@ export function moverFicha(jugadorIndex, pasos) {
       };
     }
 
-    
     return; // salimos porque mostramos modal de compra
   }
 
@@ -425,7 +471,8 @@ export function moverFicha(jugadorIndex, pasos) {
   const samePlayer = (a, b) => {
     if (!a || !b) return false;
     if (a === b) return true;
-    if (a.index !== undefined && b.index !== undefined) return a.index === b.index;
+    if (a.index !== undefined && b.index !== undefined)
+      return a.index === b.index;
     if (a.nickname && b.nickname) return a.nickname === b.nickname;
     if (a.nombre && b.nombre) return a.nombre === b.nombre;
     return false;
@@ -438,8 +485,15 @@ export function moverFicha(jugadorIndex, pasos) {
     if (casillaObj.type === "property") {
       renta = (casillaObj.rent?.base ?? parseInt(casillaData.rentBase)) || 0;
 
-      if (casillaObj.casas && casillaObj.casas > 0 && Array.isArray(casillaObj.rent?.withHouse)) {
-        const idx = Math.max(0, Math.min(casillaObj.casas - 1, casillaObj.rent.withHouse.length - 1));
+      if (
+        casillaObj.casas &&
+        casillaObj.casas > 0 &&
+        Array.isArray(casillaObj.rent?.withHouse)
+      ) {
+        const idx = Math.max(
+          0,
+          Math.min(casillaObj.casas - 1, casillaObj.rent.withHouse.length - 1)
+        );
         renta = casillaObj.rent.withHouse[idx] ?? renta;
       }
 
@@ -450,10 +504,11 @@ export function moverFicha(jugadorIndex, pasos) {
 
     // 🚂 Ferrocarriles
     else if (casillaObj.type === "railroad") {
-      const railroadsOwned = duenio.propiedades.filter(p => p.type === "railroad").length;
+      const railroadsOwned = duenio.propiedades.filter(
+        (p) => p.type === "railroad"
+      ).length;
       renta = casillaObj.rent?.[railroadsOwned] ?? 25; // fallback a 25 si falta
     }
-
 
     // aplicar pago (usar método pagarRenta si existe)
     if (typeof jugadorObj.pagarRenta === "function") {
@@ -468,15 +523,25 @@ export function moverFicha(jugadorIndex, pasos) {
     if (typeof window.actualizarJugadores === "function") {
       window.actualizarJugadores();
     } else {
-      localStorage.setItem("jugadores", JSON.stringify(window.jugadores || jugadoresActivos));
+      localStorage.setItem(
+        "jugadores",
+        JSON.stringify(window.jugadores || jugadoresActivos)
+      );
     }
 
-    console.log(`${jugadorObj.nickname || jugadorObj.nombre} pagó $${renta} a ${duenio.nickname || duenio.nombre} por caer en ${casillaObj.name}`);
+    console.log(
+      `${jugadorObj.nickname || jugadorObj.nombre} pagó $${renta} a ${
+        duenio.nickname || duenio.nombre
+      } por caer en ${casillaObj.name}`
+    );
     // Opcional: mostrar notificación/alert
-    alert(`${jugadorObj.nickname || jugadorObj.nombre} pagó $${renta} a ${duenio.nickname || duenio.nombre}`);
+    alert(
+      `${jugadorObj.nickname || jugadorObj.nombre} pagó $${renta} a ${
+        duenio.nickname || duenio.nombre
+      }`
+    );
   }
 }
-
 
 // ----------------- verificarPropiedadParaCompra -----------------
 /**
@@ -701,17 +766,19 @@ function actualizarCasillaManual(propiedad, jugador) {
   if (!casilla) return;
 
   const colorFichaMap = {
-    amarillo: "#FFD700", azul: "#1E90FF", 
-    rojo: "#FF4500", verde: "#32CD32"
+    amarillo: "#FFD700",
+    azul: "#1E90FF",
+    rojo: "#FF4500",
+    verde: "#32CD32",
   };
 
   const colorJugador = colorFichaMap[jugador.color] || "#999999";
 
-  const statusAnterior = casilla.querySelector('.status-owner');
+  const statusAnterior = casilla.querySelector(".status-owner");
   if (statusAnterior) statusAnterior.remove();
 
-  const statusOwner = document.createElement('div');
-  statusOwner.className = 'status-owner';
+  const statusOwner = document.createElement("div");
+  statusOwner.className = "status-owner";
   statusOwner.style.cssText = `
     position: absolute; top: 2px; right: 2px;
     width: 12px; height: 12px; border-radius: 50%;
@@ -722,6 +789,6 @@ function actualizarCasillaManual(propiedad, jugador) {
   `;
   statusOwner.title = `Propiedad de ${jugador.nombre || jugador.nickname}`;
 
-  casilla.style.position = 'relative';
+  casilla.style.position = "relative";
   casilla.appendChild(statusOwner);
 }
