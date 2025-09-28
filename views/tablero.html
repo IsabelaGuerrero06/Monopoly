@@ -135,6 +135,23 @@
               <button class="roll-button" id="rollButton" onclick="rollDice()">
                 Lanzar
               </button>
+              <div class="manual-dice mt-2">
+                <input
+                  type="number"
+                  id="manualDiceInput"
+                  min="2"
+                  max="12"
+                  placeholder="2-12"
+                  class="form-control text-center"
+                  style="width: 80px; margin: 10px auto"
+                />
+                <button
+                  class="btn btn-primary btn-sm mt-1"
+                  id="manualDiceButton"
+                >
+                  Usar número
+                </button>
+              </div>
             </div>
           </div>
 
@@ -197,12 +214,23 @@
     </div>
 
     <!-- Modal Bootstrap Comprar Propiedad -->
-    <div  class="modal fade"  id="modalComprarPropiedad"  tabindex="-1"  aria-labelledby="modalPropiedadLabel"  aria-hidden="true">
+    <div
+      class="modal fade"
+      id="modalComprarPropiedad"
+      tabindex="-1"
+      aria-labelledby="modalPropiedadLabel"
+      aria-hidden="true"
+    >
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header" id="modalPropiedadHeader">
             <h5 class="modal-title titulo-modal">Comprar Propiedad</h5>
-            <button  type="button"  class="btn-close"  data-bs-dismiss="modal"  aria-label="Cerrar"></button>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar"
+            ></button>
           </div>
 
           <div class="modal-body" id="modalComprarPropiedadBody">
@@ -210,14 +238,45 @@
           </div>
           <div class="modal-footer">
             <div class="contenedor-botones">
-              <button type="button" class="boton-cancelar" data-bs-dismiss="modal">Cancelar</button>
-              <button type="button" class="boton-comprar" id="btnComprarPropiedad">Comprar</button>
+              <button
+                type="button"
+                class="boton-cancelar"
+                data-bs-dismiss="modal"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                class="boton-comprar"
+                id="btnComprarPropiedad"
+              >
+                Comprar
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Modal Bootstrap Comprar Casa/Hotel -->
+    <div  class="modal fade"  id="modalCasaHotel"  tabindex="-1"  aria-labelledby="modalCasaHotelLabel"  aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header" id="modalCasaHotelHeader">
+            <h5 class="modal-title titulo-modal" id="modalCasaHotelLabel">Grupo de propiedades</h5>
+            <button  type="button"  class="btn-close"  data-bs-dismiss="modal"  aria-label="Cerrar"></button>
+          </div>
+
+          <div class="modal-body" id="modalCasaHotelBody">
+            <!-- Aquí se inyecta la info con JS -->
+          </div>
+
+          <div class="modal-footer">
+            <button  type="button"  class="btn btn-secondary"  data-bs-dismiss="modal">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
