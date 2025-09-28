@@ -246,6 +246,12 @@ pintarJugadores();
 // Hacer el array de jugadores accesible globalmente
 window.jugadores = jugadores;
 
+import { syncJugadoresActivos } from "./ficha.js"; // al inicio del archivo junto con los imports
+// ...
+window.jugadores = jugadores;
+// forzar sincronización con ficha.js
+syncJugadoresActivos();
+
 window.addEventListener("DOMContentLoaded", renderBoard);
 
 import {
@@ -262,42 +268,21 @@ window.addEventListener("DOMContentLoaded", () => {
     crearFichas();
   }, 100);
 
-  // Cuando los dados terminan de lanzarse
-  // document.addEventListener("diceRolled", (e) => {
-  //   const { total, dice1, dice2 } = e.detail;
-  //   const jugadorIndex = getTurnoActual();
-  //   const jugadorActual = getJugadorActual();
-
-  //   console.log(`${jugadorActual.nombre} avanza ${total} pasos`);
-
-  //   // Mover la ficha
-  //   moverFicha(jugadorIndex, total);
-
-  //   // Si no sacó dobles → pasa turno
-  //   if (dice1 !== dice2) {
-  //     const nuevoTurno = siguienteTurno();
-  //     const siguienteJugador = getJugadorActual();
-  //     console.log(`Turno de ${siguienteJugador.nombre}`);
-  //   } else {
-  //     console.log(`${jugadorActual.nombre} repite turno (dobles) 🎲🎲`);
-  //   }
-  // });
-
   document.addEventListener("diceRolled", (e) => {
     const { total, dice1, dice2 } = e.detail;
     const jugadorIndex = getTurnoActual();
     const jugadorActual = getJugadorActual();
 
     console.log("Jugador actual estado cárcel:", {
-      nombre: jugadorActual.nombre,
+      nombre: jugadorActual.nombre || jugadorActual.nickname,
       enCarcel: jugadorActual.enCarcel,
       turnos: jugadorActual.turnosEnCarcel
     });
 
 
-    // 🔹 Verificar si está en la cárcel
+    // Verificar si está en la cárcel
     if (jugadorActual.enCarcel) {
-      console.log(`${jugadorActual.nombre} está en la cárcel (${jugadorActual.turnosEnCarcel} turnos restantes)`);
+      console.log(`${jugadorActual.nombre || jugadorActual.nickname} está en la cárcel (${jugadorActual.turnosEnCarcel} turnos restantes)`);
 
       const modal = new bootstrap.Modal(document.getElementById("modalCarcel"));
       modal.show();
@@ -334,7 +319,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
         // Aquí está la clave: saltamos al siguiente jugador
         const nuevoTurno = siguienteTurno();
-        console.log(`Turno de ${getJugadorActual().nombre}`);
+        console.log(`Turno de ${getJugadorActual().nombre || getJugadorActual().nickname}`);
       };
 
 
@@ -342,15 +327,15 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // Si no está en cárcel → mover normal
-    console.log(`${jugadorActual.nombre} avanza ${total} pasos`);
+    console.log(`${jugadorActual.nombre || jugadorActual.nickname} avanza ${total} pasos`);
     moverFicha(jugadorIndex, total);
 
     // Si no sacó dobles → pasar turno
     if (dice1 !== dice2) {
       const nuevoTurno = siguienteTurno();
-      console.log(`Turno de ${getJugadorActual().nombre}`);
+      console.log(`Turno de ${getJugadorActual().nickname || getJugadorActual().nombre}`);
     } else {
-      console.log(`${jugadorActual.nombre} repite turno (dobles) 🎲🎲`);
+      console.log(`${jugadorActual.nombre || jugadorActual.nickname} repite turno (dobles) 🎲🎲`);
     }
     console.log("DEBUG jugadorActual:", jugadorActual);
   });

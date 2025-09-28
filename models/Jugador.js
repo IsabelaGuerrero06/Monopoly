@@ -93,9 +93,6 @@ export default class Jugador {
 
   // Pagar impuestos
   pagarImpuestos(monto) {
-    if (monto !== 100 && monto !== 200) {
-      throw new Error("El impuesto debe ser 100 o 200.");
-    }
     if (this.dinero >= monto) {
       this.dinero -= monto;
       console.log(`${this.nickname} pagó ${monto} en impuestos.`);
@@ -331,7 +328,7 @@ export default class Jugador {
 
     // Bandera (usando flagsapi.com)
     const bandera = contenedor.querySelector(".bandera");
-    const paisCodigo = this.pais.trim().split('-')[0].toUpperCase();
+    const paisCodigo = this.pais.trim().split("-")[0].toUpperCase();
     bandera.src = `https://flagsapi.com/${paisCodigo}/shiny/32.png`;
 
     // Nickname
@@ -341,5 +338,95 @@ export default class Jugador {
     // Dinero
     const dineroLabel = contenedor.querySelector(".dinero");
     dineroLabel.textContent = `$${this.dinero}`;
+  }
+
+  /**
+   * Actualiza visualmente una casilla para mostrar que pertenece al jugador
+   * @param {Object} propiedad - Objeto de la propiedad comprada
+   */
+  actualizarCasillaPropiedad(propiedad) {
+    const casilla = document.querySelector(`[data-id="${propiedad.id}"]`);
+    if (!casilla) {
+      console.warn(`No se encontró la casilla con ID ${propiedad.id}`);
+      return;
+    }
+
+    // Obtener el color de la ficha del jugador
+    const colorFichaMap = {
+      amarillo: "#FFD700",
+      azul: "#1E90FF",
+      rojo: "#FF4500",
+      verde: "#32CD32",
+    };
+
+    const colorJugador = colorFichaMap[this.color] || "#999999";
+
+    // Remover indicador de dueño anterior si existe
+    const statusAnterior = casilla.querySelector(".status-owner");
+    if (statusAnterior) {
+      statusAnterior.remove();
+    }
+
+    // Crear indicador de dueño
+    const statusOwner = document.createElement("div");
+    statusOwner.className = "status-owner";
+    statusOwner.style.cssText = `
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: ${colorJugador};
+    border: 2px solid #fff;
+    box-shadow: 0 0 3px rgba(0,0,0,0.5);
+    z-index: 10;
+  `;
+
+    // Agregar tooltip con información del dueño
+    statusOwner.title = `Propiedad de ${this.nickname}`;
+
+    // Agregar el indicador a la casilla
+    casilla.style.position = "relative";
+    casilla.appendChild(statusOwner);
+
+    console.log(
+      `Casilla ${propiedad.name} marcada como propiedad de ${this.nickname}`
+    );
+  }
+
+  /**
+   * Remueve el indicador visual de propiedad de una casilla
+   * @param {Object} propiedad - Objeto de la propiedad a liberar
+   */
+  liberarCasillaPropiedad(propiedad) {
+    const casilla = document.querySelector(`[data-id="${propiedad.id}"]`);
+    if (!casilla) return;
+
+    const statusOwner = casilla.querySelector(".status-owner");
+    if (statusOwner) {
+      statusOwner.remove();
+      console.log(`Indicador de propiedad removido de ${propiedad.name}`);
+    }
+  }
+
+  /**
+   * Versión mejorada del método comprarPropiedad que actualiza la casilla visualmente
+   */
+  comprarPropiedadConIndicador(propiedad, precio) {
+    // Llamar al método original
+    if (this.dinero >= precio) {
+      this.dinero -= precio;
+      this.propiedades.push(propiedad);
+
+      // Actualizar la casilla visualmente
+      this.actualizarCasillaPropiedad(propiedad);
+
+      console.log(`${this.nickname} compró ${propiedad.name} por $${precio}`);
+    } else {
+      throw new Error(
+        "No tienes suficiente dinero para comprar esta propiedad."
+      );
+    }
   }
 }
