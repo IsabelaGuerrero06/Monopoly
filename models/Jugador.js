@@ -5,7 +5,9 @@ export default class Jugador {
     this.color = color;
     this.dinero = 1500;
     this.propiedades = [];
-    this.posicion = 3; // posición inicial en el tablero
+    this.posicion = 0; // posición inicial en el tablero
+    this.enCarcel = false;
+    this.turnosEnCarcel = 0;
   }
 
   // Getter para nickname
