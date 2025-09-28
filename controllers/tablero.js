@@ -4,6 +4,7 @@ const ENDPOINT = "http://127.0.0.1:5000/board";
 
 // Crear lista de jugadores
 const jugadores = [];
+
 /* Mapa de colores del grupo a clases CSS */
 const colorMap = {
   brown: "color-brown",
@@ -25,8 +26,11 @@ function makeCell(c) {
   cell.dataset.id = c.id;
   cell.dataset.name = c.name || "";
 
-  // tipo para estilos futuros
-  if (c.type) cell.classList.add(c.type);
+  // Añadir atributo data-type
+  if (c.type) {
+    cell.classList.add(c.type);
+    cell.dataset.type = c.type; // Configurar data-type
+  }
 
   // banda de color SOLO si es propiedad
   if (c.type === "property" && c.color && colorMap[c.color]) {
@@ -75,6 +79,14 @@ function makeCell(c) {
   label.textContent = c.name || "";
   cell.appendChild(label);
 
+  // Añadir atributos data-price y data-color si es propiedad o ferrocarril
+  if (c.type === "property" || c.type === "railroad") {
+    cell.dataset.price = c.price || "N/A"; // Precio de la propiedad o ferrocarril
+    cell.dataset.color = c.color || "Sin color"; // Color del grupo (si aplica)
+  }
+
+  cell.dataset.rentBase = c.rent?.base || "N/A"; // Renta base de la propiedad
+
   addEventListenerCell(cell, c);
   return cell;
 }
@@ -85,17 +97,6 @@ function addEventListenerCell(cell, c) {
   });
 }
 
-function addEventListenerCornerCell(cell, c) {
-  const esquinas = document.querySelectorAll(".corner");
-  esquinas.forEach((esquina) => {
-    esquina.addEventListener("click", (e) => {
-      console.log(
-        `Casilla: ${esquina.dataset.name} id ${esquina.dataset.id}  `
-      );
-    });
-  });
-}
-
 async function renderBoard() {
   try {
     const res = await fetch(ENDPOINT, {
@@ -103,6 +104,9 @@ async function renderBoard() {
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const board = await res.json();
+
+    // 👇 ARI guardamos los datos del tablero en window
+    window.datosTablero = board;
 
     // contenedores de lados
     const topC = document.getElementById("edge-top");
@@ -146,22 +150,62 @@ async function renderBoard() {
 
 function crearJugadores() {
   const infoJugadores = JSON.parse(localStorage.getItem("jugadores"));
-  infoJugadores.forEach((info) => {
+  if (!infoJugadores) {
+    console.warn("No hay información de jugadores en localStorage");
+    return;
+  }
+
+  // Limpiar array de jugadores
+  jugadores.length = 0;
+
+  // Obtener cantidad de jugadores activos
+  const cantidadJugadores =
+    parseInt(localStorage.getItem("cantidadJugadores")) || 2;
+
+  // Crear solo la cantidad de jugadores seleccionada
+  for (let i = 0; i < cantidadJugadores && i < infoJugadores.length; i++) {
+    const info = infoJugadores[i];
     const jugador = new Jugador(info.nombre, info.pais, info.color);
     jugadores.push(jugador);
-  });
-  console.log(jugadores);
+  }
+
+  console.log(`Se crearon ${jugadores.length} jugadores:`, jugadores);
 }
 
 function pintarJugadores() {
   jugadores.forEach((jugador, index) => {
     jugador.mostrarJugador(index);
+
+    // Obtener el contenedor del perfil
+    const contenedor = document.querySelector(
+      `.perfil-jugador[data-index="${index}"]`
+    );
+    if (contenedor) {
+      const icono = contenedor.querySelector(".iconoPerfil");
+
+      // Click para abrir modal
+      icono.style.cursor = "pointer";
+      icono.addEventListener("click", () => {
+        // Pasar datos del jugador al localStorage (para que pestañaJugador los use)
+        localStorage.setItem("jugadorActivo", JSON.stringify(jugador));
+
+        // Cargar la página pestañaJugador.html en el iframe
+        document.getElementById("iframeJugador").src = "pestañaJugador.html";
+
+        // Mostrar el modal
+        const modal = new bootstrap.Modal(
+          document.getElementById("modalJugador")
+        );
+        modal.show();
+      });
+    }
   });
 }
 
 function mostrarPerfilesActivos() {
   // Leer cantidad de jugadores desde localStorage
-  const cantidadJugadores = parseInt(localStorage.getItem("cantidadJugadores")) || 0;
+  const cantidadJugadores =
+    parseInt(localStorage.getItem("cantidadJugadores")) || 0;
 
   // Obtener todos los contenedores de perfiles
   const perfiles = document.querySelectorAll(".perfil-jugador");
@@ -175,12 +219,29 @@ function mostrarPerfilesActivos() {
   });
 }
 
+function actualizarJugadores() {
+  // 🔹 1. Guardar el estado actual de los jugadores en localStorage
+  localStorage.setItem("jugadores", JSON.stringify(jugadores));
 
+  // 🔹 2. Volver a pintar los jugadores en el DOM (perfil, dinero, propiedades, etc.)
+  jugadores.forEach((jugador, index) => {
+    jugador.mostrarJugador(index);
+  });
+
+  console.log("Jugadores actualizados:", jugadores);
+}
+
+window.actualizarJugadores = actualizarJugadores;
+
+
+// Inicializar todo
 crearJugadores();
 mostrarPerfilesActivos();
 pintarJugadores();
 
-addEventListenerCornerCell();
+// Hacer el array de jugadores accesible globalmente
+window.jugadores = jugadores;
+
 window.addEventListener("DOMContentLoaded", renderBoard);
 
 import {
@@ -188,28 +249,33 @@ import {
   moverFicha,
   getTurnoActual,
   siguienteTurno,
+  getJugadorActual,
 } from "./ficha.js";
 
 window.addEventListener("DOMContentLoaded", () => {
-  crearFichas();
+  // Crear fichas después de que el tablero esté renderizado
+  setTimeout(() => {
+    crearFichas();
+  }, 100);
 
   // Cuando los dados terminan de lanzarse
   document.addEventListener("diceRolled", (e) => {
     const { total, dice1, dice2 } = e.detail;
-    const jugador = getTurnoActual();
+    const jugadorIndex = getTurnoActual();
+    const jugadorActual = getJugadorActual();
 
-    console.log(`Jugador ${jugador + 1} avanza ${total} pasos`);
+    console.log(`${jugadorActual.nombre} avanza ${total} pasos`);
 
     // Mover la ficha
-    moverFicha(jugador, total);
+    moverFicha(jugadorIndex, total);
 
     // Si no sacó dobles → pasa turno
     if (dice1 !== dice2) {
       const nuevoTurno = siguienteTurno();
-      console.log(`Turno del Jugador ${nuevoTurno + 1}`);
+      const siguienteJugador = getJugadorActual();
+      console.log(`Turno de ${siguienteJugador.nombre}`);
     } else {
-      console.log(`Jugador ${jugador + 1} repite turno (dobles) 🎲🎲`);
+      console.log(`${jugadorActual.nombre} repite turno (dobles) 🎲🎲`);
     }
   });
 });
-

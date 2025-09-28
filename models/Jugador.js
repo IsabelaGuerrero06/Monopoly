@@ -6,7 +6,6 @@ export default class Jugador {
     this.dinero = 1500;
     this.propiedades = [];
     this.posicion = 3; // posición inicial en el tablero
-    this.tieneHipoteca = false;
   }
 
   // Getter para nickname
@@ -41,12 +40,7 @@ export default class Jugador {
     return this._color;
   }
   set color(valor) {
-    const coloresValidos = [
-      "amarillo",
-      "azul",
-      "rojo",
-      "verde",
-    ];
+    const coloresValidos = ["amarillo", "azul", "rojo", "verde"];
     if (!coloresValidos.includes(valor)) {
       throw new Error("Color no válido para el jugador.");
     }
@@ -82,35 +76,21 @@ export default class Jugador {
     }
   }
 
-  // Método para hipotecar propiedad
-  hipotecar() {
-    this.tieneHipoteca = true;
-  }
-
-  // Método para cancelar hipoteca
-  cancelarHipoteca() {
-    this.tieneHipoteca = false;
-  }
-
-  //Pagar renta a otro jugador
-  pagarRenta(duenio, renta) {
+  // Pagar renta a otro jugador
+  pagarRenta(dueño, renta) {
     if (this.dinero >= renta) {
       this.dinero -= renta;
-      duenio.dinero += renta;
-      console.log(`${this.nickname} pagó ${renta} a ${duenio.nickname}`);
+      dueño.dinero += renta;
+      console.log(`${this.nickname} pagó ${renta} a ${dueño.nickname}`);
     } else {
       console.log(
         `${this.nickname} no tiene suficiente dinero para pagar la renta.`
       );
-      // Aquí podrías implementar reglas: vender propiedades, hipotecar, o declararse en bancarrota
     }
   }
 
   // Pagar impuestos
   pagarImpuestos(monto) {
-    if (monto !== 100 && monto !== 200) {
-      throw new Error("El impuesto debe ser 100 o 200.");
-    }
     if (this.dinero >= monto) {
       this.dinero -= monto;
       console.log(`${this.nickname} pagó ${monto} en impuestos.`);
@@ -128,7 +108,6 @@ export default class Jugador {
       let valorProp = prop.price;
       if (prop.casas) valorProp += prop.casas * 100;
       if (prop.hotel) valorProp += 200; // hotel vale 200 según doc
-      if (prop.hipotecada) valorProp -= prop.mortgage;
       patrimonio += valorProp;
     });
     return patrimonio;
@@ -202,82 +181,6 @@ export default class Jugador {
     console.log(`Hotel construido en ${propiedad.name} por $250`);
   }
 
-  //Metodo para comprar propiedad con modal bootstrap
-  mostrarModalComprarPropiedad(casillas) {
-    // Verificar que se pasó el array de casillas
-    if (!casillas || !Array.isArray(casillas)) {
-      console.error("Error: Se requiere un array de casillas");
-      return;
-    }
-
-    const casilla = casillas[this.posicion];
-    const modalBody = document.getElementById("modalComprarPropiedadBody");
-    const modalHeader = document.getElementById("modalPropiedadHeader");
-
-    // Obtener (o crear si no existe) el título dentro del header
-    let modalTitle = modalHeader.querySelector(".modal-title");
-    if (!modalTitle) {
-      modalTitle = document.createElement("h5");
-      modalTitle.className = "modal-title";
-      modalHeader.insertBefore(modalTitle, modalHeader.firstChild);
-    }
-    // Asegurar id para accesibilidad (coincide con aria-labelledby)
-    modalTitle.id = "modalPropiedadLabel";
-
-    if (casilla && casilla.type === "property") {
-      // Pintar el header con el color del grupo
-      modalHeader.style.backgroundColor = casilla.color;
-      modalHeader.style.color = "white";
-      modalHeader.style.borderRadius = "5px 5px 0 0";
-      // Aquí sí asignamos el nombre de la casilla al título (texto, no HTML)
-      modalTitle.textContent = casilla.name || "Propiedad";
-
-      // Llenar dinámicamente el modal
-      modalBody.innerHTML = `
-            
-            <table class="table table-borderless mt-3">
-                <tbody>
-                    <tr>
-                        <td><strong>Precio de compra</strong></td>
-                        <td>$${casilla.price}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Renta base</strong></td>
-                        <td>$${casilla.rent.base}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <p class="text-muted">Posición actual: ${this.posicion}</p>
-        `;
-
-      // Configurar el botón de comprar
-      const btnComprar = document.getElementById("btnComprarPropiedad");
-      btnComprar.onclick = () => {
-        try {
-          this.comprarPropiedad(casilla, casilla.price);
-          alert(`¡Has comprado ${casilla.name} por $${casilla.price}!`);
-
-          console.log(`Propiedades de ${this.nickname}:`, this.propiedades);
-          console.log(`Dinero restante: $${this.dinero}`);
-
-          // Cerrar modal
-          const modal = bootstrap.Modal.getInstance(
-            document.getElementById("modalComprarPropiedad")
-          );
-          modal.hide();
-        } catch (error) {
-          alert(`Error: ${error.message}`);
-        }
-      };
-
-      // Mostrar el modal
-      let modal = new bootstrap.Modal(
-        document.getElementById("modalComprarPropiedad")
-      );
-      modal.show();
-    }
-  }
-
   /**
    * Muestra modal para construir casas/hoteles en propiedades del mismo color
    * Solo se muestra si el jugador tiene monopolio del color
@@ -312,7 +215,7 @@ export default class Jugador {
     );
 
     // Construir tabla con todas las propiedades del grupo
-  let html = `
+    let html = `
     <h6 class="text-center">Grupo: ${casillaActual.color.toUpperCase()}</h6>
     <h6 class="text-center">Cada casa vale $100</h6>
     <h6 class="text-center">El hotel vale $250</h6>
@@ -351,7 +254,9 @@ export default class Jugador {
       html += `
       <tr>
         <td>${propiedad.name}</td>
-        <td>${propiedad.hotel ? "HOTEL" : (propiedad.casas || 0) + " casas"}</td>
+        <td>${
+          propiedad.hotel ? "HOTEL" : (propiedad.casas || 0) + " casas"
+        }</td>
         <td>$${rentaFutura}</td>
         <td>
           <button class="btn btn-success btn-sm btn-construir" 
@@ -363,7 +268,7 @@ export default class Jugador {
         </td>
       </tr>
     `;
-  });
+    });
 
     html += `</tbody></table>`;
     modalBody.innerHTML = html;
@@ -400,14 +305,16 @@ export default class Jugador {
   }
 
   mostrarJugador(index) {
-    const contenedor = document.querySelector(`.perfil-jugador[data-index="${index}"]`);
+    const contenedor = document.querySelector(
+      `.perfil-jugador[data-index="${index}"]`
+    );
     if (!contenedor) return;
 
     const colorFichaMap = {
       amarillo: "#FFD700",
       azul: "#1E90FF",
       rojo: "#FF4500",
-      verde: "#32CD32"
+      verde: "#32CD32",
     };
 
     // Traducir color lógico → color real
@@ -417,11 +324,10 @@ export default class Jugador {
     const icono = contenedor.querySelector(".iconoPerfil");
     icono.style.border = `4px solid ${colorCSS}`;
 
-
     // Bandera (usando flagsapi.com)
     const bandera = contenedor.querySelector(".bandera");
-    const paisCodigo = this.pais.split('-')[0].toUpperCase();
-    bandera.src = `https://flagsapi.com/${paisCodigo}/flat/32.png`;
+    const paisCodigo = this.pais.trim().split("-")[0].toUpperCase();
+    bandera.src = `https://flagsapi.com/${paisCodigo}/shiny/32.png`;
 
     // Nickname
     const nombreLabel = contenedor.querySelector(".nombre");
@@ -430,5 +336,95 @@ export default class Jugador {
     // Dinero
     const dineroLabel = contenedor.querySelector(".dinero");
     dineroLabel.textContent = `$${this.dinero}`;
+  }
+
+  /**
+   * Actualiza visualmente una casilla para mostrar que pertenece al jugador
+   * @param {Object} propiedad - Objeto de la propiedad comprada
+   */
+  actualizarCasillaPropiedad(propiedad) {
+    const casilla = document.querySelector(`[data-id="${propiedad.id}"]`);
+    if (!casilla) {
+      console.warn(`No se encontró la casilla con ID ${propiedad.id}`);
+      return;
+    }
+
+    // Obtener el color de la ficha del jugador
+    const colorFichaMap = {
+      amarillo: "#FFD700",
+      azul: "#1E90FF",
+      rojo: "#FF4500",
+      verde: "#32CD32",
+    };
+
+    const colorJugador = colorFichaMap[this.color] || "#999999";
+
+    // Remover indicador de dueño anterior si existe
+    const statusAnterior = casilla.querySelector(".status-owner");
+    if (statusAnterior) {
+      statusAnterior.remove();
+    }
+
+    // Crear indicador de dueño
+    const statusOwner = document.createElement("div");
+    statusOwner.className = "status-owner";
+    statusOwner.style.cssText = `
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: ${colorJugador};
+    border: 2px solid #fff;
+    box-shadow: 0 0 3px rgba(0,0,0,0.5);
+    z-index: 10;
+  `;
+
+    // Agregar tooltip con información del dueño
+    statusOwner.title = `Propiedad de ${this.nickname}`;
+
+    // Agregar el indicador a la casilla
+    casilla.style.position = "relative";
+    casilla.appendChild(statusOwner);
+
+    console.log(
+      `Casilla ${propiedad.name} marcada como propiedad de ${this.nickname}`
+    );
+  }
+
+  /**
+   * Remueve el indicador visual de propiedad de una casilla
+   * @param {Object} propiedad - Objeto de la propiedad a liberar
+   */
+  liberarCasillaPropiedad(propiedad) {
+    const casilla = document.querySelector(`[data-id="${propiedad.id}"]`);
+    if (!casilla) return;
+
+    const statusOwner = casilla.querySelector(".status-owner");
+    if (statusOwner) {
+      statusOwner.remove();
+      console.log(`Indicador de propiedad removido de ${propiedad.name}`);
+    }
+  }
+
+  /**
+   * Versión mejorada del método comprarPropiedad que actualiza la casilla visualmente
+   */
+  comprarPropiedadConIndicador(propiedad, precio) {
+    // Llamar al método original
+    if (this.dinero >= precio) {
+      this.dinero -= precio;
+      this.propiedades.push(propiedad);
+
+      // Actualizar la casilla visualmente
+      this.actualizarCasillaPropiedad(propiedad);
+
+      console.log(`${this.nickname} compró ${propiedad.name} por $${precio}`);
+    } else {
+      throw new Error(
+        "No tienes suficiente dinero para comprar esta propiedad."
+      );
+    }
   }
 }

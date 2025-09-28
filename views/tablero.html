@@ -6,9 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Tablero Monopoly</title>
 
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
     <!-- Estilos -->
     <link rel="stylesheet" href="styles/tablero.css" />
     <link rel="stylesheet" href="styles/dados.css" />
+    <link rel="stylesheet" href="styles/modal-comprarPropiedad.css" />
   </head>
 
   <body>
@@ -20,32 +27,48 @@
         <div class="jugadores">
           <!-- Jugador 1 -->
           <div class="perfil-jugador" data-index="0">
-            <img class="iconoPerfil" src="../../assets/img/iconoPerfil.webp" alt="Jugador 1" />
-            <img class="bandera" src="" alt="Bandera">
+            <img
+              class="iconoPerfil"
+              src="../../assets/img/iconoPerfil.webp"
+              alt="Jugador 1"
+            />
+            <img class="bandera" src="" alt="Bandera" />
             <label class="nombre"></label>
             <span class="dinero"></span>
           </div>
 
           <!-- Jugador 2 -->
           <div class="perfil-jugador" data-index="1">
-            <img class="iconoPerfil" src="../../assets/img/iconoPerfil.webp" alt="Jugador 2" />
-            <img class="bandera" src="" alt="Bandera">
+            <img
+              class="iconoPerfil"
+              src="../../assets/img/iconoPerfil.webp"
+              alt="Jugador 2"
+            />
+            <img class="bandera" src="" alt="Bandera" />
             <label class="nombre"></label>
             <span class="dinero"></span>
           </div>
 
           <!-- Jugador 3 -->
           <div class="perfil-jugador" data-index="2">
-            <img class="iconoPerfil" src="../../assets/img/iconoPerfil.webp" alt="Jugador 3" />
-            <img class="bandera" src="" alt="Bandera">
+            <img
+              class="iconoPerfil"
+              src="../../assets/img/iconoPerfil.webp"
+              alt="Jugador 3"
+            />
+            <img class="bandera" src="" alt="Bandera" />
             <label class="nombre"></label>
             <span class="dinero"></span>
           </div>
 
           <!-- Jugador 4 -->
           <div class="perfil-jugador" data-index="3">
-            <img class="iconoPerfil" src="../../assets/img/iconoPerfil.webp" alt="Jugador 4" />
-            <img class="bandera" src="" alt="Bandera">
+            <img
+              class="iconoPerfil"
+              src="../../assets/img/iconoPerfil.webp"
+              alt="Jugador 4"
+            />
+            <img class="bandera" src="" alt="Bandera" />
             <label class="nombre"></label>
             <span class="dinero"></span>
           </div>
@@ -138,46 +161,65 @@
           ></div>
 
           <!-- Esquina inferior derecha: Salida -->
-          <!-- Esquina inferior derecha: Salida -->
           <div class="corner br go" id="go" data-id="0" data-name="go">
             <span class="corner-label">Salida</span>
             <!-- Aquí aparecerán las fichas -->
           </div>
-      <!-- Panel de jugadores -->
-      <div class="jugadores">
-        <!-- Jugador 1 -->
-        <div class="perfil-jugador" data-index="0">
-          <img class="iconoPerfil" src="../../assets/img/iconoPerfil.webp" alt="Jugador 1" />
-          <img class="bandera" src="" alt="Bandera" />
-          <label class="nombre"></label>
-          <span class="dinero"></span>
-        </div>
-
-        <!-- Jugador 2 -->
-        <div class="perfil-jugador" data-index="1">
-          <img class="iconoPerfil" src="../../assets/img/iconoPerfil.webp" alt="Jugador 2" />
-          <img class="bandera" src="" alt="Bandera" />
-          <label class="nombre"></label>
-          <span class="dinero"></span>
-        </div>
-
-        <!-- Jugador 3 -->
-        <div class="perfil-jugador" data-index="2">
-          <img class="iconoPerfil" src="../../assets/img/iconoPerfil.webp" alt="Jugador 3" />
-          <img class="bandera" src="" alt="Bandera" />
-          <label class="nombre"></label>
-          <span class="dinero"></span>
-        </div>
-
-        <!-- Jugador 4 -->
-        <div class="perfil-jugador" data-index="3">
-          <img class="iconoPerfil" src="../../assets/img/iconoPerfil.webp" alt="Jugador 4" />
-          <img class="bandera" src="" alt="Bandera" />
-          <label class="nombre"></label>
-          <span class="dinero"></span>
         </div>
       </div>
     </div>
+
+    <!-- Modal del perfil del jugador -->
+    <div class="modal fade" id="modalJugador" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Perfil de Jugador</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar"
+            ></button>
+          </div>
+          <div class="modal-body p-0">
+            <!-- Aquí se incrusta la página pestañaJugador -->
+            <iframe
+              id="iframeJugador"
+              src=""
+              width="100%"
+              height="500px"
+              style="border: none"
+            ></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Bootstrap Comprar Propiedad -->
+    <div  class="modal fade"  id="modalComprarPropiedad"  tabindex="-1"  aria-labelledby="modalPropiedadLabel"  aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header" id="modalPropiedadHeader">
+            <h5 class="modal-title titulo-modal">Comprar Propiedad</h5>
+            <button  type="button"  class="btn-close"  data-bs-dismiss="modal"  aria-label="Cerrar"></button>
+          </div>
+
+          <div class="modal-body" id="modalComprarPropiedadBody">
+            <!-- Aquí se inyecta la info con JS (jugador.js) -->
+          </div>
+          <div class="modal-footer">
+            <div class="contenedor-botones">
+              <button type="button" class="boton-cancelar" data-bs-dismiss="modal">Cancelar</button>
+              <button type="button" class="boton-comprar" id="btnComprarPropiedad">Comprar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Scripts -->
     <script type="module" src="../controllers/tablero.js"></script>
