@@ -291,7 +291,6 @@ export function crearFichas() {
 
 
 // ----------------- moverFicha -----------------
-
 export function moverFicha(jugadorIndex, pasos) {
   let indiceActual = posiciones[jugadorIndex] ?? 0;
   let nuevoIndice = (indiceActual + pasos) % ordenTablero.length;
@@ -355,7 +354,6 @@ export function moverFicha(jugadorIndex, pasos) {
 
     return; // Salir, no continuar con compra/renta
   }
-
 
   // --- NUEVA SECCIÓN: Verificar si la casilla es de tipo especial (chance, community_chest, tax) ---
   if (
@@ -443,7 +441,6 @@ export function moverFicha(jugadorIndex, pasos) {
       break;
     }
   }
-
 
   // referencia al jugador que se movió (instancia o plano)
   jugadorObj = window.jugadores && window.jugadores[jugadorIndex] ? window.jugadores[jugadorIndex] : jugadoresActivos[jugadorIndex];
@@ -619,6 +616,31 @@ export function moverFicha(jugadorIndex, pasos) {
         duenio.nickname || duenio.nombre
       }`
     );
+    return; // Salir después del pago de renta
+  }
+
+  // ============= NUEVA SECCIÓN: MODAL CASA/HOTEL =============
+  // Verificar si el jugador puede construir casas/hoteles
+  // (Solo si es el dueño de la propiedad y es una property, no railroad)
+  if (
+    casillaData.type === "property" &&
+    jugadorObj && 
+    duenio && 
+    samePlayer(duenio, jugadorObj) &&
+    typeof jugadorObj.verificarYMostrarModalConstruccion === "function"
+  ) {
+    console.log(`${jugadorObj.nickname || jugadorObj.nombre} cayó en su propia propiedad: ${casillaObj.name}`);
+    
+    // Verificar si el jugador es dueño de esta propiedad
+    const esPropio = jugadorObj.propiedades.some(prop => 
+      String(prop.id) === String(nuevaId)
+    );
+    
+    if (esPropio) {
+      // Llamar al nuevo método que verificará monopolio y mostrará el modal
+      console.log("Verificando posibilidad de construcción...");
+      jugadorObj.verificarYMostrarModalConstruccion(nuevaId);
+    }
   }
 }
 
