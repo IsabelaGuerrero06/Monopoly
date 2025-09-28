@@ -871,3 +871,184 @@ function actualizarCasillaManual(propiedad, jugador) {
   casilla.style.position = "relative";
   casilla.appendChild(statusOwner);
 }
+
+/**
+ * Actualiza el indicador visual de una propiedad hipotecada (punto gris)
+ * @param {Object} propiedad - Objeto de la propiedad hipotecada
+ * @param {Object} jugador - Objeto del jugador propietario
+ */
+export function marcarPropiedadHipotecada(propiedad, jugador) {
+  const casilla = document.querySelector(`[data-id="${propiedad.id}"]`);
+  if (!casilla) {
+    console.warn(`No se encontró la casilla con ID ${propiedad.id}`);
+    return;
+  }
+
+  const statusOwner = casilla.querySelector(".status-owner");
+  if (statusOwner) {
+    // Cambiar a gris para indicar hipoteca
+    statusOwner.style.backgroundColor = "#808080";
+    statusOwner.style.border = "2px solid #666";
+    statusOwner.title = `Propiedad de ${jugador.nombre || jugador.nickname} (HIPOTECADA)`;
+    
+    // Añadir clase para identificación
+    statusOwner.classList.add("hipotecada");
+    
+    console.log(`Propiedad ${propiedad.name} marcada como hipotecada`);
+  } else {
+    console.warn(`No se encontró el indicador de propiedad para ${propiedad.name}`);
+  }
+}
+
+/**
+ * Restaura el indicador visual de una propiedad cuando se deshipoteca
+ * @param {Object} propiedad - Objeto de la propiedad deshipotecada
+ * @param {Object} jugador - Objeto del jugador propietario
+ */
+export function desmarcarPropiedadHipotecada(propiedad, jugador) {
+  const casilla = document.querySelector(`[data-id="${propiedad.id}"]`);
+  if (!casilla) {
+    console.warn(`No se encontró la casilla con ID ${propiedad.id}`);
+    return;
+  }
+
+  const statusOwner = casilla.querySelector(".status-owner");
+  if (statusOwner) {
+    // Restaurar color original del jugador
+    const colorFichaMap = {
+      amarillo: "#FFD700",
+      azul: "#1E90FF",
+      rojo: "#FF4500",
+      verde: "#32CD32",
+      rosa: "#FF69B4",
+      violeta: "#8B00FF",
+      naranja: "#FFA500",
+      celeste: "#87CEEB",
+      morado: "#8B00FF",
+      cyan: "#00FFFF",
+      magenta: "#FF00FF",
+    };
+
+    const colorJugador = jugador.colorHex || colorFichaMap[jugador.color] || "#999999";
+    
+    statusOwner.style.backgroundColor = colorJugador;
+    statusOwner.style.border = "2px solid #fff";
+    statusOwner.title = `Propiedad de ${jugador.nombre || jugador.nickname}`;
+    
+    // Remover clase de hipotecada
+    statusOwner.classList.remove("hipotecada");
+    
+    console.log(`Propiedad ${propiedad.name} desmarcada como hipotecada`);
+  } else {
+    console.warn(`No se encontró el indicador de propiedad para ${propiedad.name}`);
+  }
+}
+
+/**
+ * Actualiza el estado visual de todas las propiedades de un jugador
+ * Útil para sincronizar el estado visual tras cambios en lotes
+ * @param {Object} jugador - Objeto del jugador
+ */
+export function actualizarEstadoVisualPropiedades(jugador) {
+  if (!jugador.propiedades || !Array.isArray(jugador.propiedades)) {
+    console.warn("El jugador no tiene propiedades válidas");
+    return;
+  }
+
+  // Actualizar propiedades normales
+  jugador.propiedades.forEach(propiedad => {
+    actualizarCasillaManual(propiedad, jugador);
+  });
+
+  // Marcar propiedades hipotecadas si existen
+  if (jugador.hipotecas && Array.isArray(jugador.hipotecas)) {
+    jugador.hipotecas.forEach(propiedadHipotecada => {
+      marcarPropiedadHipotecada(propiedadHipotecada, jugador);
+    });
+  }
+}
+
+/**
+ * Función auxiliar mejorada que incluye manejo de hipotecas
+ * Extiende la funcionalidad de actualizarCasillaManual original
+ * @param {Object} propiedad - Objeto de la propiedad
+ * @param {Object} jugador - Objeto del jugador propietario
+ * @param {boolean} esHipotecada - Si la propiedad está hipotecada
+ */
+export function actualizarCasillaConHipoteca(propiedad, jugador, esHipotecada = false) {
+  const casilla = document.querySelector(`[data-id="${propiedad.id}"]`);
+  if (!casilla) return;
+
+  const colorFichaMap = {
+    amarillo: "#FFD700",
+    azul: "#1E90FF", 
+    rojo: "#FF4500",
+    verde: "#32CD32",
+    rosa: "#FF69B4",
+    violeta: "#8B00FF",
+    naranja: "#FFA500",
+    celeste: "#87CEEB",
+    morado: "#8B00FF",
+    cyan: "#00FFFF",
+    magenta: "#FF00FF",
+  };
+
+  // Determinar color según estado de hipoteca
+  const colorJugador = esHipotecada 
+    ? "#808080"  // Gris para hipotecada
+    : (jugador.colorHex || colorFichaMap[jugador.color] || "#999999");
+
+  // Remover indicador anterior
+  const statusAnterior = casilla.querySelector(".status-owner");
+  if (statusAnterior) statusAnterior.remove();
+
+  // Crear nuevo indicador
+  const statusOwner = document.createElement("div");
+  statusOwner.className = "status-owner";
+  
+  if (esHipotecada) {
+    statusOwner.classList.add("hipotecada");
+  }
+
+  statusOwner.style.cssText = `
+    position: absolute; top: 2px; right: 2px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background-color: ${colorJugador};
+    border: 2px solid ${esHipotecada ? '#666' : '#fff'};
+    box-shadow: 0 0 3px rgba(0,0,0,0.5);
+    z-index: 10;
+  `;
+
+  const estadoTexto = esHipotecada ? " (HIPOTECADA)" : "";
+  statusOwner.title = `Propiedad de ${jugador.nombre || jugador.nickname}${estadoTexto}`;
+
+  casilla.style.position = "relative";
+  casilla.appendChild(statusOwner);
+}
+
+/**
+ * Función de utilidad para verificar si una propiedad está hipotecada
+ * @param {Object} propiedad - Objeto de la propiedad a verificar
+ * @param {Object} jugador - Objeto del jugador propietario
+ * @returns {boolean} - true si está hipotecada, false si no
+ */
+export function esPropiedadHipotecada(propiedad, jugador) {
+  if (!jugador.hipotecas || !Array.isArray(jugador.hipotecas)) {
+    return false;
+  }
+  
+  return jugador.hipotecas.some(hipoteca => {
+    const idHipoteca = hipoteca.id || hipoteca;
+    const idPropiedad = propiedad.id || propiedad;
+    return String(idHipoteca) === String(idPropiedad);
+  });
+}
+
+// ========== EXPONER FUNCIONES GLOBALMENTE ==========
+// Para que puedan ser llamadas desde otros archivos
+
+window.marcarPropiedadHipotecada = marcarPropiedadHipotecada;
+window.desmarcarPropiedadHipotecada = desmarcarPropiedadHipotecada;
+window.actualizarEstadoVisualPropiedades = actualizarEstadoVisualPropiedades;
+window.actualizarCasillaConHipoteca = actualizarCasillaConHipoteca;
+window.esPropiedadHipotecada = esPropiedadHipotecada;

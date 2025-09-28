@@ -1,4 +1,9 @@
 import Jugador from "../models/Jugador.js";
+import {
+  marcarPropiedadHipotecada,
+  desmarcarPropiedadHipotecada,
+} from "./ficha.js";
+
 // controllers/tablero.js
 const ENDPOINT = "http://127.0.0.1:5000/board";
 
@@ -159,7 +164,8 @@ function crearJugadores() {
   jugadores.length = 0;
 
   // Obtener cantidad de jugadores activos
-  const cantidadJugadores = parseInt(localStorage.getItem("cantidadJugadores")) || 2;
+  const cantidadJugadores =
+    parseInt(localStorage.getItem("cantidadJugadores")) || 2;
 
   // Crear solo la cantidad de jugadores seleccionada
   for (let i = 0; i < cantidadJugadores && i < infoJugadores.length; i++) {
@@ -221,11 +227,16 @@ function mostrarPerfilesActivos() {
 
 function actualizarJugadores() {
   // 1. Guardar el estado actual de los jugadores en localStorage
-  localStorage.setItem("jugadores", JSON.stringify(jugadores.map(j => ({
-    ...j,
-    enCarcel: j.enCarcel || false,
-    turnosEnCarcel: j.turnosEnCarcel || 0
-  }))));
+  localStorage.setItem(
+    "jugadores",
+    JSON.stringify(
+      jugadores.map((j) => ({
+        ...j,
+        enCarcel: j.enCarcel || false,
+        turnosEnCarcel: j.turnosEnCarcel || 0,
+      }))
+    )
+  );
 
   // 2. Volver a pintar los jugadores en el DOM (perfil, dinero, propiedades, etc.)
   jugadores.forEach((jugador, index) => {
@@ -247,16 +258,28 @@ function hipotecarProp(propiedadId) {
   }
   if (!jugadorActivo) return;
 
-  const nick = jugadorActivo._nickname || jugadorActivo.nickname || jugadorActivo.nombre;
+  const nick =
+    jugadorActivo._nickname || jugadorActivo.nickname || jugadorActivo.nombre;
 
   // Buscar la instancia real en window.jugadores (si existen instancias)
-  const jugadorReal = (window.jugadores || []).find(j =>
-    j.nickname === nick || j._nickname === nick || j.nombre === nick
+  const jugadorReal = (window.jugadores || []).find(
+    (j) => j.nickname === nick || j._nickname === nick || j.nombre === nick
   );
 
   if (!jugadorReal) {
-    console.warn("No se encontró la instancia real del jugador para hipotecar:", nick);
+    console.warn(
+      "No se encontró la instancia real del jugador para hipotecar:",
+      nick
+    );
     return;
+  }
+
+  // Buscar la propiedad antes de hipotecar para marcarla visualmente
+  let propiedadAHipotecar = null;
+  if (jugadorReal.propiedades && Array.isArray(jugadorReal.propiedades)) {
+    propiedadAHipotecar = jugadorReal.propiedades.find(
+      (p) => p.id === propiedadId || String(p.id) === String(propiedadId)
+    );
   }
 
   // Si el método de la clase está disponible, usarlo
@@ -264,25 +287,41 @@ function hipotecarProp(propiedadId) {
     jugadorReal.hipotecarPropiedad(propiedadId);
   } else {
     // Fallback para objetos planos (por si 'jugadorReal' viene de localStorage sin métodos)
-    const idx = (jugadorReal.propiedades || []).findIndex(p => p.id === propiedadId);
+    const idx = (jugadorReal.propiedades || []).findIndex(
+      (p) => p.id === propiedadId || String(p.id) === String(propiedadId)
+    );
     if (idx === -1) {
       console.warn("Propiedad no encontrada en jugador (fallback).");
       return;
     }
     const propiedad = jugadorReal.propiedades[idx];
-    const mortgageValue = propiedad.mortgage ?? Math.floor((propiedad.price || 0) / 2);
+    const mortgageValue =
+      propiedad.mortgage ?? Math.floor((propiedad.price || 0) / 2);
 
     jugadorReal.dinero = (jugadorReal.dinero || 0) + mortgageValue;
     jugadorReal.hipotecas = jugadorReal.hipotecas || [];
     jugadorReal.hipotecas.push(propiedad);
     jugadorReal.propiedades.splice(idx, 1);
 
-    console.log(`${jugadorReal.nickname || jugadorReal.nombre} hipotecó ${propiedad.name} y recibió $${mortgageValue}`);
+    console.log(
+      `${jugadorReal.nickname || jugadorReal.nombre} hipotecó ${
+        propiedad.name
+      } y recibió $${mortgageValue}`
+    );
+  }
+
+  //  Marcar visualmente la propiedad como hipotecada
+  if (propiedadAHipotecar) {
+    marcarPropiedadHipotecada(propiedadAHipotecar, jugadorReal);
   }
 
   // Persistir cambios en localStorage para que el iframe vea el estado actualizado
   try {
-    if (window.jugadores && Array.isArray(window.jugadores) && window.jugadores.length > 0) {
+    if (
+      window.jugadores &&
+      Array.isArray(window.jugadores) &&
+      window.jugadores.length > 0
+    ) {
       localStorage.setItem("jugadores", JSON.stringify(window.jugadores));
     }
     // Actualizar jugadorActivo (para el iframe)
@@ -298,24 +337,35 @@ function hipotecarProp(propiedadId) {
 
   return true;
 }
-// Exponer la función al scope global para que el iframe la pueda llamar vía parent.hipotecarProp(...)
-window.hipotecarProp = hipotecarProp;
 
 function deshipotecarProp(propiedadId) {
   const jugador = JSON.parse(localStorage.getItem("jugadorActivo"));
   if (!jugador) return;
 
   const nick = jugador._nickname || jugador.nickname || jugador.nombre;
-  const jugadorReal = (window.jugadores || []).find(j =>
-    j.nickname === nick || j._nickname === nick || j.nombre === nick
+  const jugadorReal = (window.jugadores || []).find(
+    (j) => j.nickname === nick || j._nickname === nick || j.nombre === nick
   );
   if (!jugadorReal) return;
+
+  // Buscar la propiedad hipotecada antes de deshipotecar
+  let propiedadADeshipotecar = null;
+  if (jugadorReal.hipotecas && Array.isArray(jugadorReal.hipotecas)) {
+    propiedadADeshipotecar = jugadorReal.hipotecas.find(
+      (p) => p.id === propiedadId || String(p.id) === String(propiedadId)
+    );
+  }
 
   if (typeof jugadorReal.deshipotecarPropiedad === "function") {
     jugadorReal.deshipotecarPropiedad(propiedadId);
   }
 
-  // 🔹 Persistir cambios igual que en hipotecarProp
+  //Desmarcar visualmente la propiedad como hipotecada
+  if (propiedadADeshipotecar) {
+    desmarcarPropiedadHipotecada(propiedadADeshipotecar, jugadorReal);
+  }
+
+  // Persistir cambios igual que en hipotecarProp
   try {
     if (window.jugadores?.length > 0) {
       localStorage.setItem("jugadores", JSON.stringify(window.jugadores));
@@ -329,9 +379,9 @@ function deshipotecarProp(propiedadId) {
     window.actualizarJugadores();
   }
 }
+
+window.hipotecarProp = hipotecarProp;
 window.deshipotecarProp = deshipotecarProp;
-
-
 
 // Inicializar todo
 crearJugadores();
@@ -371,13 +421,16 @@ window.addEventListener("DOMContentLoaded", () => {
     console.log("Jugador actual estado cárcel:", {
       nombre: jugadorActual.nombre || jugadorActual.nickname,
       enCarcel: jugadorActual.enCarcel,
-      turnos: jugadorActual.turnosEnCarcel
+      turnos: jugadorActual.turnosEnCarcel,
     });
-
 
     // Verificar si está en la cárcel
     if (jugadorActual.enCarcel) {
-      console.log(`${jugadorActual.nombre || jugadorActual.nickname} está en la cárcel (${jugadorActual.turnosEnCarcel} turnos restantes)`);
+      console.log(
+        `${jugadorActual.nombre || jugadorActual.nickname} está en la cárcel (${
+          jugadorActual.turnosEnCarcel
+        } turnos restantes)`
+      );
 
       const modal = new bootstrap.Modal(document.getElementById("modalCarcel"));
       modal.show();
@@ -404,9 +457,19 @@ window.addEventListener("DOMContentLoaded", () => {
         if (jugadorActual.turnosEnCarcel <= 0) {
           jugadorActual.enCarcel = false;
           jugadorActual.turnosEnCarcel = 0;
-          console.log(`${jugadorActual.nickname || jugadorActual.nombre} salió de la cárcel gratis`);
+          console.log(
+            `${
+              jugadorActual.nickname || jugadorActual.nombre
+            } salió de la cárcel gratis`
+          );
         } else {
-          console.log(`${jugadorActual.nickname || jugadorActual.nombre} decidió esperar, le quedan ${jugadorActual.turnosEnCarcel} turnos en la cárcel`);
+          console.log(
+            `${
+              jugadorActual.nickname || jugadorActual.nombre
+            } decidió esperar, le quedan ${
+              jugadorActual.turnosEnCarcel
+            } turnos en la cárcel`
+          );
         }
 
         window.actualizarJugadores?.();
@@ -414,23 +477,32 @@ window.addEventListener("DOMContentLoaded", () => {
 
         // Aquí está la clave: saltamos al siguiente jugador
         const nuevoTurno = siguienteTurno();
-        console.log(`Turno de ${getJugadorActual().nombre || getJugadorActual().nickname}`);
+        console.log(
+          `Turno de ${getJugadorActual().nombre || getJugadorActual().nickname}`
+        );
       };
-
 
       return; // Salir, no mover ficha todavía
     }
 
     // Si no está en cárcel → mover normal
-    console.log(`${jugadorActual.nombre || jugadorActual.nickname} avanza ${total} pasos`);
+    console.log(
+      `${jugadorActual.nombre || jugadorActual.nickname} avanza ${total} pasos`
+    );
     moverFicha(jugadorIndex, total);
 
     // Si no sacó dobles → pasar turno
     if (dice1 !== dice2) {
       const nuevoTurno = siguienteTurno();
-      console.log(`Turno de ${getJugadorActual().nickname || getJugadorActual().nombre}`);
+      console.log(
+        `Turno de ${getJugadorActual().nickname || getJugadorActual().nombre}`
+      );
     } else {
-      console.log(`${jugadorActual.nombre || jugadorActual.nickname} repite turno (dobles) 🎲🎲`);
+      console.log(
+        `${
+          jugadorActual.nombre || jugadorActual.nickname
+        } repite turno (dobles) 🎲🎲`
+      );
     }
     console.log("DEBUG jugadorActual:", jugadorActual);
   });
