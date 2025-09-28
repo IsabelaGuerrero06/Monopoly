@@ -237,6 +237,16 @@ function actualizarJugadores() {
 
 window.actualizarJugadores = actualizarJugadores;
 
+function hipotecarProp(propiedadId) {
+  const jugador = JSON.parse(localStorage.getItem("jugadorActivo"));
+  if (!jugador) return;
+
+  // Buscar en window.jugadores para obtener la instancia real
+  const jugadorReal = window.jugadores.find(j => j.nickname === jugador._nickname);
+  if (!jugadorReal) return;
+
+  jugadorReal.hipotecarPropiedad(propiedadId);
+}
 
 // Inicializar todo
 crearJugadores();

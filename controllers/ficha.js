@@ -326,12 +326,12 @@ export function moverFicha(jugadorIndex, pasos) {
 
   // --- MANEJO DE CASILLAS ESPECIALES DE ESQUINA ---
   if (nuevaId === 10) {
-    console.log(`${jugadorObj.nombre} está en la Cárcel (solo de visita). No pasa nada.`);
+    console.log(`${jugadorObj.nombre || jugadorObj.nickname} está en la Cárcel (solo de visita). No pasa nada.`);
     return;
   }
 
   if (nuevaId === 20) {
-    console.log(`${jugadorObj.nombre} está en el Parqueadero Gratis. No pasa nada.`);
+    console.log(`${jugadorObj.nombre || jugadorObj.nickname} está en el Parqueadero Gratis. No pasa nada.`);
     return;
   }
 
@@ -430,6 +430,7 @@ export function moverFicha(jugadorIndex, pasos) {
 
   // helper para comparar ids (permite string/number)
   const idsEqual = (a, b) => String(a) === String(b);
+
   let duenio = null;
   for (const p of listaJugadores) {
     if (
@@ -546,6 +547,17 @@ export function moverFicha(jugadorIndex, pasos) {
   };
 
   if (jugadorObj && duenio && !samePlayer(duenio, jugadorObj)) {
+    // VERIFICAR SI LA PROPIEDAD ESTÁ HIPOTECADA
+    if (
+      duenio.hipotecas &&
+      duenio.hipotecas.some((p) => String(p.id) === String(casillaObj.id))
+    ) {
+      console.log(
+        `${casillaObj.name} está hipotecada, no se cobra renta a ${jugadorObj.nombre}`
+      );
+      return;
+    }
+
     let renta = 0;
 
     if (casillaObj.type === "property") {
@@ -567,7 +579,7 @@ export function moverFicha(jugadorIndex, pasos) {
       }
     }
 
-    // 🚂 Ferrocarriles
+    // Ferrocarriles
     else if (casillaObj.type === "railroad") {
       const railroadsOwned = duenio.propiedades.filter(
         (p) => p.type === "railroad"

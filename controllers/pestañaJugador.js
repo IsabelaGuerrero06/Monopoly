@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const row = document.createElement("tr");
     row.innerHTML = `
       <td>${prop.name}</td>
-      <td><button class="btn btn-warning btn-sm">Hipotecar</button></td>
+      <td><button class="btn btn-warning btn-sm" onclick="hipotecarProp(${propiedad.id})">Hipotecar</button></td>
     `;
     tablaProps.appendChild(row);
   });
@@ -29,6 +29,4 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
       tablaHipotecas.appendChild(row);
     });
-});
-
-  
+}); 

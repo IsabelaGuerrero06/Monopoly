@@ -5,6 +5,7 @@ export default class Jugador {
     this.color = color;
     this.dinero = 1500;
     this.propiedades = [];
+    this.hipotecas = [];
     this.posicion = 0; // posición inicial en el tablero
     this.enCarcel = false;
     this.turnosEnCarcel = 0;
@@ -102,6 +103,32 @@ export default class Jugador {
       );
       // Aquí también podrías aplicar las reglas de bancarrota
     }
+  }
+
+  // Método para hipotecar
+  hipotecarPropiedad(propiedadId) {
+    const index = this.propiedades.findIndex(p => p.id === propiedadId);
+    if (index === -1) {
+      console.warn(`${this.nickname} no tiene la propiedad con id ${propiedadId}`);
+      return false;
+    }
+
+    const propiedad = this.propiedades[index];
+    const mortgageValue = propiedad.mortgage || Math.floor((propiedad.price || 0) / 2);
+
+    // 1. Sumar dinero al jugador
+    this.dinero += mortgageValue;
+
+    // 2. Mover propiedad a lista de hipotecas
+    this.hipotecas.push(propiedad);
+    this.propiedades.splice(index, 1);
+
+    console.log(`${this.nickname} hipotecó ${propiedad.name} y recibió $${mortgageValue}`);
+
+    // 3. Actualizar perfiles en el tablero
+    window.actualizarJugadores?.();
+
+    return true;
   }
 
   calcularPatrimonio() {
