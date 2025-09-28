@@ -433,14 +433,17 @@ export function moverFicha(jugadorIndex, pasos) {
 
   let duenio = null;
   for (const p of listaJugadores) {
-    if (
-      Array.isArray(p.propiedades) &&
-      p.propiedades.some((prop) => idsEqual(prop.id ?? prop, casillaObj.id))
-    ) {
+    const todasProps = [
+      ...(p.propiedades || []),
+      ...(p.hipotecas || []), // 👈 incluimos también las hipotecadas
+    ];
+
+    if (todasProps.some((prop) => idsEqual(prop.id ?? prop, casillaObj.id))) {
       duenio = p;
       break;
     }
   }
+
 
   // referencia al jugador que se movió (instancia o plano)
   jugadorObj = window.jugadores && window.jugadores[jugadorIndex] ? window.jugadores[jugadorIndex] : jugadoresActivos[jugadorIndex];

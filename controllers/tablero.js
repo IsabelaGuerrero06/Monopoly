@@ -238,15 +238,70 @@ function actualizarJugadores() {
 window.actualizarJugadores = actualizarJugadores;
 
 function hipotecarProp(propiedadId) {
-  const jugador = JSON.parse(localStorage.getItem("jugadorActivo"));
-  if (!jugador) return;
+  // Obtenemos el jugador "activo" guardado en localStorage (abriste el modal con ese objeto)
+  let jugadorActivo = null;
+  try {
+    jugadorActivo = JSON.parse(localStorage.getItem("jugadorActivo"));
+  } catch (e) {
+    console.warn("No se pudo parsear jugadorActivo", e);
+  }
+  if (!jugadorActivo) return;
 
-  // Buscar en window.jugadores para obtener la instancia real
-  const jugadorReal = window.jugadores.find(j => j.nickname === jugador._nickname);
-  if (!jugadorReal) return;
+  const nick = jugadorActivo._nickname || jugadorActivo.nickname || jugadorActivo.nombre;
 
-  jugadorReal.hipotecarPropiedad(propiedadId);
+  // Buscar la instancia real en window.jugadores (si existen instancias)
+  const jugadorReal = (window.jugadores || []).find(j =>
+    j.nickname === nick || j._nickname === nick || j.nombre === nick
+  );
+
+  if (!jugadorReal) {
+    console.warn("No se encontró la instancia real del jugador para hipotecar:", nick);
+    return;
+  }
+
+  // Si el método de la clase está disponible, usarlo
+  if (typeof jugadorReal.hipotecarPropiedad === "function") {
+    jugadorReal.hipotecarPropiedad(propiedadId);
+  } else {
+    // Fallback para objetos planos (por si 'jugadorReal' viene de localStorage sin métodos)
+    const idx = (jugadorReal.propiedades || []).findIndex(p => p.id === propiedadId);
+    if (idx === -1) {
+      console.warn("Propiedad no encontrada en jugador (fallback).");
+      return;
+    }
+    const propiedad = jugadorReal.propiedades[idx];
+    const mortgageValue = propiedad.mortgage ?? Math.floor((propiedad.price || 0) / 2);
+
+    jugadorReal.dinero = (jugadorReal.dinero || 0) + mortgageValue;
+    jugadorReal.hipotecas = jugadorReal.hipotecas || [];
+    jugadorReal.hipotecas.push(propiedad);
+    jugadorReal.propiedades.splice(idx, 1);
+
+    console.log(`${jugadorReal.nickname || jugadorReal.nombre} hipotecó ${propiedad.name} y recibió $${mortgageValue}`);
+  }
+
+  // Persistir cambios en localStorage para que el iframe vea el estado actualizado
+  try {
+    if (window.jugadores && Array.isArray(window.jugadores) && window.jugadores.length > 0) {
+      localStorage.setItem("jugadores", JSON.stringify(window.jugadores));
+    }
+    // Actualizar jugadorActivo (para el iframe)
+    localStorage.setItem("jugadorActivo", JSON.stringify(jugadorReal));
+  } catch (e) {
+    console.warn("No se pudo actualizar localStorage tras hipotecar:", e);
+  }
+
+  // Actualizar UI principal si existe la función
+  if (typeof window.actualizarJugadores === "function") {
+    window.actualizarJugadores();
+  }
+
+  return true;
 }
+
+// Exponer la función al scope global para que el iframe la pueda llamar vía parent.hipotecarProp(...)
+window.hipotecarProp = hipotecarProp;
+
 
 // Inicializar todo
 crearJugadores();
