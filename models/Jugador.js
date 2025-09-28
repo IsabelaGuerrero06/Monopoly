@@ -131,6 +131,38 @@ export default class Jugador {
     return true;
   }
 
+  deshipotecarPropiedad(propiedadId) {
+    const index = this.hipotecas.findIndex(p => p.id === propiedadId);
+    if (index === -1) {
+      console.warn(`${this.nickname} no tiene la hipoteca con id ${propiedadId}`);
+      return false;
+    }
+
+    const propiedad = this.hipotecas[index];
+    const mortgageValue = propiedad.mortgage || Math.floor((propiedad.price || 0) / 2);
+    const costoDeshipotecar = Math.ceil(mortgageValue * 1.1); // 👈 +10%
+
+    if (this.dinero < costoDeshipotecar) {
+      alert("No tienes suficiente dinero para deshipotecar esta propiedad.");
+      return false;
+    }
+
+    // 1. Restar dinero al jugador
+    this.dinero -= costoDeshipotecar;
+
+    // 2. Pasar la propiedad de hipotecas → propiedades
+    this.propiedades.push(propiedad);
+    this.hipotecas.splice(index, 1);
+
+    console.log(`${this.nickname} deshipotecó ${propiedad.name} pagando $${costoDeshipotecar}`);
+
+    // 3. Actualizar perfiles en el tablero
+    window.actualizarJugadores?.();
+
+    return true;
+  }
+
+
   calcularPatrimonio() {
     let patrimonio = this.dinero;
     this.propiedades.forEach((prop) => {

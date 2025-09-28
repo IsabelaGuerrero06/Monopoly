@@ -55,10 +55,35 @@ document.addEventListener("DOMContentLoaded", () => {
   tablaHipotecas.innerHTML = "";
   (jugadorData.hipotecas || []).forEach((prop) => {
     const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${prop.name}</td>
-      <td><button class="btn btn-success btn-sm">Deshipotecar</button></td>
-    `;
+
+    const tdName = document.createElement("td");
+    tdName.textContent = prop.name;
+
+    const tdBtn = document.createElement("td");
+    const btn = document.createElement("button");
+    btn.className = "btn btn-success btn-sm";
+    btn.textContent = "Deshipotecar";
+
+    btn.addEventListener("click", () => {
+      if (window.parent && typeof window.parent.deshipotecarProp === "function") {
+        window.parent.deshipotecarProp(prop.id);
+
+        // Refrescar después de deshipotecar
+        setTimeout(() => {
+          const nuevo = JSON.parse(localStorage.getItem("jugadorActivo"));
+          if (nuevo) {
+            document.getElementById("dineroJugador").textContent = `$${nuevo._dinero ?? nuevo.dinero ?? 0}`;
+            window.location.reload();
+          }
+        }, 80);
+      } else {
+        alert("No se pudo deshipotecar: la función en la ventana principal no está disponible.");
+      }
+    });
+
+    tdBtn.appendChild(btn);
+    row.appendChild(tdName);
+    row.appendChild(tdBtn);
     tablaHipotecas.appendChild(row);
   });
 });

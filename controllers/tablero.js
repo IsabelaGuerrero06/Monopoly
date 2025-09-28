@@ -298,9 +298,39 @@ function hipotecarProp(propiedadId) {
 
   return true;
 }
-
 // Exponer la función al scope global para que el iframe la pueda llamar vía parent.hipotecarProp(...)
 window.hipotecarProp = hipotecarProp;
+
+function deshipotecarProp(propiedadId) {
+  const jugador = JSON.parse(localStorage.getItem("jugadorActivo"));
+  if (!jugador) return;
+
+  const nick = jugador._nickname || jugador.nickname || jugador.nombre;
+  const jugadorReal = (window.jugadores || []).find(j =>
+    j.nickname === nick || j._nickname === nick || j.nombre === nick
+  );
+  if (!jugadorReal) return;
+
+  if (typeof jugadorReal.deshipotecarPropiedad === "function") {
+    jugadorReal.deshipotecarPropiedad(propiedadId);
+  }
+
+  // 🔹 Persistir cambios igual que en hipotecarProp
+  try {
+    if (window.jugadores?.length > 0) {
+      localStorage.setItem("jugadores", JSON.stringify(window.jugadores));
+    }
+    localStorage.setItem("jugadorActivo", JSON.stringify(jugadorReal));
+  } catch (e) {
+    console.warn("No se pudo actualizar localStorage tras deshipotecar:", e);
+  }
+
+  if (typeof window.actualizarJugadores === "function") {
+    window.actualizarJugadores();
+  }
+}
+window.deshipotecarProp = deshipotecarProp;
+
 
 
 // Inicializar todo
