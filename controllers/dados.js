@@ -154,6 +154,55 @@ document.addEventListener('keydown', (e) => {
 });
 
 // Exportar funciones para uso global
-window.rollDice = rollDice;
+window.rollDice = rollDice
 window.getLastDiceResult = getLastDiceResult;
 window.resetDice = resetDice;
+
+// Función para usar el valor manual ingresado
+function useManualDice() {
+  const input = document.getElementById('manualDiceInput');
+  const value = parseInt(input.value);
+
+  // Validar que el número sea correcto (2 a 12)
+  if (isNaN(value) || value < 2 || value > 12) {
+    alert('Por favor ingresa un número válido entre 2 y 12');
+    return;
+  }
+
+  // Calcular valores ficticios de los dados que sumen el total
+  // Ejemplo simple: primer dado = valor - 1, segundo dado = 1
+  let dice1 = value - 1;
+  let dice2 = 1;
+
+  // Asegurar que estén entre 1 y 6
+  if (dice1 > 6) {
+    dice1 = 6;
+    dice2 = value - 6;
+  }
+
+  // Mostrar en los dados
+  showDiceValue('dots1', dice1);
+  showDiceValue('dots2', dice2);
+
+  // Guardar resultado
+  lastDiceResult = { dice1, dice2, total: value };
+
+  // Disparar evento como en rollDice()
+  const diceEvent = new CustomEvent('diceRolled', {
+    detail: { dice1, dice2, total: value }
+  });
+  document.dispatchEvent(diceEvent);
+
+  console.log(`Número manual: ${dice1} + ${dice2} = ${value}`);
+}
+
+// Conectar el botón al cargar la página
+window.addEventListener('DOMContentLoaded', () => {
+  const manualButton = document.getElementById('manualDiceButton');
+  if (manualButton) {
+    manualButton.addEventListener('click', useManualDice);
+  }
+});
+
+// Exportar también esta función
+window.useManualDice = useManualDice;
