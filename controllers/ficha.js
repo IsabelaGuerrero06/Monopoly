@@ -1,3 +1,4 @@
+ import { manejarCasillaEspecial } from './cartas.js';
 // Orden lineal del tablero (ids de casillas en sentido horario)
 const ordenTablero = [
   0,
@@ -280,6 +281,29 @@ export function moverFicha(jugadorIndex, pasos) {
   const casillaData = nuevaCasilla.dataset;
   console.log("Datos de la casilla al mover ficha:", casillaData);
 
+  // --- NUEVA SECCIÓN: Verificar si la casilla es de tipo especial (chance, community_chest, tax) ---
+  if (casillaData.type === "chance" || casillaData.type === "community_chest" || casillaData.type === "tax") {
+    console.log(`Casilla especial detectada: ${casillaData.type}`);
+    
+    // Llamar a la función para manejar cartas especiales
+    try {
+      if (typeof window.manejarCasillaEspecial === "function") {
+        window.manejarCasillaEspecial(casillaData, jugadorIndex);
+      } else {
+        // Fallback si no está disponible la función de cartas
+        console.warn("Función manejarCasillaEspecial no disponible");
+        const tipoTexto = casillaData.type === "chance" ? "Sorpresa" : 
+                         casillaData.type === "community_chest" ? "Caja de Comunidad" : "Impuesto";
+        alert(`¡Cayiste en ${tipoTexto}! (Sistema de cartas no disponible)`);
+      }
+    } catch (error) {
+      console.error("Error manejando casilla especial:", error);
+      alert("Error procesando la casilla especial");
+    }
+    
+    return; // Salir aquí para casillas especiales
+  }
+
   // Solo actuar si es propiedad o ferrocarril
   if (!(casillaData.name && (casillaData.type === "property" || casillaData.type === "railroad"))) {
     return;
@@ -383,6 +407,7 @@ export function moverFicha(jugadorIndex, pasos) {
       };
     }
 
+    
     return; // salimos porque mostramos modal de compra
   }
 
@@ -441,7 +466,6 @@ export function moverFicha(jugadorIndex, pasos) {
     alert(`${jugadorObj.nickname || jugadorObj.nombre} pagó $${renta} a ${duenio.nickname || duenio.nombre}`);
   }
 }
-
 
 
 // ----------------- verificarPropiedadParaCompra -----------------
