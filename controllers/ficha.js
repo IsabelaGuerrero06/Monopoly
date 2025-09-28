@@ -1,4 +1,4 @@
- import { manejarCasillaEspecial } from './cartas.js';
+import { manejarCasillaEspecial } from './cartas.js';
 // Orden lineal del tablero (ids de casillas en sentido horario)
 const ordenTablero = [
   0,
@@ -380,14 +380,24 @@ export function moverFicha(jugadorIndex, pasos) {
           if (!jugadorObj) throw new Error("No se encontró el jugador que intenta comprar.");
 
           // Si existe el método de clase, llámalo (instancia Jugador)
-          if (typeof jugadorObj.comprarPropiedad === "function") {
+          if (typeof jugadorObj.comprarPropiedadConIndicador === "function") {
+            // Usar la versión que actualiza la casilla visualmente
+            jugadorObj.comprarPropiedadConIndicador(casillaObj, price);
+          } else if (typeof jugadorObj.comprarPropiedad === "function") {
+            // Fallback al método original
             jugadorObj.comprarPropiedad(casillaObj, price);
+            // Actualizar manualmente si no existe el método con indicador
+            if (typeof jugadorObj.actualizarCasillaPropiedad === "function") {
+              jugadorObj.actualizarCasillaPropiedad(casillaObj);
+            }
           } else {
             // Fallback para objetos planos (jugadoresActivos)
             jugadorObj.dinero = (Number(jugadorObj.dinero) || 0) - price;
             jugadorObj.propiedades = jugadorObj.propiedades || [];
-            // almacenar el id de la propiedad y el objeto para búsquedas posteriores
             jugadorObj.propiedades.push({ ...casillaObj });
+            
+            // Actualizar casilla manualmente para objetos planos
+            actualizarCasillaManual(casillaObj, jugadorObj);
           }
 
           console.log(`${jugadorObj.nickname || jugadorObj.nombre} compró ${casillaObj.name}`);
@@ -682,3 +692,36 @@ export function debugFichas() {
 
 // Hacer la función disponible globalmente para debugging
 window.debugFichas = debugFichas;
+
+/**
+ * Función auxiliar para actualizar casillas cuando se usan objetos planos
+ */
+function actualizarCasillaManual(propiedad, jugador) {
+  const casilla = document.querySelector(`[data-id="${propiedad.id}"]`);
+  if (!casilla) return;
+
+  const colorFichaMap = {
+    amarillo: "#FFD700", azul: "#1E90FF", 
+    rojo: "#FF4500", verde: "#32CD32"
+  };
+
+  const colorJugador = colorFichaMap[jugador.color] || "#999999";
+
+  const statusAnterior = casilla.querySelector('.status-owner');
+  if (statusAnterior) statusAnterior.remove();
+
+  const statusOwner = document.createElement('div');
+  statusOwner.className = 'status-owner';
+  statusOwner.style.cssText = `
+    position: absolute; top: 2px; right: 2px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background-color: ${colorJugador};
+    border: 2px solid #fff;
+    box-shadow: 0 0 3px rgba(0,0,0,0.5);
+    z-index: 10;
+  `;
+  statusOwner.title = `Propiedad de ${jugador.nombre || jugador.nickname}`;
+
+  casilla.style.position = 'relative';
+  casilla.appendChild(statusOwner);
+}
