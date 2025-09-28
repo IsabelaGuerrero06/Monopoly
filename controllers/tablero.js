@@ -159,13 +159,13 @@ function crearJugadores() {
   jugadores.length = 0;
 
   // Obtener cantidad de jugadores activos
-  const cantidadJugadores =
-    parseInt(localStorage.getItem("cantidadJugadores")) || 2;
+  const cantidadJugadores = parseInt(localStorage.getItem("cantidadJugadores")) || 2;
 
   // Crear solo la cantidad de jugadores seleccionada
   for (let i = 0; i < cantidadJugadores && i < infoJugadores.length; i++) {
     const info = infoJugadores[i];
     const jugador = new Jugador(info.nombre, info.pais, info.color);
+
     jugadores.push(jugador);
   }
 
@@ -220,10 +220,14 @@ function mostrarPerfilesActivos() {
 }
 
 function actualizarJugadores() {
-  // 🔹 1. Guardar el estado actual de los jugadores en localStorage
-  localStorage.setItem("jugadores", JSON.stringify(jugadores));
+  // 1. Guardar el estado actual de los jugadores en localStorage
+  localStorage.setItem("jugadores", JSON.stringify(jugadores.map(j => ({
+    ...j,
+    enCarcel: j.enCarcel || false,
+    turnosEnCarcel: j.turnosEnCarcel || 0
+  }))));
 
-  // 🔹 2. Volver a pintar los jugadores en el DOM (perfil, dinero, propiedades, etc.)
+  // 2. Volver a pintar los jugadores en el DOM (perfil, dinero, propiedades, etc.)
   jugadores.forEach((jugador, index) => {
     jugador.mostrarJugador(index);
   });
@@ -242,6 +246,12 @@ pintarJugadores();
 // Hacer el array de jugadores accesible globalmente
 window.jugadores = jugadores;
 
+import { syncJugadoresActivos } from "./ficha.js"; // al inicio del archivo junto con los imports
+// ...
+window.jugadores = jugadores;
+// forzar sincronización con ficha.js
+syncJugadoresActivos();
+
 window.addEventListener("DOMContentLoaded", renderBoard);
 
 import {
@@ -258,24 +268,75 @@ window.addEventListener("DOMContentLoaded", () => {
     crearFichas();
   }, 100);
 
-  // Cuando los dados terminan de lanzarse
   document.addEventListener("diceRolled", (e) => {
     const { total, dice1, dice2 } = e.detail;
     const jugadorIndex = getTurnoActual();
     const jugadorActual = getJugadorActual();
 
-    console.log(`${jugadorActual.nombre} avanza ${total} pasos`);
+    console.log("Jugador actual estado cárcel:", {
+      nombre: jugadorActual.nombre || jugadorActual.nickname,
+      enCarcel: jugadorActual.enCarcel,
+      turnos: jugadorActual.turnosEnCarcel
+    });
 
-    // Mover la ficha
+
+    // Verificar si está en la cárcel
+    if (jugadorActual.enCarcel) {
+      console.log(`${jugadorActual.nombre || jugadorActual.nickname} está en la cárcel (${jugadorActual.turnosEnCarcel} turnos restantes)`);
+
+      const modal = new bootstrap.Modal(document.getElementById("modalCarcel"));
+      modal.show();
+
+      // Botón pagar
+      document.getElementById("btnPagarCarcel").onclick = () => {
+        if (jugadorActual.dinero >= 50) {
+          jugadorActual.dinero -= 50;
+          jugadorActual.enCarcel = false;
+          jugadorActual.turnosEnCarcel = 0;
+          window.actualizarJugadores?.();
+          modal.hide();
+          // ahora sí puede moverse normalmente
+          moverFicha(jugadorIndex, total);
+        } else {
+          alert("No tienes suficiente dinero para pagar la fianza.");
+        }
+      };
+
+      // Botón esperar
+      document.getElementById("btnEsperarCarcel").onclick = () => {
+        jugadorActual.turnosEnCarcel--;
+
+        if (jugadorActual.turnosEnCarcel <= 0) {
+          jugadorActual.enCarcel = false;
+          jugadorActual.turnosEnCarcel = 0;
+          console.log(`${jugadorActual.nickname || jugadorActual.nombre} salió de la cárcel gratis`);
+        } else {
+          console.log(`${jugadorActual.nickname || jugadorActual.nombre} decidió esperar, le quedan ${jugadorActual.turnosEnCarcel} turnos en la cárcel`);
+        }
+
+        window.actualizarJugadores?.();
+        modal.hide();
+
+        // Aquí está la clave: saltamos al siguiente jugador
+        const nuevoTurno = siguienteTurno();
+        console.log(`Turno de ${getJugadorActual().nombre || getJugadorActual().nickname}`);
+      };
+
+
+      return; // Salir, no mover ficha todavía
+    }
+
+    // Si no está en cárcel → mover normal
+    console.log(`${jugadorActual.nombre || jugadorActual.nickname} avanza ${total} pasos`);
     moverFicha(jugadorIndex, total);
 
-    // Si no sacó dobles → pasa turno
+    // Si no sacó dobles → pasar turno
     if (dice1 !== dice2) {
       const nuevoTurno = siguienteTurno();
-      const siguienteJugador = getJugadorActual();
-      console.log(`Turno de ${siguienteJugador.nombre}`);
+      console.log(`Turno de ${getJugadorActual().nickname || getJugadorActual().nombre}`);
     } else {
-      console.log(`${jugadorActual.nombre} repite turno (dobles) 🎲🎲`);
+      console.log(`${jugadorActual.nombre || jugadorActual.nickname} repite turno (dobles) 🎲🎲`);
     }
+    console.log("DEBUG jugadorActual:", jugadorActual);
   });
 });
