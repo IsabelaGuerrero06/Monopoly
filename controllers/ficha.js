@@ -1,4 +1,4 @@
-import { manejarCasillaEspecial } from "./cartas.js";
+import {manejarCasillaEspecial} from "./cartas.js";
 // Orden lineal del tablero (ids de casillas en sentido horario)
 const ordenTablero = [
   0,
@@ -51,57 +51,97 @@ let turno = 0; // Jugador actual (0 = primer jugador activo, 1 = segundo, etc.)
 /**
  * Inicializa los datos de los jugadores desde localStorage
  */
-function inicializarJugadores() {
-  const cantidadJugadores =
-    parseInt(localStorage.getItem("cantidadJugadores")) || 2;
+// function inicializarJugadores() {
+//   const cantidadJugadores =
+//     parseInt(localStorage.getItem("cantidadJugadores")) || 2;
 
-  // Debugging: mostrar todo lo que hay en localStorage
-  console.log("=== DEBUGGING LOCALSTORAGE ===");
-  console.log("cantidadJugadores:", cantidadJugadores);
-  console.log("jugadores string:", localStorage.getItem("jugadores"));
+//   jugadoresActivos = [];
+//   posiciones = [];
 
-  let infoJugadores = [];
+//   // Usamos las instancias reales
+//   for (let i = 0; i < cantidadJugadores; i++) {
+//     const jugador = window.jugadores?.[i];
+//     if (jugador) {
+//       // Guardamos el jugador y además le añadimos un colorHex solo para el tablero
+//       jugador.colorHex = convertirColor(jugador.color);
+//       jugadoresActivos.push(jugador);
+//       posiciones.push(0);
+//     }
+//   }
 
-  // Los datos se guardan en la clave "jugadores" como un array JSON
-  try {
-    const jugadoresData = localStorage.getItem("jugadores");
-    if (jugadoresData) {
-      infoJugadores = JSON.parse(jugadoresData);
-      console.log("Datos desde 'jugadores':", infoJugadores);
+//   console.log("Jugadores activos (instancias reales):", jugadoresActivos);
+// }
+
+// --- reemplaza la función inicializarJugadores por esto ---
+function inicializarJugadores(retries = 0) {
+  const cantidadJugadores = parseInt(localStorage.getItem("cantidadJugadores")) || 2;
+
+  // Si no existen instancias en window.jugadores, vamos a intentar esperar/reintentar
+  if (!window.jugadores || !Array.isArray(window.jugadores) || window.jugadores.length === 0) {
+    if (retries < 5) {
+      console.warn("window.jugadores no disponible aún. Reintentando inicializar jugadores...", { retries });
+      setTimeout(() => inicializarJugadores(retries + 1), 100);
+      return;
     }
-  } catch (e) {
-    console.warn("Error parseando 'jugadores':", e);
+    console.warn("No se encontraron instancias en window.jugadores tras reintentos. Se usarán datos desde localStorage (fallback).");
   }
 
-  // Limpiar arrays
   jugadoresActivos = [];
   posiciones = [];
 
-  // Tomar solo la cantidad de jugadores seleccionada
-  for (let i = 0; i < cantidadJugadores && i < infoJugadores.length; i++) {
-    const jugadorData = infoJugadores[i];
+  // Si hay instancias reales en window.jugadores las usamos (manteniendo referencias)
+  if (window.jugadores && Array.isArray(window.jugadores) && window.jugadores.length > 0) {
+    for (let i = 0; i < cantidadJugadores && i < window.jugadores.length; i++) {
+      const jugador = window.jugadores[i];
+      // Guardar color hex en la instancia para uso por crearFichas
+      jugador.colorHex = jugador.colorHex || convertirColor(jugador.color);
+      jugadoresActivos.push(jugador);
+      posiciones.push(0);
+    }
+  } else {
+    // Fallback: leer del localStorage y crear objetos planos
+    let infoJugadores = [];
+    try {
+      const jugadoresData = localStorage.getItem("jugadores");
+      if (jugadoresData) infoJugadores = JSON.parse(jugadoresData);
+    } catch (e) {
+      console.warn("Error parseando jugadores desde localStorage", e);
+    }
 
-    // Convertir el color a formato hexadecimal si es necesario
-    let colorHex = convertirColor(jugadorData.color);
-
-    const jugador = {
-      nombre: jugadorData.nombre || `Jugador ${i + 1}`,
-      color: colorHex,
-      pais: jugadorData.pais || "Sin país",
-      index: i,
-    };
-
-    console.log(`Jugador ${i} configurado:`, jugador);
-    jugadoresActivos.push(jugador);
-
-    // Todos empiezan en la posición 0 (Salida)
-    posiciones.push(0);
+    for (let i = 0; i < cantidadJugadores && i < infoJugadores.length; i++) {
+      const data = infoJugadores[i];
+      const jugadorPlano = {
+        nombre: data.nombre || `Jugador ${i + 1}`,
+        nickname: data.nombre || `Jugador ${i + 1}`,
+        color: data.color,
+        colorHex: convertirColor(data.color),
+        pais: data.pais || "Sin país",
+        dinero: data.dinero ?? 1500,
+        propiedades: data.propiedades || [],
+        index: i,
+        enCarcel: data.enCarcel ?? false,
+        turnosEnCarcel: data.turnosEnCarcel ?? 0
+      };
+      jugadoresActivos.push(jugadorPlano);
+      posiciones.push(0);
+    }
   }
 
-  console.log("=== JUGADORES ACTIVOS FINALES ===");
-  console.log(jugadoresActivos);
-  console.log("===============================");
+  console.log("=== JUGADORES ACTIVOS INICIALIZADOS ===", jugadoresActivos);
 }
+
+// Exponer función para que tablero.js llame si quiere forzar sincronización
+export function syncJugadoresActivos() {
+  inicializarJugadores();
+  // Re-crear fichas en DOM si ya hay tablero
+  try {
+    crearFichas();
+  } catch (e) {
+    // crearFichas puede estar definido más abajo; si no, lo ignoramos
+  }
+}
+
+
 
 /**
  * Convierte nombres de colores a formato hexadecimal
@@ -185,7 +225,7 @@ function convertirColor(color) {
  * Crea las fichas en la casilla de salida según los jugadores activos
  */
 export function crearFichas() {
-  // Inicializar jugadores primero
+  // Inicializar jugadores primero (ahora usando instancias reales de Jugador)
   inicializarJugadores();
 
   const salida = document.querySelector('[data-id="0"]');
@@ -210,76 +250,112 @@ export function crearFichas() {
     salida.appendChild(fichasContainer);
   }
 
-  // Crear fichas solo para los jugadores activos
+  // Crear fichas para los jugadores activos
   jugadoresActivos.forEach((jugador, index) => {
+    // Convertir color lógico (ej: "rojo") a hex para pintar la ficha
+    const colorHex = jugador.colorHex || convertirColor(jugador.color);
+    jugador.colorHex = colorHex; // Guardamos en la instancia para reutilizar
+
     console.log(
-      `Creando ficha ${index} para ${jugador.nombre} con color original: ${jugador.color}`
+      `Creando ficha ${index} para ${jugador.nickname || jugador.nombre} con color lógico: ${jugador.color}, hex: ${colorHex}`
     );
 
     const ficha = document.createElement("div");
     ficha.classList.add("ficha");
-    ficha.classList.add(`color-jugador-${index}`); // Clase de fallback
+    ficha.classList.add(`color-jugador-${index}`); // Clase fallback
 
-    // Asegurarnos de que el color se aplique correctamente
-    ficha.style.backgroundColor = jugador.color;
-    ficha.style.setProperty("background-color", jugador.color, "important"); // Forzar el color
+    // Aplicar color
+    ficha.style.backgroundColor = colorHex;
+    ficha.style.setProperty("background-color", colorHex, "important");
 
+    // Atributos útiles
     ficha.setAttribute("id", `ficha-${index}`);
-    ficha.setAttribute("data-jugador", jugador.nombre);
-    ficha.setAttribute("data-color", jugador.color); // Para CSS y debugging
-    ficha.setAttribute("data-color-original", jugador.color); // Backup del color original
-    ficha.title = `${jugador.nombre} (${jugador.pais}) - Color: ${jugador.color}`; // Tooltip con info del jugador
+    ficha.setAttribute("data-jugador", jugador.nickname || jugador.nombre);
+    ficha.setAttribute("data-color", colorHex);
+    ficha.setAttribute("data-color-original", jugador.color);
+    ficha.title = `${jugador.nickname || jugador.nombre} (${jugador.pais}) - Color: ${jugador.color}`;
 
-    console.log("Ficha creada:", ficha);
     fichasContainer.appendChild(ficha);
 
-    // Verificar que el color se aplicó después de un breve delay
+    // Debug para confirmar color aplicado
     setTimeout(() => {
       const colorAplicado = window.getComputedStyle(ficha).backgroundColor;
       console.log(`Color aplicado a ficha ${index}:`, {
-        esperado: jugador.color,
+        esperado: colorHex,
         aplicado: colorAplicado,
         elemento: ficha,
       });
-
-      // Si el color no se aplició correctamente, forzarlo de nuevo
-      if (
-        colorAplicado === "rgba(0, 0, 0, 0)" ||
-        colorAplicado === "transparent"
-      ) {
-        console.warn(`Forzando color para ficha ${index}`);
-        ficha.style.cssText += `background-color: ${jugador.color} !important; background: ${jugador.color} !important;`;
-      }
     }, 100);
   });
 }
 
+
 // ----------------- moverFicha -----------------
 
 export function moverFicha(jugadorIndex, pasos) {
-  // índice actual en el recorrido lineal (defensivo)
   let indiceActual = posiciones[jugadorIndex] ?? 0;
   let nuevoIndice = (indiceActual + pasos) % ordenTablero.length;
+
+  let jugadorObj = window.jugadores?.[jugadorIndex] ?? jugadoresActivos[jugadorIndex];
+
+  // Revisar si pasó por salida (id=0)
+  if (indiceActual + pasos >= ordenTablero.length) {
+    jugadorObj.dinero += 200;
+    console.log(`${jugadorObj.nickname || jugadorObj.nombre} pasó por Salida y ganó $200`);
+    // Actualizar perfiles
+    window.actualizarJugadores?.();
+  }
 
   // Actualizar posición
   posiciones[jugadorIndex] = nuevoIndice;
 
-  // Buscar la casilla real en el DOM usando el id de ordenTablero
+  // Casilla nueva
   const nuevaId = ordenTablero[nuevoIndice];
   const nuevaCasilla = document.querySelector(`[data-id="${nuevaId}"]`);
-
   if (!nuevaCasilla) {
     console.error(`No se encontró la casilla DOM con data-id="${nuevaId}"`);
     return;
   }
 
-  // Mover la ficha al nuevo contenedor (si existe)
+  // Mover ficha al DOM
   const ficha = document.getElementById(`ficha-${jugadorIndex}`);
   if (ficha) nuevaCasilla.appendChild(ficha);
 
-  // Datos extraídos del DOM (son strings)
   const casillaData = nuevaCasilla.dataset;
   console.log("Datos de la casilla al mover ficha:", casillaData);
+
+  // --- MANEJO DE CASILLAS ESPECIALES DE ESQUINA ---
+  if (nuevaId === 10) {
+    console.log(`${jugadorObj.nombre} está en la Cárcel (solo de visita). No pasa nada.`);
+    return;
+  }
+
+  if (nuevaId === 20) {
+    console.log(`${jugadorObj.nombre} está en el Parqueadero Gratis. No pasa nada.`);
+    return;
+  }
+
+  if (nuevaId === 30) {
+    console.log(`${jugadorObj.nombre || jugadorObj.nickname} fue enviado a la Cárcel`);
+
+    // Enviar a casilla de la cárcel (id=10)
+    posiciones[jugadorIndex] = ordenTablero.indexOf(10);
+    const casillaCarcel = document.querySelector('[data-id="10"]');
+    if (casillaCarcel) casillaCarcel.appendChild(ficha);
+
+    // Marcar estado de cárcel
+    jugadorObj.enCarcel = true;
+    jugadorObj.turnosEnCarcel = 3;
+
+    // Actualizar perfiles inmediatamente
+    window.actualizarJugadores?.();
+
+    // Aviso al jugador
+    alert(`${jugadorObj.nombre || jugadorObj.nickname} fue enviado a la cárcel. Debe pagar $50 o esperar 3 turnos.`);
+
+    return; // Salir, no continuar con compra/renta
+  }
+
 
   // --- NUEVA SECCIÓN: Verificar si la casilla es de tipo especial (chance, community_chest, tax) ---
   if (
@@ -354,8 +430,6 @@ export function moverFicha(jugadorIndex, pasos) {
 
   // helper para comparar ids (permite string/number)
   const idsEqual = (a, b) => String(a) === String(b);
-
-  // ---------------- buscar dueño ----------------
   let duenio = null;
   for (const p of listaJugadores) {
     if (
@@ -368,10 +442,7 @@ export function moverFicha(jugadorIndex, pasos) {
   }
 
   // referencia al jugador que se movió (instancia o plano)
-  const jugadorObj =
-    window.jugadores && window.jugadores[jugadorIndex]
-      ? window.jugadores[jugadorIndex]
-      : jugadoresActivos[jugadorIndex];
+  jugadorObj = window.jugadores && window.jugadores[jugadorIndex] ? window.jugadores[jugadorIndex] : jugadoresActivos[jugadorIndex];
 
   // --------- CASILLA LIBRE: mostrar modal de compra (y asignar compra correctamente) ---------
   if (!duenio) {
@@ -405,11 +476,9 @@ export function moverFicha(jugadorIndex, pasos) {
       </div>
     `;
 
-    // Mostrar modal
     const modal = new bootstrap.Modal(modalElement);
     modal.show();
 
-    // Asignar (sobrescribir) acción del botón comprar para evitar handlers acumulados
     const btnComprar = document.getElementById("btnComprarPropiedad");
     if (btnComprar) {
       btnComprar.onclick = () => {
@@ -431,8 +500,7 @@ export function moverFicha(jugadorIndex, pasos) {
               jugadorObj.actualizarCasillaPropiedad(casillaObj);
             }
           } else {
-            // Fallback para objetos planos (jugadoresActivos)
-            jugadorObj.dinero = (Number(jugadorObj.dinero) || 0) - price;
+            jugadorObj.dinero -= price;
             jugadorObj.propiedades = jugadorObj.propiedades || [];
             jugadorObj.propiedades.push({ ...casillaObj });
 
@@ -459,12 +527,11 @@ export function moverFicha(jugadorIndex, pasos) {
 
           bootstrap.Modal.getInstance(modalElement).hide();
         } catch (err) {
-          alert(err.message || "Error al comprar propiedad.");
+          alert(err.message);
         }
       };
     }
-
-    return; // salimos porque mostramos modal de compra
+    return;
   }
 
   // --------- CASILLA CON DUEÑO → pagar renta (si el dueño no es el mismo jugador) ---------
@@ -481,7 +548,6 @@ export function moverFicha(jugadorIndex, pasos) {
   if (jugadorObj && duenio && !samePlayer(duenio, jugadorObj)) {
     let renta = 0;
 
-    // Propiedades normales
     if (casillaObj.type === "property") {
       renta = (casillaObj.rent?.base ?? parseInt(casillaData.rentBase)) || 0;
 
@@ -496,7 +562,6 @@ export function moverFicha(jugadorIndex, pasos) {
         );
         renta = casillaObj.rent.withHouse[idx] ?? renta;
       }
-
       if (casillaObj.hotel) {
         renta = casillaObj.rent?.withHotel ?? renta * 2;
       }
@@ -514,9 +579,8 @@ export function moverFicha(jugadorIndex, pasos) {
     if (typeof jugadorObj.pagarRenta === "function") {
       jugadorObj.pagarRenta(duenio, renta);
     } else {
-      // fallback: ajustar dinero manualmente
-      jugadorObj.dinero = (Number(jugadorObj.dinero) || 0) - renta;
-      duenio.dinero = (Number(duenio.dinero) || 0) + renta;
+      jugadorObj.dinero -= renta;
+      duenio.dinero += renta;
     }
 
     // refrescar UI / persistir

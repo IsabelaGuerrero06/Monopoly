@@ -1,135 +1,107 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <!-- Configuración básica del documento -->
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tablero Monopoly</title>
 
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+<head>
+  <!-- Configuración básica del documento -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tablero Monopoly</title>
 
-    <!-- Estilos -->
-    <link rel="stylesheet" href="styles/tablero.css" />
-    <link rel="stylesheet" href="styles/dados.css" />
-    <link rel="stylesheet" href="styles/modal-comprarPropiedad.css" />
-  </head>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-  <body>
-    <!-- Contenedor principal del juego -->
-    <div class="contenedor-juego">
-      <!-- SECCIÓN: Panel de jugadores con dados -->
-      <div class="contenedor-perfiles">
-        <!-- Panel de jugadores -->
-        <div class="jugadores">
-          <!-- Jugador 1 -->
-          <div class="perfil-jugador" data-index="0">
-            <img
-              class="iconoPerfil"
-              src="../../assets/img/iconoPerfil.webp"
-              alt="Jugador 1"
-            />
-            <img class="bandera" src="" alt="Bandera" />
-            <label class="nombre"></label>
-            <span class="dinero"></span>
-          </div>
+  <!-- Estilos -->
+  <link rel="stylesheet" href="styles/tablero.css" />
+  <link rel="stylesheet" href="styles/dados.css" />
+  <link rel="stylesheet" href="styles/modal-comprarPropiedad.css" />
+</head>
 
-          <!-- Jugador 2 -->
-          <div class="perfil-jugador" data-index="1">
-            <img
-              class="iconoPerfil"
-              src="../../assets/img/iconoPerfil.webp"
-              alt="Jugador 2"
-            />
-            <img class="bandera" src="" alt="Bandera" />
-            <label class="nombre"></label>
-            <span class="dinero"></span>
-          </div>
+<body>
+  <!-- Contenedor principal del juego -->
+  <div class="contenedor-juego">
+    <!-- SECCIÓN: Panel de jugadores con dados -->
+    <div class="contenedor-perfiles">
+      <!-- Panel de jugadores -->
+      <div class="jugadores">
+        <!-- Jugador 1 -->
+        <div class="perfil-jugador" data-index="0">
+          <img class="iconoPerfil" src="../../assets/img/iconoPerfil.webp" alt="Jugador 1" />
+          <img class="bandera" src="" alt="Bandera" />
+          <label class="nombre"></label>
+          <span class="dinero"></span>
+        </div>
 
-          <!-- Jugador 3 -->
-          <div class="perfil-jugador" data-index="2">
-            <img
-              class="iconoPerfil"
-              src="../../assets/img/iconoPerfil.webp"
-              alt="Jugador 3"
-            />
-            <img class="bandera" src="" alt="Bandera" />
-            <label class="nombre"></label>
-            <span class="dinero"></span>
-          </div>
+        <!-- Jugador 2 -->
+        <div class="perfil-jugador" data-index="1">
+          <img class="iconoPerfil" src="../../assets/img/iconoPerfil.webp" alt="Jugador 2" />
+          <img class="bandera" src="" alt="Bandera" />
+          <label class="nombre"></label>
+          <span class="dinero"></span>
+        </div>
 
-          <!-- Jugador 4 -->
-          <div class="perfil-jugador" data-index="3">
-            <img
-              class="iconoPerfil"
-              src="../../assets/img/iconoPerfil.webp"
-              alt="Jugador 4"
-            />
-            <img class="bandera" src="" alt="Bandera" />
-            <label class="nombre"></label>
-            <span class="dinero"></span>
-          </div>
+        <!-- Jugador 3 -->
+        <div class="perfil-jugador" data-index="2">
+          <img class="iconoPerfil" src="../../assets/img/iconoPerfil.webp" alt="Jugador 3" />
+          <img class="bandera" src="" alt="Bandera" />
+          <label class="nombre"></label>
+          <span class="dinero"></span>
+        </div>
+
+        <!-- Jugador 4 -->
+        <div class="perfil-jugador" data-index="3">
+          <img class="iconoPerfil" src="../../assets/img/iconoPerfil.webp" alt="Jugador 4" />
+          <img class="bandera" src="" alt="Bandera" />
+          <label class="nombre"></label>
+          <span class="dinero"></span>
+        </div>
+      </div>
+      <!-- Botón Finalizar Partida -->
+      <div class="boton-finalizar-container" style="margin-top: 1rem; text-align: center;">
+        <button id="btnFinalizarPartida" class="btn btn-danger btn-finalizar">
+          🚩 Finalizar Partida
+        </button>
+      </div>
+    </div>
+
+    <!-- SECCIÓN: Tablero de Monopoly -->
+    <div class="board" aria-label="Tablero de Monopoly">
+      <!-- FILA SUPERIOR del tablero -->
+      <div class="row-top">
+        <!-- Esquina superior izquierda: Parqueo Gratis -->
+        <div class="corner tl free-parking" data-id="20" data-name="free-parking">
+          <span class="corner-label">Parqueo<br />Gratis</span>
+        </div>
+
+        <!-- Casillas del borde superior -->
+        <div class="edge edge-top" id="edge-top" aria-label="Casillas superiores"></div>
+
+        <!-- Esquina superior derecha: Ve a la Cárcel -->
+        <div class="corner tr go-to-jail" data-id="30" data-name="go-to-jail">
+          <span class="corner-label">Ve a la<br />Cárcel</span>
         </div>
       </div>
 
-      <!-- SECCIÓN: Tablero de Monopoly -->
-      <div class="board" aria-label="Tablero de Monopoly">
-        <!-- FILA SUPERIOR del tablero -->
-        <div class="row-top">
-          <!-- Esquina superior izquierda: Parqueo Gratis -->
-          <div
-            class="corner tl free-parking"
-            data-id="20"
-            data-name="free-parking"
-          >
-            <span class="corner-label">Parqueo<br />Gratis</span>
-          </div>
+      <!-- FILA MEDIA del tablero -->
+      <div class="row-middle">
+        <!-- Casillas del borde izquierdo -->
+        <div class="edge edge-left" id="edge-left" aria-label="Casillas izquierda"></div>
 
-          <!-- Casillas del borde superior -->
-          <div
-            class="edge edge-top"
-            id="edge-top"
-            aria-label="Casillas superiores"
-          ></div>
+        <!-- Centro del tablero con logo -->
+        <div class="center">
+          <!--  Logo de Monopoly centrado -->
+          <img src="../../assets/img/monopoly-logo2.webp" alt="Monopoly" class="logo-center" />
 
-          <!-- Esquina superior derecha: Ve a la Cárcel -->
-          <div class="corner tr go-to-jail" data-id="30" data-name="go-to-jail">
-            <span class="corner-label">Ve a la<br />Cárcel</span>
-          </div>
-        </div>
+          <!-- Sección de dados -->
+          <div class="dice-area">
+            <!-- Dado 1 -->
+            <div class="dice" id="dice1">
+              <div class="dice-dots" id="dots1"></div>
+            </div>
 
-        <!-- FILA MEDIA del tablero -->
-        <div class="row-middle">
-          <!-- Casillas del borde izquierdo -->
-          <div
-            class="edge edge-left"
-            id="edge-left"
-            aria-label="Casillas izquierda"
-          ></div>
-
-          <!-- Centro del tablero con logo -->
-          <div class="center">
-            <!--  Logo de Monopoly centrado -->
-            <img
-              src="../../assets/img/monopoly-logo2.webp"
-              alt="Monopoly"
-              class="logo-center"
-            />
-
-            <!-- Sección de dados -->
-            <div class="dice-area">
-              <!-- Dado 1 -->
-              <div class="dice" id="dice1">
-                <div class="dice-dots" id="dots1"></div>
-              </div>
-
-              <!-- Dado 2 -->
-              <div class="dice" id="dice2">
-                <div class="dice-dots" id="dots2"></div>
-              </div>
+            <!-- Dado 2 -->
+            <div class="dice" id="dice2">
+              <div class="dice-dots" id="dots2"></div>
+            </div>
 
               <!-- Botón para lanzar los dados -->
               <button class="roll-button" id="rollButton" onclick="rollDice()">
@@ -155,63 +127,44 @@
             </div>
           </div>
 
-          <!-- Casillas del borde derecho -->
-          <div
-            class="edge edge-right"
-            id="edge-right"
-            aria-label="Casillas derecha"
-          ></div>
+        <!-- Casillas del borde derecho -->
+        <div class="edge edge-right" id="edge-right" aria-label="Casillas derecha"></div>
+      </div>
+
+      <!-- FILA INFERIOR del tablero -->
+      <div class="row-bottom">
+        <!-- Esquina inferior izquierda: Cárcel/Visita -->
+        <div class="corner bl jail" id="jail" data-id="10" data-name="jail">
+          <span class="corner-label">Cárcel<br />/ Visita</span>
         </div>
 
-        <!-- FILA INFERIOR del tablero -->
-        <div class="row-bottom">
-          <!-- Esquina inferior izquierda: Cárcel/Visita -->
-          <div class="corner bl jail" id="jail" data-id="10" data-name="jail">
-            <span class="corner-label">Cárcel<br />/ Visita</span>
-          </div>
+        <!-- Casillas del borde inferior -->
+        <div class="edge edge-bottom" id="edge-bottom" aria-label="Casillas inferiores"></div>
 
-          <!-- Casillas del borde inferior -->
-          <div
-            class="edge edge-bottom"
-            id="edge-bottom"
-            aria-label="Casillas inferiores"
-          ></div>
-
-          <!-- Esquina inferior derecha: Salida -->
-          <div class="corner br go" id="go" data-id="0" data-name="go">
-            <span class="corner-label">Salida</span>
-            <!-- Aquí aparecerán las fichas -->
-          </div>
+        <!-- Esquina inferior derecha: Salida -->
+        <div class="corner br go" id="go" data-id="0" data-name="go">
+          <span class="corner-label">Salida</span>
+          <!-- Aquí aparecerán las fichas -->
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Modal del perfil del jugador -->
-    <div class="modal fade" id="modalJugador" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Perfil de Jugador</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Cerrar"
-            ></button>
-          </div>
-          <div class="modal-body p-0">
-            <!-- Aquí se incrusta la página pestañaJugador -->
-            <iframe
-              id="iframeJugador"
-              src=""
-              width="100%"
-              height="500px"
-              style="border: none"
-            ></iframe>
-          </div>
+  <!-- Modal del perfil del jugador -->
+  <div class="modal fade" id="modalJugador" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Perfil de Jugador</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body p-0">
+          <!-- Aquí se incrusta la página pestañaJugador -->
+          <iframe id="iframeJugador" src="" width="100%" height="500px" style="border: none"></iframe>
         </div>
       </div>
     </div>
+  </div>
 
     <!-- Modal Bootstrap Comprar Propiedad -->
     <div
@@ -280,8 +233,49 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Scripts -->
-    <script type="module" src="../controllers/tablero.js"></script>
-    <script src="../controllers/dados.js"></script>
-  </body>
+  <!-- Scripts -->
+  <script type="module" src="../controllers/tablero.js"></script>
+  <script src="../controllers/dados.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const btnFinalizar = document.getElementById('btnFinalizarPartida');
+      if (btnFinalizar) {
+        btnFinalizar.addEventListener('click', async function () {
+          // Obtener jugadores actuales del juego (del window o localStorage)
+          let jugadores = window.jugadores;
+          if (!jugadores || !Array.isArray(jugadores) || jugadores.length === 0) {
+            try {
+              jugadores = JSON.parse(localStorage.getItem('jugadores')) || [];
+            } catch { jugadores = []; }
+          }
+          // Preparar datos para backend
+          const scores = {};
+          jugadores.forEach(j => {
+            // Si el objeto viene de localStorage, puede que no tenga calcularPatrimonio
+            let patrimonio = j.patrimonio;
+            if (typeof patrimonio !== 'number' && typeof j.calcularPatrimonio === 'function') {
+              patrimonio = j.calcularPatrimonio();
+            }
+            if (typeof patrimonio !== 'number') patrimonio = j.dinero || 0;
+            scores[j.nickname || j.nombre] = {
+              score: patrimonio,
+              country_code: (j.pais || '').slice(0, 2).toLowerCase()
+            };
+          });
+          try {
+            await fetch('http://127.0.0.1:5000/ranking', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(scores)
+            });
+          } catch (err) {
+            alert('No se pudo actualizar el ranking en el backend.');
+          }
+          // Redirige al ranking global
+          window.location.href = '../views/ranking.html';
+        });
+      }
+    });
+  </script>
+</body>
 </html>
