@@ -48,30 +48,6 @@ let posiciones = [];
 let jugadoresActivos = [];
 let turno = 0; // Jugador actual (0 = primer jugador activo, 1 = segundo, etc.)
 
-/**
- * Inicializa los datos de los jugadores desde localStorage
- */
-// function inicializarJugadores() {
-//   const cantidadJugadores =
-//     parseInt(localStorage.getItem("cantidadJugadores")) || 2;
-
-//   jugadoresActivos = [];
-//   posiciones = [];
-
-//   // Usamos las instancias reales
-//   for (let i = 0; i < cantidadJugadores; i++) {
-//     const jugador = window.jugadores?.[i];
-//     if (jugador) {
-//       // Guardamos el jugador y además le añadimos un colorHex solo para el tablero
-//       jugador.colorHex = convertirColor(jugador.color);
-//       jugadoresActivos.push(jugador);
-//       posiciones.push(0);
-//     }
-//   }
-
-//   console.log("Jugadores activos (instancias reales):", jugadoresActivos);
-// }
-
 // --- reemplaza la función inicializarJugadores por esto ---
 function inicializarJugadores(retries = 0) {
   const cantidadJugadores = parseInt(localStorage.getItem("cantidadJugadores")) || 2;
@@ -619,7 +595,7 @@ export function moverFicha(jugadorIndex, pasos) {
     return; // Salir después del pago de renta
   }
 
-  // ============= NUEVA SECCIÓN: MODAL CASA/HOTEL =============
+  // ============= SECCIÓN: MODAL CASA/HOTEL =============
   // Verificar si el jugador puede construir casas/hoteles
   // (Solo si es el dueño de la propiedad y es una property, no railroad)
   if (
@@ -644,106 +620,7 @@ export function moverFicha(jugadorIndex, pasos) {
   }
 }
 
-// ----------------- verificarPropiedadParaCompra -----------------
-/**
- * Verifica si la casilla es una propiedad y si ya tiene dueño.
- * Si está libre, muestra el modal de compra en la instancia Jugador (si existe).
- *
- * @param {number} jugadorIndex - índice del jugador que cayó
- * @param {number} casillaId - id real de la casilla (ej: 6)
- * @param {number} nuevoIndice - índice lineal en `ordenTablero` (posición en el recorrido)
- */
-function verificarPropiedadParaCompra(jugadorIndex, casillaId, nuevoIndice) {
-  console.log("=== DEBUG VERIFICACION PROPIEDAD ===");
-  console.log("Jugador índice:", jugadorIndex);
-  console.log("Nueva casilla ID:", casillaId);
-  console.log("Datos tablero disponibles:", !!window.datosTablero);
-  console.log(
-    "Jugadores disponibles:",
-    !!window.jugadores || !!jugadoresActivos
-  );
-
-  if (!window.datosTablero) {
-    console.warn(
-      "No hay datosTablero cargado (window.datosTablero). No puedo buscar la casilla."
-    );
-    return;
-  }
-
-  const casilla = buscarCasillaPorId(casillaId, window.datosTablero);
-  console.log("Casilla encontrada:", casilla);
-  if (!casilla) return;
-
-  if (casilla.type !== "property") {
-    console.log(
-      `La casilla ${casilla.name} (id ${casilla.id}) no es de tipo property.`
-    );
-    return;
-  }
-
-  // Obtener lista de jugadores a chequear (preferimos window.jugadores si existen instancias Jugador)
-  const listaJugadores =
-    window.jugadores && window.jugadores.length
-      ? window.jugadores
-      : jugadoresActivos;
-
-  // Buscar dueño
-  let duenio = null;
-  for (let p of listaJugadores) {
-    if (
-      Array.isArray(p.propiedades) &&
-      p.propiedades.some((prop) => prop.id === casilla.id)
-    ) {
-      duenio = p;
-      break;
-    }
-  }
-
-  console.log(`Propiedad ${casilla.name} tiene dueño:`, !!duenio);
-
-  if (duenio) {
-    console.log(
-      `➡️ La propiedad ${casilla.name} (id ${casilla.id}) ya pertenece a ${
-        duenio.nickname || duenio.nombre
-      }`
-    );
-    return;
-  }
-
-  // Si no hay dueño → mostrar modal de compra en la instancia Jugador si existe
-  const instanciaJugador =
-    window.jugadores && window.jugadores[jugadorIndex]
-      ? window.jugadores[jugadorIndex]
-      : null;
-
-  const casillasArray = [];
-  // colocamos la casilla en el índice lineal esperado (nuevoIndice)
-  casillasArray[nuevoIndice] = casilla;
-
-  if (
-    instanciaJugador &&
-    typeof instanciaJugador.mostrarModalComprarPropiedad === "function"
-  ) {
-    console.log(
-      "Mostrando modal de compra para:",
-      instanciaJugador.nickname || instanciaJugador.nombre || jugadorIndex
-    );
-    instanciaJugador.mostrarModalComprarPropiedad(casillasArray);
-  } else {
-    // Fallback / debugging
-    console.warn(
-      "No se encontró una instancia Jugador con el método mostrarModalComprarPropiedad.\n" +
-        "Asegúrate de que las instancias de Jugador estén en window.jugadores.\n" +
-        "CasillasArray preparado en índice",
-      nuevoIndice,
-      casillasArray
-    );
-    // Si quieres, aquí podrías llamar a alguna función global que abra el modal manualmente,
-    // o transformar tu objeto jugadoresActivos en instancias Jugador antes de la partida.
-  }
-}
-
-// ----------------- buscarCasillaPorId (útil si no tienes una) -----------------
+// ----------------- buscarCasillaPorId -----------------
 function buscarCasillaPorId(id, datosTablero) {
   if (!datosTablero) return null;
 
@@ -764,20 +641,6 @@ function buscarCasillaPorId(id, datosTablero) {
   return null;
 }
 
-/**
- * Verifica si una propiedad ya tiene dueño
- * @param {number} casillaId - ID de la casilla
- * @returns {boolean} - true si tiene dueño, false si está disponible
- */
-function verificarSiTieneDueno(casillaId) {
-  // Verificar en todos los jugadores si alguien ya tiene esta propiedad
-  if (window.jugadores && Array.isArray(window.jugadores)) {
-    return window.jugadores.some((jugador) =>
-      jugador.propiedades.some((propiedad) => propiedad.id === casillaId)
-    );
-  }
-  return false;
-}
 
 /**
  * Obtiene la posición actual de un jugador en el tablero
@@ -1001,20 +864,6 @@ export function actualizarCasillaConHipoteca(propiedad, jugador, esHipotecada = 
   const casilla = document.querySelector(`[data-id="${propiedad.id}"]`);
   if (!casilla) return;
 
-  const colorFichaMap = {
-    amarillo: "#FFD700",
-    azul: "#1E90FF", 
-    rojo: "#FF4500",
-    verde: "#32CD32",
-    rosa: "#FF69B4",
-    violeta: "#8B00FF",
-    naranja: "#FFA500",
-    celeste: "#87CEEB",
-    morado: "#8B00FF",
-    cyan: "#00FFFF",
-    magenta: "#FF00FF",
-  };
-
   // Determinar color según estado de hipoteca
   const colorJugador = esHipotecada 
     ? "#808080"  // Gris para hipotecada
@@ -1066,8 +915,6 @@ export function esPropiedadHipotecada(propiedad, jugador) {
   });
 }
 
-// ========== EXPONER FUNCIONES GLOBALMENTE ==========
-// Para que puedan ser llamadas desde otros archivos
 
 window.marcarPropiedadHipotecada = marcarPropiedadHipotecada;
 window.desmarcarPropiedadHipotecada = desmarcarPropiedadHipotecada;
